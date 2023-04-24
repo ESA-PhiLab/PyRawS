@@ -585,7 +585,7 @@ raw_granule_0.export_to_tif(save_path=output_tif_folder)
   Given a certain set of bands of interest `[Bx,By,...,Bz]`, where `Bx` is the first band in the set, an `Raw useful granule` is one of the collection of [Sentinel-2 Raw granules](#sentinel-2-raw-granule) that compose a [Sentinel-2 Raw event](#sentinel-2-raw-event) whose band `Bx` include (or intersects) a certain area of interest (e.g., an eruption or an area covered by a fire). For an intuitive example, please, check [Raw data events and granules](#raw-events-and-raw-granules).
 
 ## Contributing
-The ```PyRawS``` project is open to contributions. To discuss new ideas and applications, please, reach us via email (please, refer to [Contact](#contact)). To report a bug or request a new feature, please, open an [issue](https://github.com/ESA-PhiLab/PyRawS/-/issues) to report a bug or to request a new feature. 
+The ```PyRawS``` project is open to contributions. To discuss new ideas and applications, please, reach us via email (please, refer to [Contacts](#contacts)). To report a bug or request a new feature, please, open an [issue](https://github.com/ESA-PhiLab/PyRawS/issues) to report a bug or to request a new feature. 
 
 If you want to contribute, please proceed as follow:
 
