@@ -596,7 +596,7 @@ If you want to contribute, please proceed as follow:
 5. Open a Pull Request
 
 ## License
-Distributed under the GPL-3.0 License.
+Distributed under the Apache License.
 
 ## Contacts
 Created by the European Space Agency $\Phi$-[lab](https://phi.esa.int/).
