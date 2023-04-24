@@ -598,7 +598,7 @@ If you want to contribute, please proceed as follow:
 ## License
 Distributed under the GPL-3.0 License.
 
-## Contact
+## Contacts
 Created by the European Space Agency $\Phi$-[lab](https://phi.esa.int/).
 
 * Gabriele Meoni - gabriele.meoni at esa.int and gabriele.meoni17 at gmail.com
