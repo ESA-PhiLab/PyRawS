@@ -1,0 +1,25 @@
+-------------------------------------------------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  
+                                                   Name    Self CPU %      Self CPU   CPU total %     CPU total  CPU time avg     Self CUDA   Self CUDA %    CUDA total  CUDA time avg    # of Calls  
+-------------------------------------------------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  
+void at::native::(anonymous namespace)::grid_sampler...         0.00%       0.000us         0.00%       0.000us       0.000us       1.569ms        88.90%       1.569ms     392.250us             4  
+void at::native::elementwise_kernel<128, 2, at::nati...         0.00%       0.000us         0.00%       0.000us       0.000us     103.000us         5.84%     103.000us       8.583us            12  
+void at::native::vectorized_elementwise_kernel<4, at...         0.00%       0.000us         0.00%       0.000us       0.000us      47.000us         2.66%      47.000us       5.875us             8  
+                                  volta_sgemm_128x32_tn         0.00%       0.000us         0.00%       0.000us       0.000us      21.000us         1.19%      21.000us       5.250us             4  
+void at::native::elementwise_kernel<128, 2, at::nati...         0.00%       0.000us         0.00%       0.000us       0.000us      12.000us         0.68%      12.000us       3.000us             4  
+void at::native::elementwise_kernel<128, 2, at::nati...         0.00%       0.000us         0.00%       0.000us       0.000us       8.000us         0.45%       8.000us       2.000us             4  
+                       Memcpy HtoD (Pageable -> Device)         0.00%       0.000us         0.00%       0.000us       0.000us       3.000us         0.17%       3.000us       0.333us             9  
+void (anonymous namespace)::elementwise_kernel_with_...         0.00%       0.000us         0.00%       0.000us       0.000us       2.000us         0.11%       2.000us       0.500us             4  
+                                             cudaMalloc         0.07%       1.275ms         0.07%       1.275ms     182.143us       0.000us         0.00%       0.000us       0.000us             7  
+                                        cudaMemcpyAsync         0.01%     112.000us         0.01%     112.000us      14.000us       0.000us         0.00%       0.000us       0.000us             8  
+                                  cudaStreamSynchronize         0.01%     228.000us         0.01%     228.000us      28.500us       0.000us         0.00%       0.000us       0.000us             8  
+                                       cudaLaunchKernel        67.78%        1.170s        67.78%        1.170s      29.260ms       0.000us         0.00%       0.000us       0.000us            40  
+                                               cudaFree        32.12%     554.606ms        32.12%     554.606ms     184.869ms       0.000us         0.00%       0.000us       0.000us             3  
+                                 cudaDeviceGetAttribute         0.00%       1.000us         0.00%       1.000us       0.091us       0.000us         0.00%       0.000us       0.000us            11  
+                                             cudaMemcpy         0.00%      23.000us         0.00%      23.000us      23.000us       0.000us         0.00%       0.000us       0.000us             1  
+                                   cudaFuncSetAttribute         0.00%      11.000us         0.00%      11.000us       0.065us       0.000us         0.00%       0.000us       0.000us           169  
+                               cudaEventCreateWithFlags         0.00%       2.000us         0.00%       2.000us       0.111us       0.000us         0.00%       0.000us       0.000us            18  
+cudaOccupancyMaxActiveBlocksPerMultiprocessorWithFla...         0.00%       4.000us         0.00%       4.000us       1.000us       0.000us         0.00%       0.000us       0.000us             4  
+                                  cudaDeviceSynchronize         0.01%     134.000us         0.01%     134.000us     134.000us       0.000us         0.00%       0.000us       0.000us             1  
+-------------------------------------------------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  
+Self CPU time total: 1.727s
+Self CUDA time total: 1.765ms
