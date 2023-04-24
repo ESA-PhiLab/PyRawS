@@ -78,7 +78,7 @@ The PyRawS repository includes the following directories:
 ### Pre-requirements
 Before all, clone this repository. We suggest using git from CLI, execute:
 
-``` git clone https://gitlab.esa.int/Alix.DeBeusscher/PyRawS.git ```
+``` git clone https://github.com/ESA-PhiLab/PyRawS ```
 
 ### Create the PyRawS environment
 To install the environment, we suggest to use [anaconda]("https://www.anaconda.com/products/distribution"). You can create a dedicated conda environment by using the `environment.yml` file by running the following command from the main directory: 
@@ -148,7 +148,7 @@ This respository contains an example of database (`THRAWS`) that is used by PyRa
 
 To create a new database (e.g., `my_database_name`), please, proceed as follows:
 
-1. Create a ".csv" file with the structure shown above and place it into the `database`subfloders (e.g., `my_db.csv`). You can use start from the [thraws_db.csv](https://gitlab.esa.int/Alix.DeBeusscher/PyRawS/-/blob/main/PyRawS/database/thraws_db.csv) database and edit it accordingly to your specification. 
+1. Create a ".csv" file with the structure shown above and place it into the `database`subfloders (e.g., `my_db.csv`). You can use start from the [thraws_db.csv](https://github.com/ESA-PhiLab/PyRawS/-/blob/main/PyRawS/database/thraws_db.csv) database and edit it accordingly to your specification. 
 2. Create subdirectory `my_database_name` in the `data` subdirectory and populate it with the correspondent [Sentinel-2 Raw data](#sentinel-2-raw-data) and [Sentinel-2 L1 data](#sentinel-2-l1-data) as described in [Data directory](#data-directory).
 3. Update the `DATABASE_FILE_DICTIONARY` in `PyRawS/utils/constants.py` as follows:
 
@@ -585,7 +585,7 @@ raw_granule_0.export_to_tif(save_path=output_tif_folder)
   Given a certain set of bands of interest `[Bx,By,...,Bz]`, where `Bx` is the first band in the set, an `Raw useful granule` is one of the collection of [Sentinel-2 Raw granules](#sentinel-2-raw-granule) that compose a [Sentinel-2 Raw event](#sentinel-2-raw-event) whose band `Bx` include (or intersects) a certain area of interest (e.g., an eruption or an area covered by a fire). For an intuitive example, please, check [Raw data events and granules](#raw-events-and-raw-granules).
 
 ## Contributing
-The ```PyRawS``` project is open to contributions. To discuss new ideas and applications, please, reach us via email (please, refer to [Contact](#contact)). To report a bug or request a new feature, please, open an [issue](https://gitlab.esa.int/Alix.DeBeusscher/PyRawS/-/issues) to report a bug or to request a new feature. 
+The ```PyRawS``` project is open to contributions. To discuss new ideas and applications, please, reach us via email (please, refer to [Contact](#contact)). To report a bug or request a new feature, please, open an [issue](https://github.com/ESA-PhiLab/PyRawS/-/issues) to report a bug or to request a new feature. 
 
 If you want to contribute, please proceed as follow:
 
