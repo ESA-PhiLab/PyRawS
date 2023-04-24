@@ -1,0 +1,106 @@
+-------------------------------------------------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  
+                                                   Name    Self CPU %      Self CPU   CPU total %     CPU total  CPU time avg     Self CUDA   Self CUDA %    CUDA total  CUDA time avg    # of Calls  
+-------------------------------------------------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  
+volta_scudnn_winograd_128x128_ldg1_ldg4_relu_tile148...         0.00%       0.000us         0.00%       0.000us       0.000us     257.782ms        35.25%     257.782ms       1.790ms           144  
+void at::native::elementwise_kernel<128, 2, at::nati...         0.00%       0.000us         0.00%       0.000us       0.000us      89.640ms        12.26%      89.640ms      29.721us          3016  
+void at::native::vectorized_elementwise_kernel<4, at...         0.00%       0.000us         0.00%       0.000us       0.000us      67.749ms         9.26%      67.749ms     124.539us           544  
+void cudnn::detail::implicit_convolve_sgemm<float, f...         0.00%       0.000us         0.00%       0.000us       0.000us      51.420ms         7.03%      51.420ms      33.874us          1518  
+                       Memcpy HtoD (Pageable -> Device)         0.00%       0.000us         0.00%       0.000us       0.000us      39.989ms         5.47%      39.989ms      13.250us          3018  
+                                  volta_sgemm_128x64_tn         0.00%       0.000us         0.00%       0.000us       0.000us      34.140ms         4.67%      34.140ms     118.542us           288  
+void at::native::(anonymous namespace)::max_pool_for...         0.00%       0.000us         0.00%       0.000us       0.000us      31.648ms         4.33%      31.648ms     247.250us           128  
+void cudnn::detail::implicit_convolve_sgemm<float, f...         0.00%       0.000us         0.00%       0.000us       0.000us      26.314ms         3.60%      26.314ms      85.993us           306  
+void (anonymous namespace)::softmax_warp_forward<flo...         0.00%       0.000us         0.00%       0.000us       0.000us      22.135ms         3.03%      22.135ms      76.858us           288  
+void at::native::vectorized_elementwise_kernel<4, at...         0.00%       0.000us         0.00%       0.000us       0.000us      18.153ms         2.48%      18.153ms      44.493us           408  
+                                  volta_sgemm_128x64_nt         0.00%       0.000us         0.00%       0.000us       0.000us      17.589ms         2.41%      17.589ms      61.073us           288  
+                   volta_scudnn_128x32_relu_small_nn_v1         0.00%       0.000us         0.00%       0.000us       0.000us      14.876ms         2.03%      14.876ms     929.750us            16  
+void at::native::elementwise_kernel<128, 2, at::nati...         0.00%       0.000us         0.00%       0.000us       0.000us       6.589ms         0.90%       6.589ms      16.639us           396  
+void at::native::(anonymous namespace)::grid_sampler...         0.00%       0.000us         0.00%       0.000us       0.000us       5.914ms         0.81%       5.914ms     369.625us            16  
+void at::native::reduce_kernel<512, 1, at::native::R...         0.00%       0.000us         0.00%       0.000us       0.000us       5.286ms         0.72%       5.286ms      10.657us           496  
+               volta_scudnn_128x128_relu_interior_nn_v1         0.00%       0.000us         0.00%       0.000us       0.000us       4.597ms         0.63%       4.597ms     287.312us            16  
+void at::native::vectorized_elementwise_kernel<4, at...         0.00%       0.000us         0.00%       0.000us       0.000us       4.566ms         0.62%       4.566ms       9.357us           488  
+void at::native::reduce_kernel<512, 1, at::native::R...         0.00%       0.000us         0.00%       0.000us       0.000us       3.524ms         0.48%       3.524ms       7.342us           480  
+                volta_scudnn_128x64_relu_interior_nn_v1         0.00%       0.000us         0.00%       0.000us       0.000us       2.375ms         0.32%       2.375ms     148.438us            16  
+void at::native::vectorized_elementwise_kernel<4, at...         0.00%       0.000us         0.00%       0.000us       0.000us       2.259ms         0.31%       2.259ms       1.711us          1320  
+void at::native::(anonymous namespace)::CatArrayBatc...         0.00%       0.000us         0.00%       0.000us       0.000us       2.220ms         0.30%       2.220ms       7.500us           296  
+void at::native::elementwise_kernel<128, 2, at::nati...         0.00%       0.000us         0.00%       0.000us       0.000us       2.048ms         0.28%       2.048ms      21.333us            96  
+void cudnn::detail::bilinear_sampler_fw_4d<float, fl...         0.00%       0.000us         0.00%       0.000us       0.000us       1.855ms         0.25%       1.855ms     115.938us            16  
+void cudnn::detail::bn_fw_inf_1C11_kernel_NCHW<float...         0.00%       0.000us         0.00%       0.000us       0.000us       1.834ms         0.25%       1.834ms       5.210us           352  
+void at::native::vectorized_elementwise_kernel<4, at...         0.00%       0.000us         0.00%       0.000us       0.000us       1.678ms         0.23%       1.678ms      34.958us            48  
+void at::native::(anonymous namespace)::cunn_Spatial...         0.00%       0.000us         0.00%       0.000us       0.000us       1.550ms         0.21%       1.550ms      96.875us            16  
+                       Memcpy DtoH (Device -> Pageable)         0.00%       0.000us         0.00%       0.000us       0.000us       1.505ms         0.21%       1.505ms       6.841us           220  
+void at::native::vectorized_elementwise_kernel<4, at...         0.00%       0.000us         0.00%       0.000us       0.000us       1.376ms         0.19%       1.376ms      28.667us            48  
+void at::native::reduce_kernel<128, 4, at::native::R...         0.00%       0.000us         0.00%       0.000us       0.000us       1.058ms         0.14%       1.058ms      33.062us            32  
+void at::native::vectorized_elementwise_kernel<4, at...         0.00%       0.000us         0.00%       0.000us       0.000us       1.041ms         0.14%       1.041ms       2.065us           504  
+void at::native::vectorized_elementwise_kernel<4, at...         0.00%       0.000us         0.00%       0.000us       0.000us     721.000us         0.10%     721.000us       8.193us            88  
+void at::native::unrolled_elementwise_kernel<at::nat...         0.00%       0.000us         0.00%       0.000us       0.000us     674.000us         0.09%     674.000us      14.042us            48  
+void cudnn::winograd::generateWinogradTilesKernel<0,...         0.00%       0.000us         0.00%       0.000us       0.000us     612.000us         0.08%     612.000us       4.250us           144  
+void at::native::vectorized_elementwise_kernel<4, at...         0.00%       0.000us         0.00%       0.000us       0.000us     552.000us         0.08%     552.000us       8.118us            68  
+void at::native::vectorized_elementwise_kernel<4, at...         0.00%       0.000us         0.00%       0.000us       0.000us     467.000us         0.06%     467.000us       0.973us           480  
+                                   volta_sgemm_64x64_nt         0.00%       0.000us         0.00%       0.000us       0.000us     459.000us         0.06%     459.000us      57.375us             8  
+void at_cuda_detail::cub::DeviceSelectSweepKernel<at...         0.00%       0.000us         0.00%       0.000us       0.000us     443.000us         0.06%     443.000us       6.922us            64  
+void at::native::vectorized_elementwise_kernel<4, at...         0.00%       0.000us         0.00%       0.000us       0.000us     431.000us         0.06%     431.000us       0.883us           488  
+void at::native::vectorized_elementwise_kernel<4, at...         0.00%       0.000us         0.00%       0.000us       0.000us     425.000us         0.06%     425.000us       0.885us           480  
+void at::native::bitonicSortKVInPlace<float, long, -...         0.00%       0.000us         0.00%       0.000us       0.000us     354.000us         0.05%     354.000us      23.600us            15  
+void at::native::sbtopk::gatherTopK<float, unsigned ...         0.00%       0.000us         0.00%       0.000us       0.000us     340.000us         0.05%     340.000us      22.667us            15  
+cudnn::gemm::computeOffsetsKernel(cudnn::gemm::Compu...         0.00%       0.000us         0.00%       0.000us       0.000us     297.000us         0.04%     297.000us       6.188us            48  
+void at::native::vectorized_elementwise_kernel<4, at...         0.00%       0.000us         0.00%       0.000us       0.000us     246.000us         0.03%     246.000us       2.562us            96  
+void at::native::reduce_kernel<512, 1, at::native::R...         0.00%       0.000us         0.00%       0.000us       0.000us     240.000us         0.03%     240.000us       7.500us            32  
+void at::native::(anonymous namespace)::CatArrayBatc...         0.00%       0.000us         0.00%       0.000us       0.000us     220.000us         0.03%     220.000us       6.875us            32  
+void at::native::index_elementwise_kernel<128, 4, at...         0.00%       0.000us         0.00%       0.000us       0.000us     194.000us         0.03%     194.000us       4.042us            48  
+void at::native::vectorized_elementwise_kernel<4, at...         0.00%       0.000us         0.00%       0.000us       0.000us     192.000us         0.03%     192.000us       6.000us            32  
+void at::native::vectorized_elementwise_kernel<4, at...         0.00%       0.000us         0.00%       0.000us       0.000us     179.000us         0.02%     179.000us       5.594us            32  
+void at::native::(anonymous namespace)::write_indice...         0.00%       0.000us         0.00%       0.000us       0.000us     144.000us         0.02%     144.000us       9.000us            16  
+void at::native::index_elementwise_kernel<128, 4, at...         0.00%       0.000us         0.00%       0.000us       0.000us     126.000us         0.02%     126.000us       4.065us            31  
+void at::native::reduce_kernel<512, 1, at::native::R...         0.00%       0.000us         0.00%       0.000us       0.000us     103.000us         0.01%     103.000us       3.219us            32  
+void at::native::reduce_kernel<512, 1, at::native::R...         0.00%       0.000us         0.00%       0.000us       0.000us     103.000us         0.01%     103.000us       6.438us            16  
+void at_cuda_detail::cub::DeviceReduceSingleTileKern...         0.00%       0.000us         0.00%       0.000us       0.000us      98.000us         0.01%      98.000us       2.042us            48  
+                                  volta_sgemm_128x32_tn         0.00%       0.000us         0.00%       0.000us       0.000us      76.000us         0.01%      76.000us       4.750us            16  
+                         Memcpy DtoD (Device -> Device)         0.00%       0.000us         0.00%       0.000us       0.000us      63.000us         0.01%      63.000us       1.312us            48  
+void at::native::_scatter_gather_elementwise_kernel<...         0.00%       0.000us         0.00%       0.000us       0.000us      58.000us         0.01%      58.000us       3.625us            16  
+void at_cuda_detail::cub::DeviceReduceKernel<at_cuda...         0.00%       0.000us         0.00%       0.000us       0.000us      57.000us         0.01%      57.000us       3.562us            16  
+void at::native::elementwise_kernel<128, 4, at::nati...         0.00%       0.000us         0.00%       0.000us       0.000us      57.000us         0.01%      57.000us       1.781us            32  
+void at_cuda_detail::cub::DeviceScanKernel<at_cuda_d...         0.00%       0.000us         0.00%       0.000us       0.000us      55.000us         0.01%      55.000us       3.438us            16  
+void at::native::index_elementwise_kernel<128, 4, at...         0.00%       0.000us         0.00%       0.000us       0.000us      53.000us         0.01%      53.000us       3.312us            16  
+void at::native::vectorized_elementwise_kernel<4, at...         0.00%       0.000us         0.00%       0.000us       0.000us      45.000us         0.01%      45.000us       1.324us            34  
+void at::native::vectorized_elementwise_kernel<4, at...         0.00%       0.000us         0.00%       0.000us       0.000us      43.000us         0.01%      43.000us       0.896us            48  
+void at_cuda_detail::cub::DeviceReduceSingleTileKern...         0.00%       0.000us         0.00%       0.000us       0.000us      36.000us         0.00%      36.000us       2.250us            16  
+void at::native::unrolled_elementwise_kernel<at::nat...         0.00%       0.000us         0.00%       0.000us       0.000us      34.000us         0.00%      34.000us       1.545us            22  
+void at::native::elementwise_kernel<128, 2, at::nati...         0.00%       0.000us         0.00%       0.000us       0.000us      32.000us         0.00%      32.000us       2.000us            16  
+void at::native::_scatter_gather_elementwise_kernel<...         0.00%       0.000us         0.00%       0.000us       0.000us      32.000us         0.00%      32.000us       4.000us             8  
+void at::native::elementwise_kernel<128, 2, at::nati...         0.00%       0.000us         0.00%       0.000us       0.000us      30.000us         0.00%      30.000us       1.875us            16  
+void at_cuda_detail::cub::DeviceCompactInitKernel<at...         0.00%       0.000us         0.00%       0.000us       0.000us      27.000us         0.00%      27.000us       0.422us            64  
+void at::native::_scatter_gather_elementwise_kernel<...         0.00%       0.000us         0.00%       0.000us       0.000us      27.000us         0.00%      27.000us       3.375us             8  
+void at::native::(anonymous namespace)::CatArrayBatc...         0.00%       0.000us         0.00%       0.000us       0.000us      26.000us         0.00%      26.000us       1.625us            16  
+void at::native::(anonymous namespace)::CatArrayBatc...         0.00%       0.000us         0.00%       0.000us       0.000us      25.000us         0.00%      25.000us       1.562us            16  
+void at::native::elementwise_kernel<128, 2, at::nati...         0.00%       0.000us         0.00%       0.000us       0.000us      23.000us         0.00%      23.000us       1.438us            16  
+                                        Memset (Device)         0.00%       0.000us         0.00%       0.000us       0.000us      21.000us         0.00%      21.000us       1.050us            20  
+void at::native::vectorized_elementwise_kernel<4, at...         0.00%       0.000us         0.00%       0.000us       0.000us      15.000us         0.00%      15.000us       0.938us            16  
+void at::native::vectorized_elementwise_kernel<4, at...         0.00%       0.000us         0.00%       0.000us       0.000us      15.000us         0.00%      15.000us       0.938us            16  
+void at::native::vectorized_elementwise_kernel<4, at...         0.00%       0.000us         0.00%       0.000us       0.000us      14.000us         0.00%      14.000us       0.583us            24  
+void at::native::vectorized_elementwise_kernel<4, at...         0.00%       0.000us         0.00%       0.000us       0.000us      13.000us         0.00%      13.000us       0.812us            16  
+void at::native::vectorized_elementwise_kernel<2, at...         0.00%       0.000us         0.00%       0.000us       0.000us      11.000us         0.00%      11.000us       1.375us             8  
+void (anonymous namespace)::elementwise_kernel_with_...         0.00%       0.000us         0.00%       0.000us       0.000us      10.000us         0.00%      10.000us       0.625us            16  
+void at::native::vectorized_elementwise_kernel<4, at...         0.00%       0.000us         0.00%       0.000us       0.000us      10.000us         0.00%      10.000us       0.625us            16  
+void at_cuda_detail::cub::DeviceScanInitKernel<at_cu...         0.00%       0.000us         0.00%       0.000us       0.000us       9.000us         0.00%       9.000us       0.562us            16  
+void at::native::unrolled_elementwise_kernel<at::nat...         0.00%       0.000us         0.00%       0.000us       0.000us       8.000us         0.00%       8.000us       0.800us            10  
+void at::native::unrolled_elementwise_kernel<at::nat...         0.00%       0.000us         0.00%       0.000us       0.000us       5.000us         0.00%       5.000us       0.625us             8  
+void at::native::vectorized_elementwise_kernel<4, at...         0.00%       0.000us         0.00%       0.000us       0.000us       4.000us         0.00%       4.000us       2.000us             2  
+void at::native::vectorized_elementwise_kernel<4, at...         0.00%       0.000us         0.00%       0.000us       0.000us       2.000us         0.00%       2.000us       0.250us             8  
+                                             cudaMalloc         1.15%      57.545ms         1.15%      57.545ms     238.776us       0.000us         0.00%       0.000us       0.000us           241  
+                                       cudaLaunchKernel        27.88%        1.397s        27.88%        1.397s      96.445us       0.000us         0.00%       0.000us       0.000us         14489  
+                                        cudaMemcpyAsync        10.22%     512.456ms        10.22%     512.456ms     156.046us       0.000us         0.00%       0.000us       0.000us          3284  
+                                  cudaStreamSynchronize         1.39%      69.792ms         1.39%      69.792ms      21.567us       0.000us         0.00%       0.000us       0.000us          3236  
+                                               cudaFree        10.92%     547.389ms        10.92%     547.389ms      78.198ms       0.000us         0.00%       0.000us       0.000us             7  
+                                 cudaDeviceGetAttribute         0.00%      15.000us         0.00%      15.000us       0.048us       0.000us         0.00%       0.000us       0.000us           312  
+                                             cudaMemcpy         0.00%      47.000us         0.00%      47.000us      23.500us       0.000us         0.00%       0.000us       0.000us             2  
+                                   cudaFuncSetAttribute         0.01%     265.000us         0.01%     265.000us       0.786us       0.000us         0.00%       0.000us       0.000us           337  
+                               cudaEventCreateWithFlags         0.00%      10.000us         0.00%      10.000us       0.208us       0.000us         0.00%       0.000us       0.000us            48  
+cudaOccupancyMaxActiveBlocksPerMultiprocessorWithFla...         0.01%     360.000us         0.01%     360.000us       2.368us       0.000us         0.00%       0.000us       0.000us           152  
+                                        cudaMemsetAsync         0.01%     321.000us         0.01%     321.000us      16.050us       0.000us         0.00%       0.000us       0.000us            20  
+                                     cudaGetDeviceCount         0.00%       0.000us         0.00%       0.000us       0.000us       0.000us         0.00%       0.000us       0.000us             2  
+                              cudaStreamCreateWithFlags        48.18%        2.415s        48.18%        2.415s     301.838ms       0.000us         0.00%       0.000us       0.000us             8  
+                       cudaDeviceGetStreamPriorityRange         0.00%       1.000us         0.00%       1.000us       1.000us       0.000us         0.00%       0.000us       0.000us             1  
+                           cudaStreamCreateWithPriority         0.00%     247.000us         0.00%     247.000us      61.750us       0.000us         0.00%       0.000us       0.000us             4  
+-------------------------------------------------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  
+Self CPU time total: 5.012s
+Self CUDA time total: 731.266ms

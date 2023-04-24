@@ -1,0 +1,30 @@
+name: pyraws
+channels:
+  - conda-forge
+  - pytorch
+dependencies:
+  - python=3.9
+  - geopy
+  - earthengine-api
+  - geopandas
+  - ipywidgets
+  - jupyter
+  - numpy
+  - geopandas
+  - folium
+  - geopy
+  - scipy
+  - matplotlib
+  - termcolor
+  - tqdm
+  - glymur
+  - cudatoolkit=10.2
+  - pytorch==1.11.0
+  - torchvision==0.12.0
+  - scikit-learn
+  - scikit-image
+  - rasterio
+  - pip
+  - pip:
+    - tifffile
+    - opencv-python

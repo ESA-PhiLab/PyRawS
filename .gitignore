@@ -1,0 +1,10 @@
+*__pycache__
+*/.ipynb_checkpoints/*
+pyraws.egg-info/*
+pyraws/sys_cfg.py
+pyraws/data/*
+scripts_and_studies/Test/
+*.png
+*.pkl
+scripts_and_studies/coregistration_study/superglue_models
+pyraws/sys_config.py
