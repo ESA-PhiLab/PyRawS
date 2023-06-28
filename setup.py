@@ -13,17 +13,13 @@ setup(
     description="Python for RAW Sentinel2 data (PyRawS) is a powerful open-source Python package that provides a comprehensive set of tools for working with Sentinel-2 Raw data. It provides utilities for coarse spatial bands coregistration, geo-referencing, data visualization, and image processing.",
     long_description=open("README.md", encoding="cp437").read(),
     long_description_content_type="text/markdown",
-    url="https://gitlab.esa.int/Alix.DeBeusscher/pyraws",
+    url="https://github.com/ESA-PhiLab/PyRawS",
     author="ESA Philab",
     author_email="gabriele.meoni@esa.int",
     install_requires=[
-        "earthengine-api",
         "geopy",
-        "folium",
         "geopandas",
         "glymur",
-        "ipywidgets",
-        "jupyter",
         "numpy",
         "opencv-python",
         "pandas",
@@ -36,8 +32,7 @@ setup(
         "scikit-image",
         "scikit-learn",
         "rasterio",
-        "tifffile",
-        "earthengine-api",
+        "tifffile"
     ],
     classifiers=[
         "Development Status :: 3 - Alpha",
@@ -56,6 +51,6 @@ setup(
     ],
     python_requires=">=3.8, <4",
     project_urls={
-        "Source": "https://gitlab.esa.int/Alix.DeBeusscher/pyraws",
+        "Source": "https://github.com/ESA-PhiLab/PyRawS",
     },
 )
