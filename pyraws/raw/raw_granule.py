@@ -1,4 +1,3 @@
-from calendar import c
 import torch
 from termcolor import colored
 import matplotlib.pyplot as plt
@@ -28,16 +27,12 @@ import cv2
 
 
 class Raw_granule:
-
-    #### PRIVATE VARIABLES ######
+    # ---------------- PRIVATE VARIABLES ----------------
     __bands_dict = None  # Bands dictionary
-
     __device = None  # Device
-
     __bands_names = None  # Bands's names
-
-    __original = True  # This parameter is used to keep track of the history of the granule. If it is True, it means the granule was created by reading an image and no operation is applied.
-
+    __original = True  # This parameter is used to keep track of the history of the granule.
+    # If it is True, it means the granule was created by reading an image, and no operation is applied.
     __granule_parents = (
         []
     )  # It is used to keep track of the parents granules originating this granule.
@@ -47,9 +42,7 @@ class Raw_granule:
     )  # Coordinates of the polygon interstecting granule area.
 
     __single_granule_along_track_size = None  # Along track size of a single granule.
-
     __cloud_percentage_list = []  # Cloud coverage percentage
-
     __cropped_pixels = [None, None]  # Cropped pixels along-across
 
     def __init__(
@@ -65,11 +58,13 @@ class Raw_granule:
         """Initialize an raw granule.
 
         Args:
-            granule_bands (list, optional): list of torch tensors representing the different bands in the format [H,W]. Defaults to None.
+            granule_bands (list, optional): list of torch tensors representing each band in the format [H,W]. Defaults to None.
             bands_names (list, optional): list of band names. Defaults to None.
             granule_name (string, optionl): granule name. Defaults to None.
             granule_polygon_coordinates (list, optional): list containing [lat, lon] for every polygon point. Defaults to None.
-            single_granule_along_track_size (float, optional): size of a single granule along track. Useful to keep this info when the granule has parents. Defaults to None.
+            single_granule_along_track_size (float, optional): size of a single granule along track.
+                                                                Useful to keep this info when the granule has parents.
+                                                                Defaults to None.
             cloud_percentage (list or float, optional): Cloud coverage percentage metadata. Defaults to None.
             device (torch.device, optional): torch.device. Defaults to torch.device("cpu").
         """
@@ -87,7 +82,8 @@ class Raw_granule:
 
         self.__cropped_pixels = [None, None]
 
-        self.__original = True  # This parameter is used to keep track of the history of the granule. If it is True, it means the granule was created by reading an image and no operation is applied.
+        self.__original = True  # This parameter is used to keep track of the history of the granule.
+        # If it is True, it means the granule was created by reading an image and no operation is applied.
 
         self.__granule_parents = (
             []
@@ -109,7 +105,7 @@ class Raw_granule:
         else:
             self.__cloud_percentage_list.append(cloud_percentage)
 
-    ###########################PRIVATE METHODS ########################################################
+    # ----------------------------------PRIVATE METHODS ----------------------------------
 
     def __set_cropped_pixels(self, cropped_pixels):
         """Set the new granule length.
@@ -152,7 +148,7 @@ class Raw_granule:
         """
         self.__cloud_percentage_list = cloud_percentage_list
 
-    ############################## PUBLIC METHODS ########################################################
+    # ---------------------- PUBLIC METHODS -----------------------
 
     def is_original(self):
         """It shows if the granule is original.
@@ -202,7 +198,7 @@ class Raw_granule:
                     plt.imshow(band.detach().cpu().numpy())
                 else:
                     plt.imshow(band)
-            except:
+            except:  # noqa: E722
                 raise ValueError(
                     "Impossible to show the requested band "
                     + colored(band_name, "red")
@@ -324,8 +320,11 @@ class Raw_granule:
         """Returns a tensor containing all the bands if all the requested bands have the same resolution.
 
         Args:
-            requested_bands (list, optional): list of requested bands. If None, all the bands are used. Defaults to None.
-            downsampling (boolean, optional): if True, bands are downsampled to the lowest resolution. Otherwise, they are upsampled to the highest one. Defaults to True.
+            requested_bands (list, optional): list of requested bands.
+                                            If None, all the bands are used. Defaults to None.
+            downsampling (boolean, optional): if True, bands are downsampled to the lowest resolution.
+                                            Otherwise, they are upsampled to the highest one.
+                                            Defaults to True.
 
         Raises:
             ValueError: The granule is empty
@@ -340,7 +339,6 @@ class Raw_granule:
             requested_bands = self.__bands_names
 
         if downsampling:
-
             bands_resolution_list = [
                 BAND_SPATIAL_RESOLUTION_DICT[b] for b in requested_bands
             ]
@@ -407,7 +405,8 @@ class Raw_granule:
         return bands
 
     def stack_to_granule(self, granule_other, position):
-        """It stacks the granule to another input granule to a specificied position. For instance, if position == ""T"", the granule will be stacked at the top of the ""granule_other"".
+        """It stacks the granule to another input granule to a specificied position.
+        For instance, if position == ""T"", the granule will be stacked at the top of the ""granule_other"".
 
         Args:
             granule_other (Raw_granule): other granule to which the input granule will be stacked to.
@@ -609,15 +608,27 @@ class Raw_granule:
         bands_shifts=None,
         verbose=False,
     ):
-        """It implements the coarse coregistration of the bands by compensating the along-track pixels shift with respect to the first band.
+        """It implements the coarse coregistration of the bands by compensating
+        the along-track pixels shift with respect to the first band.
 
         Args:
-            rotate_swir_bands (boolean, optional): if True, SWIR bands are rotated before applying coregistration. Defaults to True.
-            granule_filler_before (Raw_granule, optional): if not None, bands of this tile will be used to fill the missing elements during the coregistration as before granule. Defaults to None.
-            granule_filler_after (Raw_granule, optional): if not None, bands of this tile will be used to fill the missing elements during the coregistration as bottom granule. Defaults to None.
-            crop_empty_pixels (boolean, optional): if True and no fillers are available or granule fillers are None, the image will be crop at the bottom and the top of a number of pixels equal to the maximum zeros pixels stacked from each band.
-            downsampling (boolean, optional): if True, higher resolution bands will be undersampled to match the bands with the lowest resolution. If False, lower resolution bands will be upsampled to match the bands with the highest resolution. Defaults to True.
-            bands_shifts (list, optional): bands shift values compared to the first band. If None, they will be read by the LUT file. Defaults to None.
+            rotate_swir_bands (boolean, optional): if True, SWIR bands are rotated before applying coregistration.
+                                                  Defaults to True.
+            granule_filler_before (Raw_granule, optional): if not None, bands of this tile will be used to fill
+                                                           the missing elements during the coregistration as before granule.
+                                                           Defaults to None.
+            granule_filler_after (Raw_granule, optional): if not None, bands of this tile will be used to fill the missing
+                                                          elements during the coregistration as bottom granule.
+                                                          Defaults to None.
+            crop_empty_pixels (boolean, optional): if True and no fillers are available or granule fillers are None,
+                                                   the image will be crop at the bottom and the top of a number
+                                                   of pixels equal to the maximum zeros pixels stacked from each band.
+            downsampling (boolean, optional): if True, higher resolution bands will be undersampled to match the bands
+                                              with the lowest resolution.
+                                              If False, lower resolution bands will be upsampled to match the bands
+                                              with the highest resolution. Defaults to True.
+            bands_shifts (list, optional): bands shift values compared to the first band.
+                                           If None, they will be read by the LUT file. Defaults to None.
             verbose (boolean, optional): if True, verbose mode is used. Defaults to False.
         Returns:
             Raw_granule: granule with coarse-coregistered bands.
@@ -708,7 +719,8 @@ class Raw_granule:
                 band (str): curent band name
 
             Returns:
-                The updated maximum offsets in top, bottom, left, right directions, updated max_top, max_bottom, max_right, max_left
+                The updated maximum offsets in top, bottom, left, right directions,
+                updated max_top, max_bottom, max_right, max_left
             """
             top_rescaled, bottom_rescaled = (
                 BAND_SPATIAL_RESOLUTION_DICT[band]
@@ -820,7 +832,7 @@ class Raw_granule:
                 band_name = self.__bands_names[n]
                 band_shifted = shift_band(band, shifts=[along_track, cross_track])
 
-                ########################## BEFORE CASE:
+                # -------------------------- BEFORE CASE:
                 if granule_filler_before is not None:
                     band_filler_before = granule_filler_before.get_band(band_name)
 
@@ -839,7 +851,7 @@ class Raw_granule:
                         ]
                         filler_name["top"] = granule_filler_before.get_granule_info()[0]
 
-                ########################## AFTER CASE:
+                # --------------------- AFTER CASE:
                 if granule_filler_after is not None:
                     band_filler_after = granule_filler_after.get_band(band_name)
 
@@ -952,7 +964,9 @@ class Raw_granule:
 
                 # Adjusting coordinates only in absence of top filling.
                 if filler_name["top"] is None:
-                    # Reprojecting top shift with respect to band 9 (used inside the granule to manage the lenght of the pixel when bands coordinates are used.)
+                    # Reprojecting top shift with respect to band 9
+                    # (used inside the granule to manage the lenght of the
+                    # pixel when bands coordinates are used.)
                     max_top_resized_09 = int(
                         max_top
                         * BAND_SPATIAL_RESOLUTION_DICT[max_top_band]
@@ -968,7 +982,9 @@ class Raw_granule:
 
                 # Adjusting coordinates only in absence of bottom filling.
                 if filler_name["bottom"] is None:
-                    # Reprojecting bottom shift with respect to band 9 (used inside the granule to manage the lenght of the pixel when bands coordinates are used.)
+                    # Reprojecting bottom shift with respect to band 9
+                    # (used inside the granule to manage the lenght of the pixel
+                    # when bands coordinates are used.)
                     max_bottom_resized_09 = int(
                         max_bottom
                         * BAND_SPATIAL_RESOLUTION_DICT[max_bottom_band]
@@ -1040,7 +1056,9 @@ class Raw_granule:
                     point_2_shifted,
                     point_3_shifted,
                 ]
-                # Reprojecting right shift with respect to band 9 (used inside the granule to manage the lenght of the pixel across-track when bands coordinates are used.)
+                # Reprojecting right shift with respect to band 9
+                # (used inside the granule to manage the lenght of the pixel
+                # across-track when bands coordinates are used.)
                 max_left_resized_09 = int(
                     max_left
                     * BAND_SPATIAL_RESOLUTION_DICT_ACROSS[max_left_band]
@@ -1069,9 +1087,10 @@ class Raw_granule:
         # Adjusting granule name.
         granule_name = self.granule_name
 
-        # Adding COMPLEMENTED_WITH_top_granule_number_bottom_granule_number depending on the case
+        # Adding COMPLEMENTED_WITH_top_granule_number_bottom_granule_number
+        # depending on the case
         if filler_name["top"] is not None or filler_name["bottom"] is not None:
-            granule_name = granule_name + f"_COMPLEMENTED_WITH"
+            granule_name = granule_name + "_COMPLEMENTED_WITH"
         if filler_name["top"] is not None:
             granule_name = granule_name + f"_top_{filler_name['top']}"
         if filler_name["bottom"] is not None:
@@ -1112,10 +1131,17 @@ class Raw_granule:
         """It shows the superimposition of bands in requested_bands
 
         Args:
-            requested_bands (list, optional): requested bands list. If None, all the bands are used. Defaults to None.
-            downsampling (boolean, optional): if True, bands are downsampled to have the same resolution. Default to False.
-            equalize (boolean, optional): if True, bands are equalized for a better plotting by saturating the outliers of each band with an upper and lower valuer respectively equal to pixel value mean *- n_std * histogram standard deviation. Default to False.
-            n_std (integer, optional):  number of times the value of the pixel values standard deviation used for histogram cropping. Defaults to 2.
+            requested_bands (list, optional): requested bands list.
+                                              If None, all the bands are used.
+                                              Defaults to None.
+            downsampling (boolean, optional): if True, bands are downsampled to have the same resolution.
+                                              Default to False.
+            equalize (boolean, optional): if True, bands are equalized for a better plotting by saturating
+                                          the outliers of each band with an upper and lower valuer respectively
+                                          equal to pixel value mean *- n_std * histogram standard deviation.
+                                          Default to False.
+            n_std (integer, optional):  number of times the value of the pixel values standard deviation used
+                                        for histogram cropping. Defaults to 2.
         Raises:
             ValueError: Impossible to superimpose more than 3 bands
         """
@@ -1165,9 +1191,12 @@ class Raw_granule:
         """It shows the requested bands.
 
         Args:
-            requested_bands (list, optional): list of requested bands to show. If None, all the bands are shown. Defaults to None.
-            downsampling (bool, optional): if True, bands are downsampled to have the same resolution. Default to False.
-            oversampling (bool, optional): if True, bands are oversampled to have the same resolution. Downsampling has priority over upampling. Default to False.
+            requested_bands (list, optional): list of requested bands to show.
+                                              If None, all the bands are shown. Defaults to None.
+            downsampling (bool, optional): if True, bands are downsampled to have the same resolution.
+                                           Default to False.
+            oversampling (bool, optional): if True, bands are oversampled to have the same resolution.
+                                           Downsampling has priority over upampling. Default to False.
             rotate_swir_bands (bool, optional): if True, SWIR bands are rotated. Default to False.
 
         """
@@ -1259,7 +1288,6 @@ class Raw_granule:
 
         else:
             for n in range(n_rows * 3):
-
                 if n_rows > 1:
                     row = int(np.floor(n / 3))
                     column = int(n - 3 * row)
@@ -1286,7 +1314,10 @@ class Raw_granule:
                     ax_plot.set_axis_off()
 
     def get_granule_info(self):
-        """Returns name, sensing time, acquisition time, detector number information, originality, parents list, polygon coordinates list, cloud percentages. If the granule have parents, sensing time, acquisition time, detector number of parents, and cloud percentages are returned.
+        """Returns name, sensing time, acquisition time, detector number information,
+        originality, parents list, polygon coordinates list, cloud percentages.
+        If the granule have parents, sensing time, acquisition time, detector number of parents,
+        and cloud percentages are returned.
 
         Returns:
             string: name
@@ -1396,8 +1427,10 @@ class Raw_granule:
     def get_bands_coordinates(self, downsampling=True, latlon_format=True):
         """Returns the coordinates of the bands.
         Args:
-            downsampling (bool, optional): if True, bands are downsampled to have the same resolution. Default to False.
-            latlon_format (bool): format to use to get the granule's coordinates. Default to: Latitude, Longitude. Default to Latitude, Longitude.
+            downsampling (bool, optional): if True, bands are downsampled to have the same resolution.
+                                           Default to False.
+            latlon_format (bool): format to use to get the granule's coordinates.
+                                  Default to: Latitude, Longitude.
         Returns:
             dict: band-names/band coordinates dict.
         """
@@ -1438,7 +1471,6 @@ class Raw_granule:
             )
 
             if band_name == "B02":
-
                 point_1_shifted = polygon_coordinates[0] + p0_1_angle
                 point_2_shifted = polygon_coordinates[3] + p3_2_angle
                 shifted_points = [
@@ -1449,7 +1481,6 @@ class Raw_granule:
                 ]
 
             elif band_name == "B09":
-
                 point_0_shifted = polygon_coordinates[1] - p0_1_angle
                 point_3_shifted = polygon_coordinates[2] - p3_2_angle
                 shifted_points = [
@@ -1541,7 +1572,7 @@ class Raw_granule:
                 band, coords[band_name], os.path.join(save_path, band_name + ".tif")
             )
 
-    def get_raw_bbox(self, l1c_tif, bbox, mode = "standard"):
+    def get_raw_bbox(self, l1c_tif, bbox, mode="standard"):
         """Changing bbox coordinates from green system (L1C) to raw.
 
         Args:
@@ -1559,7 +1590,6 @@ class Raw_granule:
             return (p1, topright, p2, bottleft)
 
         def get_srcPoints(l1c_tif):
-
             for k in range(l1c_tif.shape[1]):
                 y = l1c_tif[:, k, 0]
                 dy = torch.where(y != 0)[0]
@@ -1574,8 +1604,8 @@ class Raw_granule:
                     dx = dx[0]
                     break
 
-            for l in range(l1c_tif.shape[1] - 1, 0, -1):
-                y_end = l1c_tif[:, l, 0]
+            for k in range(l1c_tif.shape[1] - 1, 0, -1):
+                y_end = l1c_tif[:, k, 0]
                 dy_end = torch.where(y_end != 0)[0]
                 if len(dy_end) != 0:
                     dy_end = dy_end[0]
@@ -1590,7 +1620,7 @@ class Raw_granule:
             if mode == "standard":
                 return [np.array([dy, k]), np.array([m, dx]), np.array([q, dx_end])]
             else:
-                return [np.array([m,dx]), np.array([dy_end, l]), np.array([dy, k])]
+                return [np.array([m, dx]), np.array([dy_end, k]), np.array([dy, k])]
 
         def prep_point(point):
             arr = np.array([point[0], point[1], 1])
