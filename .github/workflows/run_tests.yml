@@ -1,0 +1,39 @@
+# This workflow will install Python dependencies, run tests and lint with a single version of Python
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
+name: Running tests
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  workflow_dispatch:
+jobs:
+  lint_flake8:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.9
+      - name: Lint with flake8
+        run: |
+          pip install flake8
+          flake8 . --count --show-source --statistics --max-line-length=127 --ignore=E402,W503,E203
+
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.9
+      - name: Search for severe code errors with flake8
+        run: |
+          # stop the build if there are Python syntax errors or undefined names
+          pip install flake8
+          flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics --max-line-length=127
