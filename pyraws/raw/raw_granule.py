@@ -31,7 +31,9 @@ class Raw_granule:
     __bands_dict = None  # Bands dictionary
     __device = None  # Device
     __bands_names = None  # Bands's names
-    __original = True  # This parameter is used to keep track of the history of the granule.
+    __original = (
+        True  # This parameter is used to keep track of the history of the granule.
+    )
     # If it is True, it means the granule was created by reading an image, and no operation is applied.
     __granule_parents = (
         []
@@ -82,7 +84,9 @@ class Raw_granule:
 
         self.__cropped_pixels = [None, None]
 
-        self.__original = True  # This parameter is used to keep track of the history of the granule.
+        self.__original = (
+            True  # This parameter is used to keep track of the history of the granule.
+        )
         # If it is True, it means the granule was created by reading an image and no operation is applied.
 
         self.__granule_parents = (
