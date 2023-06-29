@@ -602,7 +602,7 @@ Distributed under the Apache License.
 ## Contacts
 Created by the European Space Agency $\Phi$-[lab](https://phi.esa.int/).
 
-* Gabriele Meoni - gabriele.meoni at esa.int and gabriele.meoni17 at gmail.com
+* Gabriele Meoni - G.Meoni@tudelft.nl (previously, wit ESA $\Phi$-lab)
 * Roberto Del Prete - roberto.delprete at ext.esa.int and unina.it
 * Nicolas Longepe - nicolas.longepe at esa.int
 * Federico Serva - federico.serva at ext.esa.int
