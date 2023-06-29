@@ -52,7 +52,7 @@ def main():
         events_list[1:], desc="Processing events... "
     ):  # Skipping first event, being ":"
         print("Processing event: " + colored(event, "blue"))
-        ####Create quicklook###################
+        # -------------Create quicklook-------------
         plt.close()
         try:
             raw_event = Raw_event(device=device)
@@ -61,7 +61,7 @@ def main():
             )
             l1c_event = L1C_event(device=device)
             l1c_event.from_database(event, requested_bands, database=pargs.database)
-        except:
+        except:  # noqa: E722
             print("Skipping event: ", colored(event, "red"))
             continue
 
@@ -97,7 +97,7 @@ def main():
             )
             band_shifted_dict = raw_granule.get_bands_coordinates()
             raw_granule_coordinates = band_shifted_dict[requested_bands[0]]
-            output_cropped_tile_path = l1c_event.crop_tile(
+            _ = l1c_event.crop_tile(
                 raw_granule_coordinates,
                 output_tif_dir,
                 out_name_ending=str(useful_granule[0]) + "_" + str(useful_granule[1]),

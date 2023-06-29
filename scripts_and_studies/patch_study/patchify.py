@@ -1,4 +1,3 @@
-import csv
 import sys
 import os
 
@@ -7,36 +6,9 @@ sys.path.insert(
     1, os.path.join("..", "..", "scripts_and_studies", "hta_detection_algorithms")
 )
 from pyraws.raw.raw_event import Raw_event
-from pyraws.l1.l1_event import L1C_event
-from pyraws.l1.l1_tile import L1C_tile
-from pyraws.utils.raw_utils import get_bands_shift
-from pyraws.utils.l1_utils import read_L1C_image_from_tif
-from pyraws.utils.database_utils import get_cfg_file_dict
-from pyraws.utils.parse_csv_utils import parse_csv
-from pyraws.utils.visualization_utils import plot_img1_vs_img2_bands
-from s2pix_detector import s2pix_detector
-from functools import partial
-from geopy.distance import geodesic as GD
-from geopy.geocoders import Nominatim
-from geopy.point import Point
-import geopandas
-from geopandas import GeoSeries
-import matplotlib.pyplot as plt
-from matplotlib import patches
-import numpy as np
 from shapely.geometry import Polygon
-from termcolor import colored
 import torch
-from tqdm import tqdm
 import matplotlib.pyplot as plt
-from pathlib import Path
-from tqdm import tqdm
-import numpy as np
-from copy import deepcopy
-import pandas as pd
-from ast import literal_eval
-from IPython.display import clear_output
-import time
 
 # CONFIG_
 os.environ["KMP_DUPLICATE_LIB_OK"] = "True"
@@ -49,7 +21,6 @@ plt.rcParams["figure.figsize"] = [10, 10]
 
 
 def mulitBox(bbox_list):
-
     if any(isinstance(i, list) for i in bbox_list):
         return True
 
@@ -65,7 +36,8 @@ def sliding_window(image, window_size, overlap):
          - overlap (float): The degree of overlap between two consecutive window movements.
 
     Returns:
-         - sub_images (dict): A dictionary with the top-left and bottom-right corner positions (x1, y1, x2, y2) as keys and the sub-images as values.
+         - sub_images (dict): A dictionary with the top-left and bottom-right corner positions (x1, y1, x2, y2)
+                              as keys and the sub-images as values.
     """
     # Get the dimensions of the input image
     h, w = image.shape[:2]

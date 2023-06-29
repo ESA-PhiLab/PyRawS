@@ -15,7 +15,6 @@ from pyraws.utils.constants import (
 
 
 def update_csv_shift_lut(csv_name, bands_shifts_dict):
-
     band_names = list(bands_shifts_dict.keys())
 
     with open(csv_name, mode="w+") as csv_file:
@@ -208,8 +207,6 @@ def main():
                         bx = rotate(bx.unsqueeze(2), 180).squeeze(2)
 
                     bx_scaled = bx - bx.mean()
-                    by_mean = by.mean()
-                    by_scaled = by - by_mean
 
                     if start_values_lut is not None:
                         start_value = int(start_values_lut[band_name_x][band_name_y])
@@ -290,7 +287,6 @@ def main():
                                 negative_correlation_found = True
                                 break
 
-                            ##print("SHIFT: ", shift, " CORRELATION: ", correlation)
                             if best_correlation < correlation:
                                 print(
                                     "Found new best correlation value: "
@@ -314,7 +310,7 @@ def main():
 
                             if n_without_optimum == n_early:
                                 break
-                        except:
+                        except:  # noqa: E722
                             continue
 
                     if not (negative_correlation_found):

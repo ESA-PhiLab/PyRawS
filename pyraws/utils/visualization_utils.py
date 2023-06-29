@@ -19,7 +19,8 @@ def image_histogram_equalization(image, number_bins=255):
 
 
 def equalize_tensor(raw_granule_tensor, n_std=2):
-    """Equalizes a tensor for a better visualization by clipping outliers of a histogram higher and lower than than pixels value mean *- n_std times the standarda deviation.
+    """Equalizes a tensor for a better visualization by clipping outliers of a histogram higher and lower than
+    pixels value mean *- n_std times the standarda deviation.
 
     Args:
         raw_granule_tensor (torch.tensor): tensor to equalize.
@@ -60,7 +61,8 @@ def plot_img1_vs_img2_bands(
         img2_band (torch.tensor): second image band.
         img_name_list (list): list of names of different images.
         alert_matrix (torch.tensor, opional): if not None, the hotmap of normal band is shown. Defaults to None.
-        alert_matrix_unregistered (torch.tensor, opional): if not None, the hotmap of unregstered band is shown. Defaults to None.
+        alert_matrix_unregistered (torch.tensor, opional): if not None, the hotmap of unregstered band is shown.
+                                                           Defaults to None.
         save_path (string, optional): if not None, the image is saved at save_path. Defaults to None.
     """
     cmap = "bone"
@@ -102,7 +104,7 @@ def plot_event(img, img_name, bbox_list, alert_matrix=None, save_path=None):
     ax.axis("off")
     ax.title.set_text(img_name)
     for prop in bbox_list:
-        bbox = prop.bbox  #   x,       y,        width, height
+        bbox = prop.bbox  # x, y, width, height
         rect = patches.Rectangle(
             (bbox[1], bbox[0]),
             abs(bbox[1] - bbox[3]),

@@ -17,14 +17,17 @@ import rasterio
 def get_bands_shift(
     bands_list, satellite, detector_number, downsampling=True, cfg_file_dict=None
 ):
-    """It returns the number of backward shift pixels of the various bands with respect to the first band in the list. Negative shift means the bands shall translate forward.
+    """It returns the number of backward shift pixels of the various bands with respect to the first band in the list.
+    Negative shift means the bands shall translate forward.
 
     Args:
         bands_list (list): list of bands
         satellite (str, optional): "S2A" or "S2B" respectively for "Sentinel-2A" data and "Sentinel-2B" data.
         detector_number (int): Detectorn number.
-        downsampling (boolean, optional): if True, shift values for downsampled bands of the chosen satellite are used. Otherwise, values for upsampled bands are used. Defaults to True.
-        cfg_file_dict (dict, optional): cfg_file_dict (dict, optional): dictionary containing paths to the different end2end directories. If None, internal CSV database will be parsed. Defaults to None.
+        downsampling (boolean, optional): if True, shift values for downsampled bands of the chosen satellite are used.
+                                          Otherwise, values for upsampled bands are used. Defaults to True.
+        cfg_file_dict (dict, optional): dictionary containing paths to the different pyraws directories.
+                                        If None, internal CSV database will be parsed. Defaults to None.
 
     Returns:
         list: list of relative pixel shift compared to the first band.
@@ -57,7 +60,6 @@ def get_bands_shift(
             b_s_index = lut_df_keys.index(b_s)
 
         if b_m_index < b_s_index:
-
             s_along_track_ms = np.array(
                 [
                     BAND_SPATIAL_RESOLUTION_DICT[lut_df_keys[k + 1]]
@@ -132,7 +134,8 @@ def get_granule_px_length(
 def read_Raw_granule(
     granule_path, bands_list, verbose=True, device=torch.device("cpu")
 ):
-    """Read specific bands of an Raw Sentine2 granule, specified in "bands_list". The image contains several granules  at "dir_path".
+    """Read specific bands of an Raw Sentine2 granule, specified in "bands_list".
+    The image contains several granules  at "dir_path".
 
     Args:
         granule_path (str): Sentinel 2 Raw granule path.
@@ -154,7 +157,8 @@ def read_Raw_granule(
         bands_img_paths = sorted(glob(os.path.join(granule_path, "*")))
         band_name_file_dict = dict(
             zip(bands_list, bands_list)
-        )  # This dictionary is to match the desired band with the file. We initialized with bands_list also as value because they will be fixed in the next for loop.
+        )  # This dictionary is to match the desired band with the file. We initialized with bands_list also as
+        # value because they will be fixed in the next for loop.
 
         for name in bands_img_paths:
             band_number = name[name.find("_B") + 1 : name.find(".tif")]
@@ -177,7 +181,7 @@ def read_Raw_granule(
                 sentinel_raw_granule.append(
                     torch.from_numpy(band_k.astype(np.float32)).to(device)
                 )
-    except:
+    except:  # noqa: E722
         raise ValueError(
             colored("Error. ", "red")
             + " impossible to open: "
@@ -205,7 +209,7 @@ def read_Raw_granule(
         cloud_percentage = float(
             xml_content.getElementsByTagName("CloudPercentage")[0].firstChild.data
         )
-    except:
+    except:  # noqa: E722
         raise ValueError(
             colored("Error. ", "red")
             + " impossible to read: "
@@ -219,7 +223,8 @@ def read_Raw_granule(
 def read_Raw_event_from_path(
     dir_path, bands_list, verbose=True, device=torch.device("cpu")
 ):
-    """Read specific bands of an Raw Sentine2 event, specified in "bands_list". The image contains several granules  at "dir_path".
+    """Read specific bands of an Raw Sentine2 event, specified in "bands_list".
+    The image contains several granules  at "dir_path".
 
     Args:
         dir_path (str): Sentinel 2 Raw image path.
@@ -264,7 +269,7 @@ def read_Raw_event_from_path(
             cloud_percentages_list,
         )
 
-    except:
+    except:  # noqa: E722
         raise ValueError(
             colored("Error. ", "red")
             + " impossible to open: "
@@ -303,7 +308,8 @@ def read_Raw_event_from_database(
     Args:
         id_event (str): event ID.
         bands_list (list): bands list.
-        cfg_file_dict (dict, optional): dictionary containing paths to the different end2end directories. If None, internal CSV database will be parsed.
+        cfg_file_dict (dict, optional): dictionary containing paths to the different pyraws directories.
+                                        If None, internal CSV database will be parsed.
         id_raw_l1_dict (dict, optional): id-raw-l1 dictionary. If None, internal CSV database will be parsed.
         database (string, optional): database name. Defaults to "THRAWS".
         verbose (bool, optional): if True, if True, verbose mode is used. Defaults to True.
@@ -333,7 +339,7 @@ def read_Raw_event_from_database(
             _,
             _,
         ) = get_event_info(id_event, cfg_file_dict, id_raw_l1_dict, database=database)
-    except:
+    except:  # noqa: E722
         raise ValueError(
             "Impossible to find information on event: "
             + colored(id_event, "blue")

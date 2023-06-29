@@ -112,7 +112,7 @@ def main():
         try:
             raw_event = Raw_event(device=device)
             raw_event.from_database(event, requested_bands, verbose=False)
-        except:
+        except:  # noqa: E722
             print("Skipping event: ", colored(event, "red"))
             continue
 
@@ -220,7 +220,7 @@ def main():
                         coregistration_database,
                     )
                     n_granule_per_image += 1
-                except:
+                except:  # noqa: E722
                     print("Skipping couple: ", colored(stackable_couple, "red"))
                     continue
             else:

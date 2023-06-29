@@ -1,20 +1,18 @@
+try:
+    from pyraws.sys_cfg import PYRAWS_HOME_PATH, DATA_PATH
+except:  # noqa: E722
+    raise ValueError(
+        "sys_cfg.py not found. Please, refer to README.md for instructions on how to generate it."
+    )
 import os
 import pandas as pd
 from termcolor import colored
 import csv
 from .constants import DATABASE_FILE_DICTIONARY, BAND_NAMES_REAL_ORDER
-from pyraws.sys_cfg import DATA_PATH
 from pathlib import Path
 import xml.etree.ElementTree as ET
 from shapely.geometry import Polygon
 from ast import literal_eval
-
-try:
-    from pyraws.sys_cfg import PYRAWS_HOME_PATH, DATA_PATH
-except:
-    raise ValueError(
-        "sys_cfg.py not found. Please, refer to README.md for instructions on how to generate it."
-    )
 
 
 class DatabaseHandler:
@@ -52,7 +50,7 @@ class DatabaseHandler:
             self.L1 = self.datapath / "l1c"
             self.L1_products = [x for x in self.L1.iterdir() if x.is_dir()]
             print("Found L1c products: ", len(self.L1_products))
-        except:
+        except:  # noqa: E722
             print(
                 "L1 folder not found. If this behaviour is not desidered, please, refer to README.md for instructions."
             )
@@ -207,8 +205,11 @@ def get_raw_shift_lut(
     Args:
         satellite (str, optional): "S2A" or "S2B" respectively for "Sentinel-2A" data and "Sentinel-2B" data.
         detector_number (int): Detectorn number.
-        downsampling (boolean, optional): if True, shift values for downsampled bands of the chosen satellite are used. Otherwise, values for upsampled bands are used. Defaults to True.
-        cfg_file_dict (dict, optional): cfg_file_dict (dict, optional): dictionary containing paths to the different pyraws directories. If None, internal CSV database will be parsed. Defaults to None.
+        downsampling (boolean, optional): if True, shift values for downsampled bands of the chosen satellite are used.
+                                        Otherwise, values for upsampled bands are used. Defaults to True.
+        cfg_file_dict (dict, optional): cfg_file_dict (dict, optional): dictionary containing paths to
+                                        the different pyraws directories. If None, internal CSV database will be parsed.
+                                        Defaults to None.
     Returns:
         dict: returns the Raw shift LUT.
     """
@@ -269,10 +270,12 @@ def get_raw_shift_lut(
 
 
 def get_id_raw_l1_dict(database="THRAWS", cfg_file_dict=None):
-    """Returns a dictionary containing raw (directory name), l1c (product ID and correspondent granule) and class, raw useful and complementary tiles.
+    """Returns a dictionary containing raw (directory name), l1c (product ID and correspondent granule) and class,
+    raw useful and complementary tiles.
     Args:
         database (string, optional): database name. Defaults to ""THRAWS"".
-        cfg_file_dict (dict, optional): dictionary containing paths to the different pyraws directories. If None, internal CSV database will be parsed.
+        cfg_file_dict (dict, optional): dictionary containing paths to the different pyraws directories.
+                                       If None, internal CSV database will be parsed.
     Returns:
         dict: label_raw-l1_dict
     """
@@ -319,9 +322,9 @@ def get_id_raw_l1_dict(database="THRAWS", cfg_file_dict=None):
                             for x in polygon[1:]
                         ]
                     )
-                except:
+                except:  # noqa: E722
                     requested_polygon_list.append([[None, None]])
-    except:
+    except:  # noqa: E722
         print(
             colored("ERROR", "red")
             + ". Impossible to parse the file: "
@@ -355,7 +358,8 @@ def get_event_granule_bb_dict(event_id, database="THRAWS", cfg_file_dict=None):
     Args:
         event_id (string): event ID.
         database (string, optional): database name. Defaults to ""THRAWS"".
-        cfg_file_dict (dict, optional): dictionary containing paths to the different pyraws directories. If None, internal CSV database will be parsed.
+        cfg_file_dict (dict, optional): dictionary containing paths to the different pyraws directories.
+                                    If None, internal CSV database will be parsed.
 
     Returns:
         dict: {useful_granule : bounding_box_list} for the requested event.
@@ -372,7 +376,8 @@ def get_events_list(database="THRAWS", cfg_file_dict=None):
 
     Args:
         database (string, optional): database name. Defaults to ""THRAWS"".
-        cfg_file_dict (dict, optional): dictionary containing paths to the different pyraws directories. If None, internal CSV database will be parsed.
+        cfg_file_dict (dict, optional): dictionary containing paths to the different pyraws directories.
+                                      If None, internal CSV database will be parsed.
     Returns:
         str: list of events.
     """
@@ -383,11 +388,13 @@ def get_events_list(database="THRAWS", cfg_file_dict=None):
 def get_event_info(
     event_id, cfg_file_dict=None, id_raw_l1_dict=None, database="THRAWS"
 ):
-    """From the event_ID, it returns raw directory path, the path to the l1 image, to the L1C auxiliary file, and the class of the image. If no `id_raw_l1_dict`is provided, it is done by parsing the internal CSV database file.
+    """From the event_ID, it returns raw directory path, the path to the l1 image, to the L1C auxiliary file,
+    and the class of the image. If no `id_raw_l1_dict`is provided, it is done by parsing the internal CSV database file.
 
     Args:
         event_id (string): image name.
-        cfg_file_dict (dict, optional): dictionary containing paths to the different pyraws directories. If None, internal CSV database will be parsed.
+        cfg_file_dict (dict, optional): dictionary containing paths to the different pyraws directories.
+                                      If None, internal CSV database will be parsed.
         id_raw_l1_dict (dict, optional): id-raw-l1 dictionary. If None, internal CSV database will be parsed.
         database (string, optional): database name. Defaults to "THRAWS".
 
@@ -457,7 +464,7 @@ def get_event_info(
         raw_complementary_granules_str = id_raw_l1_dict[event_id][
             "raw_complementary_granules"
         ]
-    except:
+    except:  # noqa: E722
         raise ValueError(
             colored("ERROR", "red")
             + ". The image: "
@@ -477,7 +484,7 @@ def get_event_info(
             "]" in raw_useful_granules_str
         ):  # Single granules list
             raw_useful_granules = [
-                int(x[0]) if (x[0] != None and x[0] != "None") else [None]
+                int(x[0]) if ((x[0] is not None) and (x[0] != "None")) else [None]
                 for x in [x.split(",") for x in raw_useful_granules_str]
             ]
         else:

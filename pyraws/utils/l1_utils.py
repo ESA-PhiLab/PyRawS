@@ -18,7 +18,8 @@ from xml.dom import minidom
 
 
 def get_event_bounding_box(event_hotmap, coords_dict):
-    """Returns the bounding box and the coordinates of the bounding box top-left, bottom-right corners for each clust of 1 in the event_hotmap.
+    """Returns the bounding box and the coordinates of the bounding box top-left,
+    bottom-right corners for each clust of 1 in the event_hotmap.
 
     Args:
         event_hotmap (torch.tensor): event hotmap. Pixels = 1 indicate event.
@@ -26,7 +27,8 @@ def get_event_bounding_box(event_hotmap, coords_dict):
 
     Returns:
         skimage.bb: bounding box
-        list: list of coordinates [lat, lon] of top-left, bottom-right coordinates for each cluster of events in the hotmap.
+        list: list of coordinates [lat, lon] of top-left,
+             bottom-right coordinates for each cluster of events in the hotmap.
     """
     mask = event_hotmap.numpy()
     lbl = label(mask)
@@ -56,8 +58,10 @@ def get_l1C_image_default_path(
 
     Args:
         id_event (str): event ID.
-        cfg_file_dict (dict, optional): dictionary containing paths to the different end2end directories. If None, internal CSV database will be parsed.
-        id_raw_l1_dict (dict, optional): id-raw-l1 dictionary. If None, internal CSV database will be parsed.
+        cfg_file_dict (dict, optional): dictionary containing paths to the different pyraws directories.
+                                       If None, internal CSV database will be parsed.
+        id_raw_l1_dict (dict, optional): id-raw-l1 dictionary.
+                                       If None, internal CSV database will be parsed.
         database (string, optional): database name. Defaults to "THRAWS".
 
     Returns:
@@ -161,7 +165,9 @@ def read_L1C_tile_from_path(
     verbose=True,
     device=torch.device("cpu"),
 ):
-    """Read specific bands of an L1C Sentine2 tile, specified in "bands_list". The tile, located at "tile_path", is divided by a factor specified in the auxiliary file "auxiliary_file_path" to transform it from DN to TOA reflectance.
+    """Read specific bands of an L1C Sentine2 tile,
+    specified in "bands_list". The tile, located at "tile_path",
+    is divided by a factor specified in the auxiliary file "auxiliary_file_path" to transform it from DN to TOA reflectance.
 
     Args:
         tile_path (str): Sentinel 2 image path.
@@ -203,23 +209,25 @@ def read_L1C_tile_from_path(
         tile_footprint_coordinates = tile_footprint_coordinates[
             :-1
         ]  # Excluding the last couple since it is the repetition of the first one.
-    except:
+    except:  # noqa: E722
         print(
             colored("Warning: ", "red")
-            + "Metadata missing. It is impossible to estimate the footprint coordinates. However, georeferencing of the tile is still possible."
+            + "Metadata missing. "
+            + "It is impossible to estimate the footprint coordinates. "
+            + "However, georeferencing of the tile is still possible."
         )
         tile_footprint_coordinates = [["NA", "NA"] for i in range(4)]
         quantification_value = S2_DEFAULT_QUANTIFICATION_VALUE
 
     try:
-
         granule_name_path = sorted(glob(os.path.join(tile_path, "GRANULE", "*")))[0]
 
         bands_img_paths = sorted(glob(os.path.join(granule_name_path, "IMG_DATA", "*")))
 
         band_name_file_dict = dict(
             zip(bands_list, bands_list)
-        )  # This dictionary is to match the desired band with the file. We initialized with bands_list also as value because they will be fixed in the next for loop.
+        )  # This dictionary is to match the desired band with the file.
+        # We initialized with bands_list also as value because they will be fixed in the next for loop.
         for name in bands_img_paths:
             if name[-3:] == "jp2" and name[-7:-4] in bands_list:
                 band_name_file_dict[name[-7:-4]] = name
@@ -288,7 +296,7 @@ def read_L1C_tile_from_path(
                     band_k_torch.to("cuda")
                 sentinel_img.append(band_k_torch)
                 n += 1
-    except:
+    except:  # noqa: E722
         raise ValueError(
             colored("Error. ", "red")
             + " impossible to open: "
@@ -311,7 +319,8 @@ def read_L1C_event_from_path(
     verbose=True,
     device=torch.device("cpu"),
 ):
-    """Read specific bands of an L1C Sentinel 2 event, specified in "bands_list" from img_name. Every tile of the event is represented as TOA reflectance.
+    """Read specific bands of an L1C Sentinel 2 event, specified in "bands_list" from img_name.
+    Every tile of the event is represented as TOA reflectance.
 
     Args:
         id_event (str): event ID.
@@ -324,10 +333,14 @@ def read_L1C_event_from_path(
         ValueError: impossible to find information on the database.
 
     Returns:
-        dictionary: dictionary containing [tile_name, tile]. Each tile is list of tensors, each of them is made of TOA values of the requested Sentinel 2A image bands.
-        dictionary: dictionary containing [tile_name, coordinates], where coordinates are the corners coordinates of each tile composing the requested image.
-        dictionary: dictionary containing [tile_name, coordinates], where coordinates are the footprint's coordinates of each tile composing the requested image.
-        dictionary: dictionary containing [tile_name, band_filename_dict], where band_filename_dict is the dictionary associating to every band the original jp2 file.
+        dictionary: dictionary containing [tile_name, tile]. Each tile is list of tensors,
+                    each of them is made of TOA values of the requested Sentinel 2A image bands.
+        dictionary: dictionary containing [tile_name, coordinates], where coordinates are the corners
+                    coordinates of each tile composing the requested image.
+        dictionary: dictionary containing [tile_name, coordinates], where coordinates are the footprint's
+                    coordinates of each tile composing the requested image.
+        dictionary: dictionary containing [tile_name, band_filename_dict], where band_filename_dict is the
+                    dictionary associating to every band the original jp2 file.
     """
 
     tiles_paths = sorted(glob(os.path.join(l1c_image_path, "*")))
@@ -395,12 +408,14 @@ def read_L1C_event_from_database(
     verbose=True,
     device=torch.device("cpu"),
 ):
-    """Read specific bands of an L1C Sentinel 2 event, specified in "bands_list" from img_name. Every tile of the event is represented as TOA reflectance.
+    """Read specific bands of an L1C Sentinel 2 event, specified in "bands_list" from img_name.
+    Every tile of the event is represented as TOA reflectance.
 
     Args:
         id_event (str): event ID.
         bands_list (list): bands list.
-        cfg_file_dict (dict, optional): dictionary containing paths to the different end2end directories. If None, internal CSV database will be parsed.
+        cfg_file_dict (dict, optional): dictionary containing paths to the different pyraws directories.
+                                        If None, internal CSV database will be parsed.
         id_raw_l1_dict (dict, optional): id-raw-l1 dictionary. If None, internal CSV database will be parsed.
         database (string, optional): database name. Defaults to "THRAWS".
         reproject_bounds (bool, optional): if True, bounds are reprojected to EPGS:4326.
@@ -411,17 +426,21 @@ def read_L1C_event_from_database(
         ValueError: impossible to find information on the database.
 
     Returns:
-        dictionary: dictionary containing [tile_name, tile]. Each tile is list of tensors, each of them is made of TOA values of the requested Sentinel 2A image bands.
-        dictionary: dictionary containing [tile_name, coordinates], where coordinates are the corners coordinates of each tile composing the requested image.
-        dictionary: dictionary containing [tile_name, coordinates], where coordinates are the footprint's coordinates of each tile composing the requested image.
-        dictionary: dictionary containing [tile_name, band_filename_dict], where band_filename_dict is the dictionary associating to every band the original jp2 file.
+        dictionary: dictionary containing [tile_name, tile].
+                    Each tile is list of tensors, each of them is made of TOA values of the requested Sentinel 2A image bands.
+        dictionary: dictionary containing [tile_name, coordinates], where coordinates are the corners coordinates of each tile
+                    composing the requested image.
+        dictionary: dictionary containing [tile_name, coordinates], where coordinates are the footprint's coordinates
+                    of each tile composing the requested image.
+        dictionary: dictionary containing [tile_name, band_filename_dict], where band_filename_dict is the dictionary
+                    associating to every band the original jp2 file.
         string: expected class name.
     """
     try:
         _, l1c_image_path, _, expected_class, _, _, _, _ = get_event_info(
             id_event, cfg_file_dict, id_raw_l1_dict, database=database
         )
-    except:
+    except:  # noqa: E722
         raise ValueError(
             "Impossible to find information on image: "
             + colored(id_event, "blue")
@@ -453,12 +472,14 @@ def read_L1C_image_from_tif(
     database="THRAWS",
     device=torch.device("cpu"),
 ):
-    """Read an L1C Sentine2 image from a cropped TIF. The image is represented as TOA reflectance. The image is post processed.
+    """Read an L1C Sentine2 image from a cropped TIF. The image is represented as TOA reflectance.
+    The image is post processed.
 
     Args:
         id_event (str): event ID.
         out_name_ending (src, optional): optional ending for the output name. Defaults to None.
-        cfg_file_dict (dict, optional): dictionary containing paths to the different end2end directories. If None, internal CSV database will be parsed.
+        cfg_file_dict (dict, optional): dictionary containing paths to the different pyraws directories.
+                                        If None, internal CSV database will be parsed.
         id_raw_l1_dict (dict, optional): id-raw-l1 dictionary. If None, internal CSV database will be parsed.
         database (string, optional): database name. Defaults to "THRAWS".
         device (torch.device, optional): torch device. Defaults to torch.device("cpu").
@@ -467,7 +488,8 @@ def read_L1C_image_from_tif(
         ValueError: impossible to find information on the database.
 
     Returns:
-        dictionary: dictionary containing every tile composing the requested image. Each tensor is made of TOA values of the requested Sentinel 2A image bands.
+        dictionary: dictionary containing every tile composing the requested image.
+                    Each tensor is made of TOA values of the requested Sentinel 2A image bands.
         dictionary: dictionary containing lat and lon for every point.
         string: expected class name.
     """
@@ -475,7 +497,7 @@ def read_L1C_image_from_tif(
         _, _, l1c_post_processed_path, expected_class, _, _, _, _ = get_event_info(
             id_event, cfg_file_dict, id_raw_l1_dict, database=database
         )
-    except:
+    except:  # noqa: E722
         raise ValueError(
             "Impossible to find information on image: "
             + colored(id_event, "blue")

@@ -1,6 +1,4 @@
 # from end2end.noise_model.noise_model import get_pixel_spsf
-import ee
-import folium
 import geopandas as gpd
 import geopy
 import geopy.distance

@@ -2,7 +2,6 @@ import os
 from pyraws.l0.l0_event import L0_event
 from pyraws.utils.database_utils import get_events_list
 
-from glob import glob
 import argparse
 import torch
 from termcolor import colored
@@ -46,7 +45,7 @@ def main():
         try:
             l0_event = L0_event(device=device)
             l0_event.from_database(event, bands, verbose=False)
-        except:
+        except:  # noqa: E722
             print("Skipping event: ", colored(event, "red") + ".")
 
         if l0_event.is_void():

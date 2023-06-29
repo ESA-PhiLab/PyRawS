@@ -7,7 +7,6 @@ from pyraws.raw.raw_event import Raw_event
 from pyraws.l1.l1_event import L1C_event
 from pyraws.utils.l1_utils import (
     read_L1C_image_from_tif,
-    read_L1C_image_from_tif,
     get_event_bounding_box,
 )
 from pyraws.utils.database_utils import get_events_list, get_cfg_file_dict
@@ -188,7 +187,7 @@ def main():
 
     for event in tqdm(events_list[start_idx:], desc="Processing events... "):
         print("Processing event: " + colored(event, "blue"))
-        ####Create quicklook###################
+        # ------------------Create quicklook---------------------
         plt.close()
         try:
             raw_event = Raw_event(device=device)
@@ -196,7 +195,7 @@ def main():
             if not (Skip_L1C_generation):
                 l1c_event = L1C_event(device=device)
                 l1c_event.from_database(event, requested_bands, verbose=False)
-        except:
+        except:  # noqa: E722
             print(
                 "Impossible to open either Raw either L1c data. Skipping event: ",
                 colored(event, "red"),
@@ -300,7 +299,7 @@ def main():
                         complementary_granule_names_list.remove(
                             ""
                         )  # Removing empty names
-                    except:
+                    except:  # noqa: E722
                         pass
 
                     # Removing ending character
@@ -428,7 +427,7 @@ def main():
                         event_detected = False
                 else:
                     print(colored("Skipping event: Predicted as NOT EVENT.", "red"))
-            except:
+            except:  # noqa: E722
                 print(
                     "Errors in processing the L1C granule. Skipping event: ",
                     colored(event, "red"),
