@@ -181,7 +181,6 @@ def main():
     print(colored("Loading " + str(pargs.n_event) + " granules...", "blue"))
 
     for event in events:
-
         raw_event = Raw_event(device=device)
 
         raw_event.from_database(event, requested_bands, verbose=False)

@@ -63,7 +63,9 @@ def set_log_level(level=logging.WARN):
     """Allows setting global log level for the application.
 
     Args:
-        level (logging.level, optional): Level to set, available are (logging.DEBUG,logging.INFO,logging.WARN,logging.ERROR). Defaults to logging.WARN.
+        level (logging.level, optional): Level to set, available are
+                                        (logging.DEBUG,logging.INFO,logging.WARN,logging.ERROR).
+                                        Defaults to logging.WARN.
     """
     logger.setLevel(level)
     if level == 10:

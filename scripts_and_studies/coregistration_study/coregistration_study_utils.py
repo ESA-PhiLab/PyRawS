@@ -1,9 +1,10 @@
 try:
     from superglue_models.matching import Matching
     from superglue_models.utils import make_matching_plot
-except:
+except:  # noqa: E722
     raise ValueError(
-        "SuperGlue model not found. Please, follow the instructions at: https://gitlab.esa.int/Alix.DeBeusscher/pyraws/#set-up-for-coregistration-study."
+        "SuperGlue model not found. Please, follow the instructions at: "
+        + "https://github.com/ESA-PhiLab/PyRawS#set-up-for-coregistration-study."
     )
 
 import csv
@@ -34,7 +35,8 @@ def get_shift_SuperGlue_profiling(
         sinkhorn_iterations (int, optional): number of sinkorn iterations. Defaults to 30.
         requested_bands (list): list containing two bands for which perform the study.
         equalize (bool, optional): if True, equalization is performed. Defaults to True.
-        n_std (int, optional): Outliers are saturated for equalization at histogram_mean*- n_std * histogram_std. Defaults to 2.
+        n_std (int, optional): Outliers are saturated for equalization at histogram_mean*- n_std * histogram_std.
+                               Defaults to 2.
         device (torch.device, optional): torch.device. Defaults to torch.device("cpu").
 
     Returns:
@@ -80,7 +82,7 @@ def get_shift_SuperGlue_profiling(
     )
     pred = {k: v[0].detach().cpu().numpy() for k, v in pred.items()}
     kpts0, kpts1 = pred["keypoints0"], pred["keypoints1"]
-    matches, conf = pred["matches0"], pred["matching_scores0"]
+    matches, _ = pred["matches0"], pred["matching_scores0"]
     valid = matches > -1
     mkpts0 = kpts0[valid]
     mkpts1 = kpts1[matches[valid]]
@@ -127,7 +129,8 @@ def get_shift_SuperGlue(
         requested_bands (list): list containing two bands for which perform the study.
         save_path (str, optional): path to save quicklooks. No quicklook is generated if None. Defaults to None.
         equalize (bool, optional): if True, equalization is performed. Defaults to True.
-        n_std (int, optional): Outliers are saturated for equalization at histogram_mean*- n_std * histogram_std. Defaults to 2.
+        n_std (int, optional): Outliers are saturated for equalization at histogram_mean*- n_std * histogram_std.
+                               Defaults to 2.
         device (torch.device, optional): torch.device. Defaults to torch.device("cpu").
 
     Returns:

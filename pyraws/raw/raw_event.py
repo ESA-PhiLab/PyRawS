@@ -31,7 +31,8 @@ class Raw_event:
         useful_granule_bounding_box_dict=None,
         device=torch.device("cpu"),
     ):
-        """Creates an raw event from a granules collection and band_names. It is possible to associate an image class to the event.
+        """Creates an raw event from a granules collection and band_names.
+        It is possible to associate an image class to the event.
 
         Args:
             granules_collection (list, optional): list of Raw_granule. Defaults to None.
@@ -94,7 +95,7 @@ class Raw_event:
             ) = read_Raw_event_from_path(
                 raw_dir_path, bands_list, verbose, self.__device
             )
-        except:
+        except:  # noqa: E722
             raise ValueError(
                 "Impossible to open the raw file at: "
                 + colored(raw_dir_path, "red")
@@ -139,8 +140,10 @@ class Raw_event:
 
         Args:
             id_event (str): event ID.
-            bands_list (list, optional): bands list. If None, all bands are used and sorted according to the datasheet order. Defaults to None.
-            cfg_file_dict (dict, optional): dictionary containing paths to the different end2end directories. If None, internal CSV database will be parsed.
+            bands_list (list, optional): bands list. If None, all bands are used and sorted according to the datasheet order.
+                                         Defaults to None.
+            cfg_file_dict (dict, optional): dictionary containing paths to the different end2end directories.
+                                          If None, internal CSV database will be parsed.
             id_raw_l1_dict (dict, optional): id-raw-l1 dictionary. If None, internal CSV database will be parsed.
             verbose (bool, optional): if True, if True, verbose mode is used. Defaults to True.
             database (string, optional): database name. Defaults to "THRAWS".
@@ -302,7 +305,10 @@ class Raw_event:
             print("\n")
 
     def stack_granules(self, granules_idx, positions):
-        """Stack different granules recursively specified by granules_idx. Positions will specify the stacking positions. If granules_idx=[0,1,2] and positions=["T", "B"], granule_0 will be stacked at the top of granule_1 and the result will be stacked at the bottom of granule_2.
+        """Stack different granules recursively specified by granules_idx.
+        Positions will specify the stacking positions.
+        If granules_idx=[0,1,2] and positions=["T", "B"], granule_0 will be stacked at the top of granule_1
+        and the result will be stacked at the bottom of granule_2.
 
         Args:
             granules_idx (list): list of granule indices.
@@ -351,7 +357,9 @@ class Raw_event:
         """Return names of the granules requested through granules_idx from granules names.
 
         Args:
-            granules_idx (list, optional): list of granules for which getting the names. If None, all the names of the granules in the collection are returned. Defaults to None.
+            granules_idx (list, optional): list of granules for which getting the names.
+                                         If None, all the names of the granules in the collection are returned.
+                                         Defaults to None.
 
         Raises:
             ValueError: Empty granules lists
@@ -375,7 +383,9 @@ class Raw_event:
         """Return info of the granules requested through granules_idx from granules names.
 
         Args:
-            granules_idx (list, optional): list of granules for which getting the names. If None, all the names of the granules in the collection are returned. Defaults to None.
+            granules_idx (list, optional): list of granules for which getting the names.
+                                         If None, all the names of the granules in the collection are returned.
+                                         Defaults to None.
 
         Raises:
             ValueError: Empty granules lists
@@ -444,18 +454,28 @@ class Raw_event:
         bands_shifts=None,
         verbose=False,
     ):
-        """It implements the coarse coregistration of the bands by compensating the along-track pixels shift with respect to the first band.
+        """It implements the coarse coregistration of the bands by compensating the along-track pixels shift
+        with respect to the first band.
 
         Args:
-            granules_idx (list, optional): Indices of granules to stack and coregister. If None, internal __raw_useful_granules_idx are used. Defaults to None.
-            use_complementary_granules (boolean, optional): if True, coregistration is performed with filler elements. Defaults to False.
-            crop_empty_pixels (boolean, optional):  if True and use_complementary_granules is False or no filler is available, empty pixels are cropped. Defaults to False.
-            bands_shifts (list, optional): bands shift values compared to the first band. If None, they will be read by the LUT file. Defaults to None.
-            downsampling (boolean, optional): if True, higher resolution bands will be undersampled to match the bands with the lowest resolution. If False, lower resolution bands will be upsampled to match the bands with the highest resolution. Defaults to True.
+            granules_idx (list, optional): Indices of granules to stack and coregister.
+                                           If None, internal __raw_useful_granules_idx are used.
+                                           Defaults to None.
+            use_complementary_granules (boolean, optional): if True, coregistration is performed with filler elements.
+                                                          Defaults to False.
+            crop_empty_pixels (boolean, optional):  if True and use_complementary_granules is False or no filler is available,
+                                                  empty pixels are cropped. Defaults to False.
+            bands_shifts (list, optional): bands shift values compared to the first band.
+                                           If None, they will be read by the LUT file. Defaults to None.
+            downsampling (boolean, optional): if True, higher resolution bands will be undersampled
+                                              to match the bands with the lowest resolution.
+                                              If False, lower resolution bands will be upsampled to match the bands
+                                            with the highest resolution. Defaults to True.
             verbose (boolean, optional): if True, verbose mode is used. Defaults to False.
         Returns:
             Raw_granule: granule with coarse-coregistered bands.
         """
+
         if granules_idx is None:
             print("No granule indexes was specified. Using default.")
             granules_idx = self.__raw_useful_granules_idx
@@ -471,9 +491,7 @@ class Raw_event:
         granule_filler_after = None
 
         if use_complementary_granules:
-
             if len(granules_idx) == 1:
-
                 stackable_couples, positions = self.get_stackable_granules()
                 stackable_couple_sorted = []
 

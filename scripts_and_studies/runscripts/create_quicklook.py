@@ -7,7 +7,6 @@ from pyraws.raw.raw_event import Raw_event
 from pyraws.l1.l1_event import L1C_event
 from pyraws.utils.l1_utils import (
     read_L1C_image_from_tif,
-    read_L1C_image_from_tif,
     get_event_bounding_box,
     get_l1C_image_default_path,
 )
@@ -79,9 +78,9 @@ def main():
             print("Parsing L0 event: " + colored(event, "green"))
             raw_event = Raw_event(device=device)
             raw_event.from_database(event, bands_list, verbose=False, database=database)
-        except:
+        except:  # noqa: E722
             raise ValueError(
-                "Impossible to open L0 data for: "
+                "Impossible to open Raw data for: "
                 + colored(event, "red")
                 + ". Check it is included in the database: "
                 + colored(event, "red")
@@ -89,11 +88,11 @@ def main():
             )
 
         if raw_event.is_void():
-            raise ValueError("L0 data for " + colored(event, "red") + " is void.")
+            raise ValueError("Raw data for " + colored(event, "red") + " is void.")
 
         try:
             raw_granule = raw_event.get_granule(granule)
-        except:
+        except:  # noqa: E722
             raise ValueError(
                 "Impossible to get the granule:"
                 + colored(str(granule), "red")
@@ -107,21 +106,6 @@ def main():
         )
         band_shifted_dict = raw_granule.get_bands_coordinates()
         raw_granule_coordinates = band_shifted_dict[bands_list[0]]
-
-    if event + "_" + ending + ".tif" in glob(os.path.join(".", "*")):
-        print(
-            "Skipping creation of L1C crop for the granule: "
-            + colored(granule, "green")
-        )
-    else:
-        print("Creating L1C crop for the granule: " + colored(granule, "cyan"))
-        _ = l1c_event.crop_tile(
-            raw_granule_coordinates,
-            None,
-            verbose=False,
-            out_name_ending=ending,
-            lat_lon_format=True,
-        )
 
         registered_granule_name = raw_granule_registered.get_granule_info()[0]
         if "_COMPLEMENTED_WITH" in registered_granule_name:
@@ -143,7 +127,7 @@ def main():
 
             try:
                 complementary_granule_names_list.remove("")  # Removing empty names
-            except:
+            except:  # noqa: E722
                 pass
 
             # Removing ending character
@@ -183,7 +167,7 @@ def main():
                 l1c_event.from_database(
                     event, bands_list, verbose=False, database=database
                 )
-            except:
+            except:  # noqa: E722
                 raise ValueError(
                     "Impossible to open L1 data for: "
                     + colored(event, "red")
@@ -261,7 +245,7 @@ def main():
 
             else:
                 print(colored("Warning:", "red") + " no bounding box found.")
-        except:
+        except:  # noqa: E722
             print(
                 "Errors in processing the L1C granule. Skipping event: ",
                 colored(event, "red"),
@@ -273,5 +257,4 @@ def main():
 
 
 if __name__ == "__main__":
-    # python .\create_quicklook.py --events_list "[Etna_00,Piton_de_la_Fournaise_31, Australia_1]" --bands "[B8A,B11,B12]" --granules_number_list "[2,0,1]"
     main()
