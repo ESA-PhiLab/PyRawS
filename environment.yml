@@ -5,13 +5,8 @@ channels:
 dependencies:
   - python=3.9
   - geopy
-  - earthengine-api
-  - geopandas
-  - ipywidgets
-  - jupyter
   - numpy
   - geopandas
-  - folium
   - geopy
   - scipy
   - matplotlib
