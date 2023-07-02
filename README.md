@@ -563,7 +563,7 @@ raw_granule_0.export_to_tif(save_path=output_tif_folder)
 **N.B**: the nomenclature ```raw data``` and its location in the Sentinel-2 processing chain is specific for this project only. 
 
 ### Sentinel-2 Raw granule
-  A `granule` is the image acquired by a Sentinel-2 detector during a single acquisition lasting 3.6 s. Granules are defined at [L0](#sentinel-2-raw-data) level. However, since the processing perfomed on the ground between L0 and raw data does not alter the image content (with the exception of the decompression process) but just provide additional metadata, granules are defined also at [Sentinel-2 Raw](#sentinel-2-raw-data) level. 
+  A `granule` is the image acquired by a Sentinel-2 detector during a single acquisition lasting 3.6 s. Granules are defined at [L0](#sentinel-2-l0-data) level. However, since the processing perfomed on the ground between L0 and raw data does not alter the image content (with the exception of the decompression process) but just provide additional metadata, granules are defined also at [Sentinel-2 Raw](#sentinel-2-raw-data) level. 
     Given the pushbroom nature of the Sentinel-2 sensor, bands do not look at the same area at [Raw](#sentinel-2-raw-data) level. For more information, refer to the [Sentinel-2 Products Specification Document](https://sentinel.esa.int/documents/247904/685211/sentinel-2-products-specification-document)
 
 ### Sentinel-2 Raw event
