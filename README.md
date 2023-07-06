@@ -105,6 +105,20 @@ Create a file `sys_cfg.py` in the directory `pyraws\pyraws`, and add two variabl
 
 ``` DATA_PATH="Absolute path to the data directory. " ```
 
+
+## Docker
+
+To use PyRawS with docker, follow these steps:
+
+1. Clone the repository and build the docker image by running the following command from the main directory:
+
+``` docker build -t pyraws_v1:latest  -f dockerfile . ```
+
+2. Run the docker image by executing:
+
+``` docker run -it --rm -p 8888:8888 pyraws_v1:latest ```
+
+
 ### Set-up for coregistration study
 
 If you want to perform the coregistration study, you need to:
