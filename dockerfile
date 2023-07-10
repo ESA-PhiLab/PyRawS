@@ -9,13 +9,12 @@
 FROM pytorch/pytorch:1.11.0-cuda11.3-cudnn8-runtime
 
 # Set the working directory inside the container
-WORKDIR /workdir
+WORKDIR /workdir/PyProjects/
 
 # Install Python dependencies for pyraws:
-RUN apt-get update && apt-get install -y git
-RUN apt-get update && apt-get install ffmpeg libsm6 libxext6  -y
+RUN apt-get update && apt-get install -y git ffmpeg libsm6 libxext6
 # install pyraws
-RUN git clone https://github.com/ESA-PhiLab/PyRawS.git
-RUN cd PyRawS && source pyraws_install.sh
-
-
+RUN git clone -b docker https://github.com/ESA-PhiLab/PyRawS.git
+RUN cd PyRawS && /bin/bash -c "source ./pyraws_install.sh" 
+RUN echo "source activate pyraws" > ~/.bashrc
+ENV PATH /opt/conda/envs/pyraws/bin:$PATH
