@@ -80,7 +80,7 @@ fi
 
 # get absolute path of current working directory
 # and setup the sys_cfg.py file
-echo "PYRAWS_HOME_PATH = '$(pwd)::::TEST'" > pyraws/sys_cfg.py
+echo "PYRAWS_HOME_PATH = '$(pwd)'" > pyraws/sys_cfg.py
 echo "DATA_PATH = '$(pwd)/data'" >> pyraws/sys_cfg.py
 
 # install pyraws
