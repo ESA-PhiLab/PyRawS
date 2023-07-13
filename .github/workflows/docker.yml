@@ -11,7 +11,7 @@ name: Build and Push Docker Image for PYRAWS
 
 on:
   push:
-    branches: [ "docker" ]
+    branches: [ "main" ]
 
 jobs:
   build:
