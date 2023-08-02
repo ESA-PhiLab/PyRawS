@@ -37,7 +37,7 @@ def equalize_tensor(raw_granule_tensor, n_std=2):
         band[band < band_mean - n_std * band_std] = band_mean - n_std * band_std
         band[band > band_mean + n_std * band_std] = band_mean + n_std * band_std
 
-        band, cdf = image_histogram_equalization(band.numpy(), number_bins=2 ** 16)
+        band, cdf = image_histogram_equalization(band.numpy(), number_bins=2**16)
         band = torch.from_numpy(band)
         #   band_clahe = clahe.apply((band.numpy() * CONVERSION ).astype(np.uint8))
         #   raw_granule_tensor_equalized[:,:,n]= torch.from_numpy(band_clahe/CONVERSION)

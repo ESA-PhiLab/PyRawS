@@ -244,13 +244,17 @@ def main():
                     negative_correlation_found = False
                     for shift in tqdm(shift_range[0]):
                         try:
-                            coarse_coregistered_granule = stacked_granules.coarse_coregistration(
-                                crop_empty_pixels=False,
-                                bands_shifts=[shift],
-                                downsampling=downsampling,
+                            coarse_coregistered_granule = (
+                                stacked_granules.coarse_coregistration(
+                                    crop_empty_pixels=False,
+                                    bands_shifts=[shift],
+                                    downsampling=downsampling,
+                                )
                             )
-                            coarse_coregistered_granule_tensor = coarse_coregistered_granule.as_tensor(
-                                downsampling=downsampling
+                            coarse_coregistered_granule_tensor = (
+                                coarse_coregistered_granule.as_tensor(
+                                    downsampling=downsampling
+                                )
                             )
                             # coarse_coregistered_granule_tensor=coarse_coregistered_granule_tensor/coarse_coregistered_granule_tensor.max()
                             by_shifted = coarse_coregistered_granule_tensor[:, :, 1]
