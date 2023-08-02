@@ -45,10 +45,8 @@ def main():
         database="THRAWS",
     )
 
-    raw_coregistered_granule_1 = (
-        raw_event.coarse_coregistration(  # granule index to coregister.
-            granules_idx=[pargs.granule_index]
-        )
+    raw_coregistered_granule_1 = raw_event.coarse_coregistration(  # granule index to coregister.
+        granules_idx=[pargs.granule_index]
     )
 
     # Perform the corase coregistration of the "Etna_00" event.
