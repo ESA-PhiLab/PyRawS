@@ -1,3 +1,10 @@
+![Docker Automated build](https://img.shields.io/docker/automated/sirbastiano94/pyraws?color=blue)
+![GitHub last commit](https://img.shields.io/github/last-commit/ESA-PhiLab/PyRawS?style=flat-square)
+![GitHub contributors](https://img.shields.io/github/contributors/ESA-PhiLab/PyRawS?style=flat-square)
+![GitHub issues](https://img.shields.io/github/issues/ESA-PhiLab/PyRawS?style=flat-square)
+![GitHub pull requests](https://img.shields.io/github/issues-pr/ESA-PhiLab/PyRawS?style=flat-square)
+[![Tests](https://github.com/ESA-PhiLab/PyRawS/actions/workflows/run_tests.yml/badge.svg)](https://github.com/ESA-PhiLab/PyRawS/actions/workflows/run_tests.yml)
+
 # PyRawS
 ![Alt Text](resources/images/PyRawS_logo.png)
 ## About the project

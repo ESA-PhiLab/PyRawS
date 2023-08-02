@@ -288,8 +288,8 @@ def main():
 
                     complementary_granule_names_list = []
 
-                    complementary_granules_name_bottom = (
-                        complementary_granules_name.split("_bottom_")
+                    complementary_granules_name_bottom = complementary_granules_name.split(
+                        "_bottom_"
                     )
 
                     for name in complementary_granules_name_bottom:
