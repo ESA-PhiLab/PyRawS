@@ -1,4 +1,4 @@
-![Docker Automated build](https://img.shields.io/docker/automated/sirbastiano94/pyraws?color=blue)
+[![Docker Automated build](https://img.shields.io/docker/automated/sirbastiano94/pyraws?color=blue)](https://hub.docker.com/repository/docker/sirbastiano94/pyraws/general)
 ![GitHub last commit](https://img.shields.io/github/last-commit/ESA-PhiLab/PyRawS?style=flat-square)
 ![GitHub contributors](https://img.shields.io/github/contributors/ESA-PhiLab/PyRawS?style=flat-square)
 ![GitHub issues](https://img.shields.io/github/issues/ESA-PhiLab/PyRawS?style=flat-square)
