@@ -1,3 +1,7 @@
+![Docker Automated build](https://img.shields.io/docker/automated/sirbastiano94/pyraws?color=blue)
+
+
+
 # PyRawS
 ![Alt Text](resources/images/PyRawS_logo.png)
 ## About the project
