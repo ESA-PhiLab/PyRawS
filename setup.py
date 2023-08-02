@@ -44,15 +44,7 @@ setup(
         "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
         "Programming Language :: Python :: 3.8",
     ],
-    packages=[
-        "pyraws",
-        "pyraws.database",
-        "pyraws.raw",
-        "pyraws.l1",
-        "pyraws.utils",
-    ],
+    packages=["pyraws", "pyraws.database", "pyraws.raw", "pyraws.l1", "pyraws.utils"],
     python_requires=">=3.8, <4",
-    project_urls={
-        "Source": "https://github.com/ESA-PhiLab/PyRawS",
-    },
+    project_urls={"Source": "https://github.com/ESA-PhiLab/PyRawS"},
 )
