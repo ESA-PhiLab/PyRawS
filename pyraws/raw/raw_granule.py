@@ -1171,7 +1171,7 @@ class Raw_granule:
             bands_superimposed_equalized = equalize_tensor(bands_superimposed, n_std)
             bands_superimposed_equalized = (
                 bands_superimposed_equalized
-                / (2 ** 12 - 1)
+                / (2**12 - 1)
                 * bands_superimposed.max()
                 / bands_superimposed_equalized.max()
             )
@@ -1181,7 +1181,9 @@ class Raw_granule:
                 bands_superimposed_equalized / bands_superimposed_equalized.max()
             )
 
-        plt.imshow(bands_superimposed_equalized.detach().cpu().numpy(),)
+        plt.imshow(
+            bands_superimposed_equalized.detach().cpu().numpy(),
+        )
 
     def show_bands(
         self,
