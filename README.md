@@ -36,25 +36,20 @@ The systme is based on [pytorch]("https://pytorch.org/"), which be installed wit
     <li><a href="#about-the-project">About the Project</a></li>
     <li><a href="#content-of-the-repository">Content of the repository</a></li>
     <li><a href="#installation">Installation</a>
-    <ul>
-      <li><a href="#create-the-PyRawS-environment">Create the PyRawS environment</a></li>
-      <li><a href="#set-up-for-coregistration-study">Set-up-for-coregistration-study</a></li>
-      <li><a href="#data-directory">Data directory</a></li>
-    </ul>
-    <li><a href="#PyRawS-databases">PyRawS databases</a></li>
+    <li><a href="#pyraws-databases">PyRawS databases</a></li>
     <li><a href="#raw-events-and-raw-granules">Raw events and Raw granules</a></li>
     <li><a href="#quickstart">Quickstart</a>
       <ul>
       <li><a href="#open-a-raw-event-from-path">Open a Raw event from PATH.</a></li>
       <li><a href="#open-a-raw-event-from-database">Open a Raw event from database.</a></li>
       <li><a href="#show-raw-granules-information-of-a-raw-event">Show Raw granules information of a Raw event</a></li>
-      <li><a href="#access-a-rawgranule-pixels">Access a Raw_granule pixels</a></li>
-      <li><a href="#get-a-single-rawgranule-from-a-rawevent">Get a single Raw_granule from a Raw_event</a></li>
-      <li><a href="#superimpose-rawgranule-bands">Superimpose Raw_granule bands</a></li>
-      <li><a href="#how-to-perform-the-coarse-coregisteration-of-rawgranules">How to perform the coarse coregisteration of Raw_granules</a></li>
-      <li><a href="#how-to-get-coordinates-of-a-raw-granule-band">How to get the coordinates of a Raw granule band</a></li>
-      <li><a href="#rawevent-database-metadata">Raw_event: database metadata</a></li>
-      <li><a href="#export-a-rawgranule-to-tif">Export a Raw_granule to TIF</a></li>
+      <li><a href="#access-a-raw_granule-pixels">Access a Raw_granule pixels</a></li>
+      <li><a href="#get-a-single-raw_granule-from-a-raw_event">Get a single Raw_granule from a Raw_event</a></li>
+      <li><a href="#superimpose-raw_granule-bands">Superimpose Raw_granule bands</a></li>
+      <li><a href="#how-to-perform-the-coarse-coregisteration-of-raw_granules">How to perform the coarse coregisteration of Raw_granules</a></li>
+      <li><a href="#how-to-get-the-coordinates-of-a-raw-granule-band">How to get the coordinates of a Raw granule band</a></li>
+      <li><a href="#raw_event-database-metadata">Raw_event: database metadata</a></li>
+      <li><a href="#export-a-raw_granule-to-tif">Export a Raw_granule to TIF</a></li>
       </ul>
     </li>
     <li><a href="#glossary">Glossary</a></li>
@@ -128,7 +123,7 @@ conda activate PyRawS
 <!-- You can also install  `pyraws` [PyPy](https://www.pypy.org/) by running the following command from the main:
 
 ``` pip install pyraws ``` -->
-### **C) Docker** [![Docker](https://fontawesome.com/icons/docker?style=brands)](https://www.docker.com/)
+### **C) Docker** 
 
 PyRawS comes also delivered in a docker image. To use PyRawS with docker, use one of the following methods.
 
@@ -229,11 +224,11 @@ Finally, for some [Raw useful granules](#raw-useful-granule) part of the eruptio
 <br>
 
 
-## Quickstart ⚡️
+## Quickstart
 The next examples (with the exception of [Open a Raw event from path](#open-a-raw-event-from-path)) will exploit the `THRAWS` database to showcase the use of PyRawS, but they are applicable to any [databases compatible with PyRawS](#PyRawS-databases). 
 
 
->### A) Open a Raw event from path
+>### Open a Raw event from path
 >The next code snipped will showcase how to use PyRawS to open a [Raw_event]>(#sentinel-2-raw-event) `My_Raw_data`, included in the `THRAWS` database by using its `PATH`. >We assume to have the `My_RAW_data` directory in the same directory where you execute the code >snippet below. <br> 
 >To manipulate [Raw events](#sentinel-2-raw-event), `PyRawS` offer a class called `Raw_event`. >To open an avent, we will use the [Raw_event](#sentinel-2-raw-event) class method `from_path>(...)`, which parses the database specified, retrieves the event specified by `id_event` and >opens it with the requested bands (`bands_list`).
 >When you open an event, you can specify which bands to use. If `bands_list` is not specified, >the method `from_path(...)` will return all the bands.
@@ -256,7 +251,7 @@ The next examples (with the exception of [Open a Raw event from path](#open-a-ra
 >```
 >The example above can be used directly, **even if you did not set up a** [PyRawS database]>(#PyRawS-databases). However, `PyRawS` offer some API to parse directly [Raw_event]>(#sentinel-2-raw-event) parsing a database. with no need to specify a path. Please, check >[Open a Raw event from database](#open-a-raw-event-from-database). 
 
->### B) Open a Raw event from database
+>### Open a Raw event from database
 >The next code snipped will showcase how to use PyRawS to open the [Raw_event]>(#sentinel-2-raw-event) `Etna_00` included in the `THRAWS` database. <br> To do that, 
 >To manipulate [Raw events](#sentinel-2-raw-event) objects, `PyRawS` will exploits the >`Raw_event` class method `from_database(...)`, which parses the associated `.csv` file located >in `PyRawS/database` with no need to specify the `PATH` from the user. To execute the next >code snipped, we assume to you have already downloaded and set-up the `THRAWS` database as >specificied in [databases compatible with PyRawS](#PyRawS-databases).
 >As for the method `from_path(...)` described in [Open a Raw event from path]>(#open-an-raw-event-from-path), you can specify which bands to use. If `bands_list` is not >specified, the method `from_database(...)` will return all the bands.
