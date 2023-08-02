@@ -14,7 +14,7 @@ WORKDIR /workdir/PyProjects/
 RUN apt-get update && apt-get install -y git ffmpeg libsm6 libxext6
 # install pyraws
 ARG CACHEBUST=1
-RUN git clone -b docker https://github.com/ESA-PhiLab/PyRawS.git
+RUN git clone -b main https://github.com/ESA-PhiLab/PyRawS.git
 RUN cd PyRawS && /bin/bash -c "source ./pyraws_install.sh" 
 RUN echo "source activate pyraws" > ~/.bashrc
 ENV PATH /opt/conda/envs/pyraws/bin:$PATH
