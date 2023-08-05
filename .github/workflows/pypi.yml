@@ -55,3 +55,5 @@ jobs:
             git add setup.py
             git commit -m 'Bump version'
             git push
+          env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
