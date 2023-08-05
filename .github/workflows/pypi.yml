@@ -10,10 +10,8 @@
 name: Build and publish PyRawS distribution to PyPI
 
 on:
-  push:
-    branches: [ "pypi" ] 
-    paths-ignore:
-      - 'setup.py'
+  release:
+    types: [created]
 
 jobs:
     pypi-publish:
