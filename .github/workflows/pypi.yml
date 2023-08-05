@@ -41,4 +41,4 @@ jobs:
           with:
             user: sirbastiano94
             password: ${{ secrets.PYPI_PASSWORD }}
-            repository-url: https://pypi.org/project/pyraws/1.0.0/
+            repository-url: https://upload.pypi.org/legacy/
