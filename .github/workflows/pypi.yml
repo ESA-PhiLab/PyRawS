@@ -11,7 +11,7 @@ name: Build and publish PyRawS distribution to PyPI
 
 on:
   push:
-    branches: [ "pypi" ] # CHANGE THIS. This workflow only runs when a commit is pushed to the pypi branch.
+    branches: [ "pypi" ] 
     paths-ignore:
       - 'setup.py'
 
@@ -33,10 +33,7 @@ jobs:
         - name: Install dependencies
           run: |
                 python -m pip install --upgrade pip
-                pip install setuptools wheel twine
-
-        - name: Update setup.py version
-          run: python .github/update_version.py
+                pip install setuptools wheel
 
         - name: Build Python package
           run: python setup.py bdist_wheel
@@ -47,13 +44,3 @@ jobs:
             user: sirbastiano94
             password: ${{ secrets.PYPI_PASSWORD }}
             repository-url: https://upload.pypi.org/legacy/
-
-        - name: Commit and push changes
-          run: |
-            git config --global user.name sirbastiano
-            git config --global user.email 'robertodelprete88@.com'
-            git add setup.py
-            git commit -m 'Bump version'
-            git push
-          env:
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
