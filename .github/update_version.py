@@ -1,12 +1,14 @@
 # .github/update_version.py
 import re
 
+
 def increment_version(version):
-    major, minor, patch = map(int, version.split('.'))
+    major, minor, patch = map(int, version.split("."))
     patch += 1
     return f"{major}.{minor}.{patch}"
 
-with open('setup.py', 'r+') as f:
+
+with open("setup.py", "r+") as f:
     content = f.read()
     version_match = re.search(r'version="(.*)",', content)
     if version_match:
