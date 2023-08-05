@@ -7,7 +7,7 @@
 ![Python 3.8](https://img.shields.io/badge/python-3.8-blue.svg)
 ![Python 3.9](https://img.shields.io/badge/python-3.9-blue.svg)
 ![Python 3.10](https://img.shields.io/badge/python-3.10-blue.svg)
-[![PyPI](https://img.shields.io/pypi/v/pyraws.svg)](https://pypi.org/project/pyraws/1.0.0/)
+[![PyPI](https://img.shields.io/pypi/v/pyraws.svg)](https://pypi.org/project/pyraws/)
 # PyRawS
 [![Py-Raw-S-logo.png](https://i.postimg.cc/7Yptgf5y/Py-Raw-S-logo.png)](https://postimg.cc/vctvy87P)
 ## About the project
