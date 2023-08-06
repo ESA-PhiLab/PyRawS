@@ -8,6 +8,10 @@
 ![Python 3.9](https://img.shields.io/badge/python-3.9-blue.svg)
 ![Python 3.10](https://img.shields.io/badge/python-3.10-blue.svg)
 [![PyPI](https://img.shields.io/pypi/v/pyraws.svg)](https://pypi.org/project/pyraws/)
+[![Docs](https://img.shields.io/badge/Docs-GitHub%20Pages-blue)](https://esa-philab.github.io/PyRawS/)
+
+
+
 # PyRawS
 [![Py-Raw-S-logo.png](https://i.postimg.cc/7Yptgf5y/Py-Raw-S-logo.png)](https://postimg.cc/vctvy87P)
 ## About the project
