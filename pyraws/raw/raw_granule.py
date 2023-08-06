@@ -7,26 +7,41 @@ import geopy.distance
 from copy import deepcopy
 from shapely.geometry import Polygon
 import os
+import cv2
 
-from ..utils.constants import (
+
+from pyraws.utils.constants import (
     BAND_SPATIAL_RESOLUTION_DICT,
     BAND_SPATIAL_RESOLUTION_DICT_ACROSS,
     BANDS_RAW_SHAPE_DICT,
     SWIR_BANDS,
 )
-from ..utils.raw_utils import (
+from pyraws.utils.raw_utils import (
     export_band_to_tif,
     get_bands_shift,
     get_granule_px_length,
     swap_latlon,
 )
-from ..utils.visualization_utils import equalize_tensor
-from ..utils.band_shape_utils import image_band_upsample
-from ..utils.date_utils import parse_string_date
-import cv2
+from pyraws.utils.visualization_utils import equalize_tensor
+from pyraws.utils.band_shape_utils import image_band_upsample
+from pyraws.utils.date_utils import parse_string_date
+
 
 
 class Raw_granule:
+    """Initialize an raw granule.
+
+    Args:
+        granule_bands (list, optional): list of torch tensors representing each band in the format [H,W]. Defaults to None.
+        bands_names (list, optional): list of band names. Defaults to None.
+        granule_name (string, optionl): granule name. Defaults to None.
+        granule_polygon_coordinates (list, optional): list containing [lat, lon] for every polygon point. Defaults to None.
+        single_granule_along_track_size (float, optional): size of a single granule along track.
+                                                            Useful to keep this info when the granule has parents.
+                                                            Defaults to None.
+        cloud_percentage (list or float, optional): Cloud coverage percentage metadata. Defaults to None.
+        device (torch.device, optional): torch.device. Defaults to torch.device("cpu").
+    """
     # ---------------- PRIVATE VARIABLES ----------------
     __bands_dict = None  # Bands dictionary
     __device = None  # Device
@@ -57,19 +72,6 @@ class Raw_granule:
         cloud_percentage=None,
         device=torch.device("cpu"),
     ):
-        """Initialize an raw granule.
-
-        Args:
-            granule_bands (list, optional): list of torch tensors representing each band in the format [H,W]. Defaults to None.
-            bands_names (list, optional): list of band names. Defaults to None.
-            granule_name (string, optionl): granule name. Defaults to None.
-            granule_polygon_coordinates (list, optional): list containing [lat, lon] for every polygon point. Defaults to None.
-            single_granule_along_track_size (float, optional): size of a single granule along track.
-                                                                Useful to keep this info when the granule has parents.
-                                                                Defaults to None.
-            cloud_percentage (list or float, optional): Cloud coverage percentage metadata. Defaults to None.
-            device (torch.device, optional): torch.device. Defaults to torch.device("cpu").
-        """
 
         if (granule_bands is not None) and (bands_names is not None):
             self.__bands_dict = dict(zip(bands_names, granule_bands))

@@ -2,16 +2,32 @@ import numpy as np
 import torch
 import matplotlib.pyplot as plt
 import os
-from ..utils.constants import (
+from pyraws.utils.constants import (
     BAND_SPATIAL_RESOLUTION_DICT,
     S2_DEFAULT_QUANTIFICATION_VALUE,
 )
-from ..utils.band_shape_utils import image_band_upsample
-from ..utils.date_utils import parse_string_date
-from ..utils.l1_utils import export_band_to_tif, swap_latlon
+from pyraws.utils.band_shape_utils import image_band_upsample
+from pyraws.utils.date_utils import parse_string_date
+from pyraws.utils.l1_utils import export_band_to_tif, swap_latlon
 
 
 class L1C_tile:
+    """Initialize an L0 tile.
+
+        Args:
+            tile_bands (list, optional): list of torch tensors representing each band in the format [H,W].
+                                         Defaults to None.
+            bands_names (list, optional): list of band names. Defaults to None.
+            tile_name (string, optionl): tile name. Defaults to None.
+            tile_coordinates (list, optional): list containing [lan, lon] for every corner point.
+                                               Defaults to None.
+            tile_footprint_coordinates (list, optional): list containing [lan, lon] for every point of the tile.
+                                                         Defaults to None.
+            bands_file_name_dict (dict, optional): dictionary associating the orginal jp2 file to each band.
+                                                   Defaults to None.
+            csr (string, optional): crs. Defaults to None.
+            device (torch.device, optional): torch.device. Defaults to torch.device("cpu").
+    """
     # ------------ PRIVATE VARIABLES ------------
 
     __bands_dict = None  # Bands dictionary
@@ -41,22 +57,6 @@ class L1C_tile:
         crs=None,
         device=torch.device("cpu"),
     ):
-        """Initialize an L0 tile.
-
-        Args:
-            tile_bands (list, optional): list of torch tensors representing each band in the format [H,W].
-                                         Defaults to None.
-            bands_names (list, optional): list of band names. Defaults to None.
-            tile_name (string, optionl): tile name. Defaults to None.
-            tile_coordinates (list, optional): list containing [lan, lon] for every corner point.
-                                               Defaults to None.
-            tile_footprint_coordinates (list, optional): list containing [lan, lon] for every point of the tile.
-                                                         Defaults to None.
-            bands_file_name_dict (dict, optional): dictionary associating the orginal jp2 file to each band.
-                                                   Defaults to None.
-            csr (string, optional): crs. Defaults to None.
-            device (torch.device, optional): torch.device. Defaults to torch.device("cpu").
-        """
 
         if (tile_bands is not None) and (bands_names is not None):
             self.__bands_dict = dict(zip(bands_names, tile_bands))

@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>raw.raw_event &mdash; pyraws 0.0.3 documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/sphinx_highlight.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            pyraws
+              <img src="../../_static/PyRawS_logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">First Steps:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../configuration.html">Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../quickstart.html">Quickstart</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../API.html">API demonstration</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../database.html">Database</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../raw.html">Raw</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../l1.html">L1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../utils.html">Utils</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Useful Info:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../contacts.html">Contacts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../glossario.html">Glossary</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">pyraws</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">raw.raw_event</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for raw.raw_event</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">termcolor</span> <span class="kn">import</span> <span class="n">colored</span>
+<span class="kn">import</span> <span class="nn">geopy.distance</span>
+
+
+<span class="kn">from</span> <span class="nn">pyraws.raw.raw_granule</span> <span class="kn">import</span> <span class="n">Raw_granule</span>
+<span class="kn">from</span> <span class="nn">pyraws.utils.constants</span> <span class="kn">import</span> <span class="n">BANDS_RAW_SHAPE_DICT</span>
+<span class="kn">from</span> <span class="nn">pyraws.utils.raw_utils</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">read_Raw_event_from_database</span><span class="p">,</span>
+    <span class="n">find_granules_names</span><span class="p">,</span>
+    <span class="n">read_Raw_event_from_path</span><span class="p">,</span>
+<span class="p">)</span>
+
+
+
+<div class="viewcode-block" id="Raw_event"><a class="viewcode-back" href="../../raw.html#raw.raw_event.Raw_event">[docs]</a><span class="k">class</span> <span class="nc">Raw_event</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Creates an raw event from a granules collection and band_names.</span>
+<span class="sd">    It is possible to associate an image class to the event.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        granules_collection (list, optional): list of Raw_granule. Defaults to None.</span>
+<span class="sd">        bands_names (list, optional): list of band names. Defaults to None.</span>
+<span class="sd">        event_class (string, optional): class name. Defaults to None.</span>
+<span class="sd">        raw_useful_granules_idx (list, optional): list of useful granules indices. Defaults to None.</span>
+<span class="sd">        raw_complementary_granules_idx (list, optional): list of complementary granules indices. Defaults to None.</span>
+<span class="sd">        useful_granule_bounding_box_dict (dict, optional): {useful granule : bounding boxes}. Defaults to None.</span>
+<span class="sd">        device (torch.device, optional): device for each raw granule in the image. Defaults to torch.device(&quot;cpu&quot;).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">__device</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">__bands_names</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">__granules_collection</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">__event_class</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">__raw_useful_granules_idx</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">__raw_complementary_granules_idx</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">__useful_granule_bounding_box_dict</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">granules_collection</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">bands_names</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">event_class</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">raw_useful_granules_idx</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">raw_complementary_granules_idx</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">useful_granule_bounding_box_dict</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">device</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="s2">&quot;cpu&quot;</span><span class="p">),</span>
+    <span class="p">):</span>
+        <span class="k">if</span> <span class="n">bands_names</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__bands_names</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__bands_names</span> <span class="o">=</span> <span class="n">bands_names</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">__event_class</span> <span class="o">=</span> <span class="n">event_class</span>
+        <span class="k">if</span> <span class="n">granules_collection</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__granules_collection</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__granules_collection</span> <span class="o">=</span> <span class="n">granules_collection</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_granules</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">if</span> <span class="n">raw_useful_granules_idx</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__raw_useful_granules_idx</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__raw_useful_granules_idx</span> <span class="o">=</span> <span class="n">raw_useful_granules_idx</span>
+
+        <span class="k">if</span> <span class="n">raw_complementary_granules_idx</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__raw_complementary_granules_idx</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__raw_complementary_granules_idx</span> <span class="o">=</span> <span class="n">raw_complementary_granules_idx</span>
+
+        <span class="k">if</span> <span class="n">granules_collection</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">granules_collection</span><span class="p">)):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">__granules_collection</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="n">granules_collection</span><span class="p">[</span><span class="n">n</span><span class="p">],</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
+                <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">n_granules</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__granules_collection</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">useful_granule_bounding_box_dict</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__useful_granule_bounding_box_dict</span> <span class="o">=</span> <span class="n">useful_granule_bounding_box_dict</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__useful_granule_bounding_box_dict</span> <span class="o">=</span> <span class="p">{}</span>
+
+<div class="viewcode-block" id="Raw_event.from_path"><a class="viewcode-back" href="../../raw.html#raw.raw_event.Raw_event.from_path">[docs]</a>    <span class="k">def</span> <span class="nf">from_path</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">raw_dir_path</span><span class="p">,</span> <span class="n">bands_list</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Read specific bands of the Sentinel-2 raw event located at &quot;&quot;raw_dir_path&quot;&quot;.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            raw_dir_path (str): path to the raw event dir.</span>
+<span class="sd">            bands list. If None, all bands are used and sorted according to the datasheet order. Defaults to None.</span>
+<span class="sd">            verbose (bool, optional): if True, if True, verbose mode is used. Defaults to True.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">bands_list</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">bands_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">BANDS_RAW_SHAPE_DICT</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="p">(</span>
+                <span class="n">granules_collection</span><span class="p">,</span>
+                <span class="n">granules_paths</span><span class="p">,</span>
+                <span class="n">polygon_coordinates_list</span><span class="p">,</span>
+                <span class="n">cloud_percentages_list</span><span class="p">,</span>
+            <span class="p">)</span> <span class="o">=</span> <span class="n">read_Raw_event_from_path</span><span class="p">(</span>
+                <span class="n">raw_dir_path</span><span class="p">,</span> <span class="n">bands_list</span><span class="p">,</span> <span class="n">verbose</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__device</span>
+            <span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>  <span class="c1"># noqa: E722</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Impossible to open the raw file at: &quot;</span>
+                <span class="o">+</span> <span class="n">colored</span><span class="p">(</span><span class="n">raw_dir_path</span><span class="p">,</span> <span class="s2">&quot;red&quot;</span><span class="p">)</span>
+                <span class="o">+</span> <span class="s2">&quot;.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="n">granule_names</span> <span class="o">=</span> <span class="n">find_granules_names</span><span class="p">(</span><span class="n">granules_paths</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__bands_names</span> <span class="o">=</span> <span class="n">bands_list</span>
+        <span class="c1"># These pieces of information are not available since the event is not read from database.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__raw_useful_granules_idx</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__raw_complementary_granules_idx</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__event_class</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__useful_granule_bounding_box_dict</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="k">for</span> <span class="n">granule</span><span class="p">,</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">granules_collection</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">granules_collection</span><span class="p">))):</span>
+            <span class="n">new_granule</span> <span class="o">=</span> <span class="n">Raw_granule</span><span class="p">(</span><span class="n">device</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__device</span><span class="p">)</span>
+            <span class="n">along_track_size</span> <span class="o">=</span> <span class="n">geopy</span><span class="o">.</span><span class="n">distance</span><span class="o">.</span><span class="n">geodesic</span><span class="p">(</span>
+                <span class="n">polygon_coordinates_list</span><span class="p">[</span><span class="n">n</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">polygon_coordinates_list</span><span class="p">[</span><span class="n">n</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">km</span>
+            <span class="n">new_granule</span><span class="o">.</span><span class="n">create_granule</span><span class="p">(</span>
+                <span class="n">bands_list</span><span class="p">,</span>
+                <span class="n">granule</span><span class="p">,</span>
+                <span class="n">granule_names</span><span class="p">[</span><span class="n">n</span><span class="p">],</span>
+                <span class="n">polygon_coordinates_list</span><span class="p">[</span><span class="n">n</span><span class="p">],</span>
+                <span class="n">along_track_size</span><span class="p">,</span>
+                <span class="n">cloud_percentages_list</span><span class="p">[</span><span class="n">n</span><span class="p">],</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__granules_collection</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_granule</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_granules</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__granules_collection</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Raw_event.from_database"><a class="viewcode-back" href="../../raw.html#raw.raw_event.Raw_event.from_database">[docs]</a>    <span class="k">def</span> <span class="nf">from_database</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">id_event</span><span class="p">,</span>
+        <span class="n">bands_list</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">cfg_file_dict</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">id_raw_l1_dict</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">database</span><span class="o">=</span><span class="s2">&quot;THRAWS&quot;</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Read specific bands of the Sentinel-2 raw event &quot;&quot;id_event&quot;&quot;, specified in &quot;bands_list&quot;, from database.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            id_event (str): event ID.</span>
+<span class="sd">            bands_list (list, optional): bands list. If None, all bands are used and sorted according to the datasheet order.</span>
+<span class="sd">                                         Defaults to None.</span>
+<span class="sd">            cfg_file_dict (dict, optional): dictionary containing paths to the different end2end directories.</span>
+<span class="sd">                                          If None, internal CSV database will be parsed.</span>
+<span class="sd">            id_raw_l1_dict (dict, optional): id-raw-l1 dictionary. If None, internal CSV database will be parsed.</span>
+<span class="sd">            verbose (bool, optional): if True, if True, verbose mode is used. Defaults to True.</span>
+<span class="sd">            database (string, optional): database name. Defaults to &quot;THRAWS&quot;.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">bands_list</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">bands_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">BANDS_RAW_SHAPE_DICT</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+
+        <span class="p">(</span>
+            <span class="n">granules_collection</span><span class="p">,</span>
+            <span class="n">event_class</span><span class="p">,</span>
+            <span class="n">granule_names</span><span class="p">,</span>
+            <span class="n">raw_useful_granules</span><span class="p">,</span>
+            <span class="n">raw_complementary_granules</span><span class="p">,</span>
+            <span class="n">polygon_coordinates_list</span><span class="p">,</span>
+            <span class="n">cloud_percentages_list</span><span class="p">,</span>
+            <span class="n">useful_granule_bounding_box_dict</span><span class="p">,</span>
+        <span class="p">)</span> <span class="o">=</span> <span class="n">read_Raw_event_from_database</span><span class="p">(</span>
+            <span class="n">id_event</span><span class="p">,</span>
+            <span class="n">bands_list</span><span class="p">,</span>
+            <span class="n">cfg_file_dict</span><span class="p">,</span>
+            <span class="n">id_raw_l1_dict</span><span class="p">,</span>
+            <span class="n">database</span><span class="p">,</span>
+            <span class="n">verbose</span><span class="p">,</span>
+            <span class="n">device</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__device</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__bands_names</span> <span class="o">=</span> <span class="n">bands_list</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__raw_useful_granules_idx</span> <span class="o">=</span> <span class="n">raw_useful_granules</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__raw_complementary_granules_idx</span> <span class="o">=</span> <span class="n">raw_complementary_granules</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__event_class</span> <span class="o">=</span> <span class="n">event_class</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__useful_granule_bounding_box_dict</span> <span class="o">=</span> <span class="n">useful_granule_bounding_box_dict</span>
+
+        <span class="k">for</span> <span class="n">granule</span><span class="p">,</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">granules_collection</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">granules_collection</span><span class="p">))):</span>
+            <span class="n">new_granule</span> <span class="o">=</span> <span class="n">Raw_granule</span><span class="p">(</span><span class="n">device</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__device</span><span class="p">)</span>
+            <span class="n">along_track_size</span> <span class="o">=</span> <span class="n">geopy</span><span class="o">.</span><span class="n">distance</span><span class="o">.</span><span class="n">geodesic</span><span class="p">(</span>
+                <span class="n">polygon_coordinates_list</span><span class="p">[</span><span class="n">n</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">polygon_coordinates_list</span><span class="p">[</span><span class="n">n</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">km</span>
+            <span class="n">new_granule</span><span class="o">.</span><span class="n">create_granule</span><span class="p">(</span>
+                <span class="n">bands_list</span><span class="p">,</span>
+                <span class="n">granule</span><span class="p">,</span>
+                <span class="n">granule_names</span><span class="p">[</span><span class="n">n</span><span class="p">],</span>
+                <span class="n">polygon_coordinates_list</span><span class="p">[</span><span class="n">n</span><span class="p">],</span>
+                <span class="n">along_track_size</span><span class="p">,</span>
+                <span class="n">cloud_percentages_list</span><span class="p">[</span><span class="n">n</span><span class="p">],</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__granules_collection</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_granule</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_granules</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__granules_collection</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Raw_event.get_bands_list"><a class="viewcode-back" href="../../raw.html#raw.raw_event.Raw_event.get_bands_list">[docs]</a>    <span class="k">def</span> <span class="nf">get_bands_list</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the list of bands of every Raw_granule object in the collection.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            list: band names.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__bands_names</span></div>
+
+<div class="viewcode-block" id="Raw_event.get_bounding_box_dict"><a class="viewcode-back" href="../../raw.html#raw.raw_event.Raw_event.get_bounding_box_dict">[docs]</a>    <span class="k">def</span> <span class="nf">get_bounding_box_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get bounding box dictionaries.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            dict: Returns {useful granules : bounding box dictionary}</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__useful_granule_bounding_box_dict</span></div>
+
+<div class="viewcode-block" id="Raw_event.get_event_class"><a class="viewcode-back" href="../../raw.html#raw.raw_event.Raw_event.get_event_class">[docs]</a>    <span class="k">def</span> <span class="nf">get_event_class</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get event class.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            dict: Returns {useful granules : bounding box dictionary}</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__event_class</span></div>
+
+<div class="viewcode-block" id="Raw_event.get_granule"><a class="viewcode-back" href="../../raw.html#raw.raw_event.Raw_event.get_granule">[docs]</a>    <span class="k">def</span> <span class="nf">get_granule</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">granule_idx</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;It returns the granule addressed by granule_idx.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            granule_idx (int): granule index.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__granules_collection</span><span class="p">[</span><span class="n">granule_idx</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="Raw_event.get_stackable_granules"><a class="viewcode-back" href="../../raw.html#raw.raw_event.Raw_event.get_stackable_granules">[docs]</a>    <span class="k">def</span> <span class="nf">get_stackable_granules</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns list of stackable granules couples indices and stacking positions.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            list: list of stackable granules couples.</span>
+<span class="sd">            list: stacking poisition for each couple of stackable granule.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">granules_info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_granules_info</span><span class="p">()</span>
+        <span class="n">granules_names</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">granules_info</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="n">n_granules</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">granules_info</span><span class="p">)</span>
+
+        <span class="n">granules_couples_list</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">granules_postions_list</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">granule_name</span><span class="p">,</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">granules_names</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_granules</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="n">granules_info</span><span class="p">[</span><span class="n">granule_name</span><span class="p">][</span><span class="mi">4</span><span class="p">]:</span>
+                <span class="n">sensing_time</span> <span class="o">=</span> <span class="n">granules_info</span><span class="p">[</span><span class="n">granule_name</span><span class="p">][</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">detector_number</span> <span class="o">=</span> <span class="n">granules_info</span><span class="p">[</span><span class="n">granule_name</span><span class="p">][</span><span class="mi">3</span><span class="p">]</span>
+
+                <span class="k">for</span> <span class="n">granule_name_m</span><span class="p">,</span> <span class="n">m</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span>
+                    <span class="n">granules_names</span><span class="p">[</span><span class="n">n</span> <span class="o">+</span> <span class="mi">1</span> <span class="p">:],</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">n_granules</span><span class="p">)</span>
+                <span class="p">):</span>
+                    <span class="n">sensing_time_m</span> <span class="o">=</span> <span class="n">granules_info</span><span class="p">[</span><span class="n">granule_name_m</span><span class="p">][</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+                    <span class="n">detector_number_m</span> <span class="o">=</span> <span class="n">granules_info</span><span class="p">[</span><span class="n">granule_name_m</span><span class="p">][</span><span class="mi">3</span><span class="p">]</span>
+
+                    <span class="k">if</span> <span class="p">(</span><span class="n">granules_info</span><span class="p">[</span><span class="n">granule_name_m</span><span class="p">][</span><span class="mi">4</span><span class="p">])</span> <span class="ow">and</span> <span class="p">(</span>
+                        <span class="n">detector_number</span> <span class="o">==</span> <span class="n">detector_number_m</span>
+                    <span class="p">):</span>
+                        <span class="k">if</span> <span class="p">((</span><span class="n">sensing_time_m</span> <span class="o">-</span> <span class="n">sensing_time</span><span class="p">)</span><span class="o">.</span><span class="n">seconds</span> <span class="o">==</span> <span class="mi">3</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span>
+                            <span class="p">(</span><span class="n">sensing_time_m</span> <span class="o">-</span> <span class="n">sensing_time</span><span class="p">)</span><span class="o">.</span><span class="n">seconds</span> <span class="o">==</span> <span class="mi">4</span>
+                        <span class="p">):</span>
+                            <span class="n">granules_couples_list</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">n</span><span class="p">,</span> <span class="n">m</span><span class="p">])</span>
+                            <span class="n">granules_postions_list</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="s2">&quot;T&quot;</span><span class="p">])</span>
+                            <span class="k">break</span>
+                        <span class="k">elif</span> <span class="p">((</span><span class="n">sensing_time</span> <span class="o">-</span> <span class="n">sensing_time_m</span><span class="p">)</span><span class="o">.</span><span class="n">seconds</span> <span class="o">==</span> <span class="mi">3</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span>
+                            <span class="p">(</span><span class="n">sensing_time</span> <span class="o">-</span> <span class="n">sensing_time_m</span><span class="p">)</span><span class="o">.</span><span class="n">seconds</span> <span class="o">==</span> <span class="mi">4</span>
+                        <span class="p">):</span>
+                            <span class="n">granules_couples_list</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">n</span><span class="p">,</span> <span class="n">m</span><span class="p">])</span>
+                            <span class="n">granules_postions_list</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="s2">&quot;B&quot;</span><span class="p">])</span>
+                            <span class="k">break</span>
+        <span class="k">return</span> <span class="n">granules_couples_list</span><span class="p">,</span> <span class="n">granules_postions_list</span></div>
+
+<div class="viewcode-block" id="Raw_event.show_granules_info"><a class="viewcode-back" href="../../raw.html#raw.raw_event.Raw_event.show_granules_info">[docs]</a>    <span class="k">def</span> <span class="nf">show_granules_info</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Print granules info.&quot;&quot;&quot;</span>
+        <span class="n">granules_info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_granules_info</span><span class="p">()</span>
+        <span class="n">granules_names</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">granules_info</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">granules_names</span><span class="p">)):</span>
+            <span class="nb">print</span><span class="p">(</span>
+                <span class="n">colored</span><span class="p">(</span>
+                    <span class="s2">&quot;------------------Granule &quot;</span>
+                    <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+                    <span class="o">+</span> <span class="s2">&quot; ----------------------------&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;blue&quot;</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Name: &quot;</span><span class="p">,</span> <span class="n">colored</span><span class="p">(</span><span class="n">granules_info</span><span class="p">[</span><span class="n">granules_names</span><span class="p">[</span><span class="n">n</span><span class="p">]],</span> <span class="s2">&quot;red&quot;</span><span class="p">))</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Sensing time: &quot;</span><span class="p">,</span> <span class="n">colored</span><span class="p">(</span><span class="n">granules_info</span><span class="p">[</span><span class="n">granules_names</span><span class="p">[</span><span class="n">n</span><span class="p">]][</span><span class="mi">1</span><span class="p">],</span> <span class="s2">&quot;red&quot;</span><span class="p">))</span>
+            <span class="nb">print</span><span class="p">(</span>
+                <span class="s2">&quot;Creation time: &quot;</span><span class="p">,</span> <span class="n">colored</span><span class="p">(</span><span class="n">granules_info</span><span class="p">[</span><span class="n">granules_names</span><span class="p">[</span><span class="n">n</span><span class="p">]][</span><span class="mi">2</span><span class="p">],</span> <span class="s2">&quot;red&quot;</span><span class="p">)</span>
+            <span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span>
+                <span class="s2">&quot;Detector number: &quot;</span><span class="p">,</span> <span class="n">colored</span><span class="p">(</span><span class="n">granules_info</span><span class="p">[</span><span class="n">granules_names</span><span class="p">[</span><span class="n">n</span><span class="p">]][</span><span class="mi">3</span><span class="p">],</span> <span class="s2">&quot;red&quot;</span><span class="p">)</span>
+            <span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Originality: &quot;</span><span class="p">,</span> <span class="n">colored</span><span class="p">(</span><span class="n">granules_info</span><span class="p">[</span><span class="n">granules_names</span><span class="p">[</span><span class="n">n</span><span class="p">]][</span><span class="mi">4</span><span class="p">],</span> <span class="s2">&quot;red&quot;</span><span class="p">))</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Parents: &quot;</span><span class="p">,</span> <span class="n">colored</span><span class="p">(</span><span class="n">granules_info</span><span class="p">[</span><span class="n">granules_names</span><span class="p">[</span><span class="n">n</span><span class="p">]][</span><span class="mi">5</span><span class="p">],</span> <span class="s2">&quot;red&quot;</span><span class="p">))</span>
+            <span class="n">coordinates</span> <span class="o">=</span> <span class="n">granules_info</span><span class="p">[</span><span class="n">granules_names</span><span class="p">[</span><span class="n">n</span><span class="p">]][</span><span class="mi">6</span><span class="p">]</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Polygon coordinates: </span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">coordinates</span><span class="p">)):</span>
+                <span class="nb">print</span><span class="p">(</span>
+                    <span class="n">colored</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">P_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">m</span><span class="p">),</span> <span class="s2">&quot;blue&quot;</span><span class="p">)</span>
+                    <span class="o">+</span> <span class="s2">&quot; : &quot;</span>
+                    <span class="o">+</span> <span class="n">colored</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">coordinates</span><span class="p">[</span><span class="n">m</span><span class="p">])</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;red&quot;</span><span class="p">)</span>
+                <span class="p">)</span>
+
+            <span class="nb">print</span><span class="p">(</span>
+                <span class="s2">&quot;Cloud coverage: &quot;</span><span class="p">,</span>
+                <span class="n">colored</span><span class="p">(</span><span class="n">granules_info</span><span class="p">[</span><span class="n">granules_names</span><span class="p">[</span><span class="n">n</span><span class="p">]][</span><span class="mi">7</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="s2">&quot;red&quot;</span><span class="p">),</span>
+            <span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Raw_event.stack_granules"><a class="viewcode-back" href="../../raw.html#raw.raw_event.Raw_event.stack_granules">[docs]</a>    <span class="k">def</span> <span class="nf">stack_granules</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">granules_idx</span><span class="p">,</span> <span class="n">positions</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Stack different granules recursively specified by granules_idx.</span>
+<span class="sd">        Positions will specify the stacking positions.</span>
+<span class="sd">        If granules_idx=[0,1,2] and positions=[&quot;T&quot;, &quot;B&quot;], granule_0 will be stacked at the top of granule_1</span>
+<span class="sd">        and the result will be stacked at the bottom of granule_2.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            granules_idx (list): list of granule indices.</span>
+<span class="sd">            positions (list): list of stacking positions.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Raw_granule: recursively stacked granule.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">granule_stacked</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_granule</span><span class="p">(</span><span class="n">granules_idx</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+        <span class="k">for</span> <span class="n">granule_idx</span><span class="p">,</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">granules_idx</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">granules_idx</span><span class="p">[</span><span class="mi">1</span><span class="p">:]))):</span>
+            <span class="n">granule_stacked</span> <span class="o">=</span> <span class="n">granule_stacked</span><span class="o">.</span><span class="n">stack_to_granule</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">get_granule</span><span class="p">(</span><span class="n">granule_idx</span><span class="p">),</span> <span class="n">positions</span><span class="p">[</span><span class="n">n</span><span class="p">]</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">granule_stacked</span></div>
+
+<div class="viewcode-block" id="Raw_event.stack_granules_couples"><a class="viewcode-back" href="../../raw.html#raw.raw_event.Raw_event.stack_granules_couples">[docs]</a>    <span class="k">def</span> <span class="nf">stack_granules_couples</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Stacks automatically couples of granules by detector number and sensing time.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            list: stacked couples of granules</span>
+<span class="sd">            list: indidces of couples of granules</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">stackable_couples</span><span class="p">,</span> <span class="n">positions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_stackable_granules</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">stackable_couples</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;No granules to stack.&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="p">[]</span>
+
+        <span class="n">stacked_granule_list</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">stackable_couple</span><span class="p">,</span> <span class="n">position</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">stackable_couples</span><span class="p">,</span> <span class="n">positions</span><span class="p">):</span>
+            <span class="n">stacked_granule_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stack_granules</span><span class="p">(</span><span class="n">stackable_couple</span><span class="p">,</span> <span class="n">position</span><span class="p">))</span>
+
+        <span class="n">stackable_couple_sorted</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># Sorted to be the first on top</span>
+
+        <span class="k">for</span> <span class="n">couple</span><span class="p">,</span> <span class="n">position</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">stackable_couples</span><span class="p">,</span> <span class="n">positions</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">position</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;T&quot;</span><span class="p">:</span>
+                <span class="n">stackable_couple_sorted</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">couple</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">stackable_couple_sorted</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">couple</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">couple</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
+
+        <span class="k">return</span> <span class="n">stacked_granule_list</span><span class="p">,</span> <span class="n">stackable_couple_sorted</span></div>
+
+<div class="viewcode-block" id="Raw_event.get_granules_names"><a class="viewcode-back" href="../../raw.html#raw.raw_event.Raw_event.get_granules_names">[docs]</a>    <span class="k">def</span> <span class="nf">get_granules_names</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">granules_idx</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return names of the granules requested through granules_idx from granules names.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            granules_idx (list, optional): list of granules for which getting the names.</span>
+<span class="sd">                                         If None, all the names of the granules in the collection are returned.</span>
+<span class="sd">                                         Defaults to None.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            ValueError: Empty granules lists</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            list: granules&#39; names.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">granules_names</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__granules_collection</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Empty granules lists.&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">granules_idx</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">granules_idx</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__granules_collection</span><span class="p">))</span>
+
+        <span class="k">for</span> <span class="n">granule_idx</span> <span class="ow">in</span> <span class="n">granules_idx</span><span class="p">:</span>
+            <span class="n">granules_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_granule</span><span class="p">(</span><span class="n">granule_idx</span><span class="p">)</span><span class="o">.</span><span class="n">granule_name</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">granules_names</span></div>
+
+<div class="viewcode-block" id="Raw_event.get_granules_info"><a class="viewcode-back" href="../../raw.html#raw.raw_event.Raw_event.get_granules_info">[docs]</a>    <span class="k">def</span> <span class="nf">get_granules_info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">granules_idx</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return info of the granules requested through granules_idx from granules names.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            granules_idx (list, optional): list of granules for which getting the names.</span>
+<span class="sd">                                         If None, all the names of the granules in the collection are returned.</span>
+<span class="sd">                                         Defaults to None.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            ValueError: Empty granules lists</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            dictionary: granules name : granules info</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">granules_names</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">granules_info</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__granules_collection</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Empty granules lists.&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">granules_idx</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">granules_idx</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__granules_collection</span><span class="p">))</span>
+
+        <span class="k">for</span> <span class="n">granule_idx</span> <span class="ow">in</span> <span class="n">granules_idx</span><span class="p">:</span>
+            <span class="n">granule</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_granule</span><span class="p">(</span><span class="n">granule_idx</span><span class="p">)</span>
+            <span class="n">granule_info</span> <span class="o">=</span> <span class="n">granule</span><span class="o">.</span><span class="n">get_granule_info</span><span class="p">()</span>
+            <span class="n">granules_info</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">granule_info</span><span class="p">)</span>
+            <span class="n">granules_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">granule_info</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+        <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">granules_names</span><span class="p">,</span> <span class="n">granules_info</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="Raw_event.set_useful_granules"><a class="viewcode-back" href="../../raw.html#raw.raw_event.Raw_event.set_useful_granules">[docs]</a>    <span class="k">def</span> <span class="nf">set_useful_granules</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">useful_granules_list</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;useful_granules_list (list): Set useful granules from list.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__raw_useful_granules_idx</span> <span class="o">=</span> <span class="n">useful_granules_list</span></div>
+
+<div class="viewcode-block" id="Raw_event.get_useful_granules_idx"><a class="viewcode-back" href="../../raw.html#raw.raw_event.Raw_event.get_useful_granules_idx">[docs]</a>    <span class="k">def</span> <span class="nf">get_useful_granules_idx</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns useful granules indices.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            list: useful granules indices.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__raw_useful_granules_idx</span></div>
+
+<div class="viewcode-block" id="Raw_event.get_complementary_granules_idx"><a class="viewcode-back" href="../../raw.html#raw.raw_event.Raw_event.get_complementary_granules_idx">[docs]</a>    <span class="k">def</span> <span class="nf">get_complementary_granules_idx</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns complementary granules indices.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            list: complementary granules indices.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__raw_complementary_granules_idx</span></div>
+
+<div class="viewcode-block" id="Raw_event.set_complementary_granules"><a class="viewcode-back" href="../../raw.html#raw.raw_event.Raw_event.set_complementary_granules">[docs]</a>    <span class="k">def</span> <span class="nf">set_complementary_granules</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">complementary_granules</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;useful_granules_list (list): Set useful granules from list.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__raw_complementary_granules_idx</span> <span class="o">=</span> <span class="n">complementary_granules</span></div>
+
+<div class="viewcode-block" id="Raw_event.is_void"><a class="viewcode-back" href="../../raw.html#raw.raw_event.Raw_event.is_void">[docs]</a>    <span class="k">def</span> <span class="nf">is_void</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns true if the image is void.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            bool: True if the image is void.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__granules_collection</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__granules_collection</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">True</span></div>
+
+<div class="viewcode-block" id="Raw_event.coarse_coregistration"><a class="viewcode-back" href="../../raw.html#raw.raw_event.Raw_event.coarse_coregistration">[docs]</a>    <span class="k">def</span> <span class="nf">coarse_coregistration</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">granules_idx</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">use_complementary_granules</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">crop_empty_pixels</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">downsampling</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">bands_shifts</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;It implements the coarse coregistration of the bands by compensating the along-track pixels shift</span>
+<span class="sd">        with respect to the first band.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            granules_idx (list, optional): Indices of granules to stack and coregister.</span>
+<span class="sd">                                           If None, internal __raw_useful_granules_idx are used.</span>
+<span class="sd">                                           Defaults to None.</span>
+<span class="sd">            use_complementary_granules (boolean, optional): if True, coregistration is performed with filler elements.</span>
+<span class="sd">                                                          Defaults to False.</span>
+<span class="sd">            crop_empty_pixels (boolean, optional):  if True and use_complementary_granules is False or no filler is available,</span>
+<span class="sd">                                                  empty pixels are cropped. Defaults to False.</span>
+<span class="sd">            bands_shifts (list, optional): bands shift values compared to the first band.</span>
+<span class="sd">                                           If None, they will be read by the LUT file. Defaults to None.</span>
+<span class="sd">            downsampling (boolean, optional): if True, higher resolution bands will be undersampled</span>
+<span class="sd">                                              to match the bands with the lowest resolution.</span>
+<span class="sd">                                              If False, lower resolution bands will be upsampled to match the bands</span>
+<span class="sd">                                            with the highest resolution. Defaults to True.</span>
+<span class="sd">            verbose (boolean, optional): if True, verbose mode is used. Defaults to False.</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            Raw_granule: granule with coarse-coregistered bands.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">granules_idx</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;No granule indexes was specified. Using default.&quot;</span><span class="p">)</span>
+            <span class="n">granules_idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__raw_useful_granules_idx</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">granules_idx</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">granule_stacked</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stack_granules</span><span class="p">(</span>
+                <span class="n">granules_idx</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;T&quot;</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">granules_idx</span><span class="p">))]</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">granule_stacked</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_granule</span><span class="p">(</span><span class="n">granules_idx</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+        <span class="n">granule_filler_before</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">granule_filler_after</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">if</span> <span class="n">use_complementary_granules</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">granules_idx</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">stackable_couples</span><span class="p">,</span> <span class="n">positions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_stackable_granules</span><span class="p">()</span>
+                <span class="n">stackable_couple_sorted</span> <span class="o">=</span> <span class="p">[]</span>
+
+                <span class="c1"># Every couple will be ordered as [acquired before, acquired after] in that couple.</span>
+                <span class="k">for</span> <span class="n">couple</span><span class="p">,</span> <span class="n">position</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">stackable_couples</span><span class="p">,</span> <span class="n">positions</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="n">position</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;T&quot;</span><span class="p">:</span>
+                        <span class="n">stackable_couple_sorted</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">couple</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">stackable_couple_sorted</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">couple</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">couple</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
+
+                <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;This granule: &quot;</span> <span class="o">+</span> <span class="n">colored</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">granules_idx</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="s2">&quot;red&quot;</span><span class="p">))</span>
+                    <span class="nb">print</span><span class="p">(</span>
+                        <span class="s2">&quot;Stackable granules: &quot;</span>
+                        <span class="o">+</span> <span class="n">colored</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">stackable_couple_sorted</span><span class="p">),</span> <span class="s2">&quot;red&quot;</span><span class="p">)</span>
+                    <span class="p">)</span>
+
+                <span class="k">for</span> <span class="n">couple</span> <span class="ow">in</span> <span class="n">stackable_couple_sorted</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">granules_idx</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">couple</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+                        <span class="n">granule_filler_after</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_granule</span><span class="p">(</span><span class="n">couple</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+                        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Granule after: &quot;</span> <span class="o">+</span> <span class="n">colored</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">couple</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="s2">&quot;red&quot;</span><span class="p">))</span>
+
+                    <span class="k">if</span> <span class="n">granules_idx</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">couple</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
+                        <span class="n">granule_filler_before</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_granule</span><span class="p">(</span><span class="n">couple</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+                        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Granule before: &quot;</span> <span class="o">+</span> <span class="n">colored</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">couple</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="s2">&quot;red&quot;</span><span class="p">))</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s2">&quot;Use of complementary granules is not supported for more than one granules at the time.&quot;</span>
+                <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">granule_stacked</span><span class="o">.</span><span class="n">coarse_coregistration</span><span class="p">(</span>
+            <span class="n">rotate_swir_bands</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">crop_empty_pixels</span><span class="o">=</span><span class="n">crop_empty_pixels</span><span class="p">,</span>
+            <span class="n">granule_filler_before</span><span class="o">=</span><span class="n">granule_filler_before</span><span class="p">,</span>
+            <span class="n">granule_filler_after</span><span class="o">=</span><span class="n">granule_filler_after</span><span class="p">,</span>
+            <span class="n">downsampling</span><span class="o">=</span><span class="n">downsampling</span><span class="p">,</span>
+            <span class="n">bands_shifts</span><span class="o">=</span><span class="n">bands_shifts</span><span class="p">,</span>
+            <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span>
+        <span class="p">)</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Roberto Del Prete, Gabriele Meoni.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

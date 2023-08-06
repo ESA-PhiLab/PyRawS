@@ -20,7 +20,7 @@ def image_histogram_equalization(image, number_bins=255):
 
 def equalize_tensor(raw_granule_tensor, n_std=2):
     """Equalizes a tensor for a better visualization by clipping outliers of a histogram higher and lower than
-    pixels value mean *- n_std times the standarda deviation.
+    pixels value mean \*- n_std times the standarda deviation.
 
     Args:
         raw_granule_tensor (torch.tensor): tensor to equalize.

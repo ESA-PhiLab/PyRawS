@@ -1,0 +1,1029 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Utils &mdash; pyraws 0.0.3 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Contacts" href="contacts.html" />
+    <link rel="prev" title="L1" href="l1.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            pyraws
+              <img src="_static/PyRawS_logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">First Steps:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="configuration.html">Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quickstart</a></li>
+<li class="toctree-l1"><a class="reference internal" href="API.html">API demonstration</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="database.html">Database</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raw.html">Raw</a></li>
+<li class="toctree-l1"><a class="reference internal" href="l1.html">L1</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Utils</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#utils.visualization_utils.equalize_tensor"><code class="docutils literal notranslate"><span class="pre">equalize_tensor()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#utils.visualization_utils.plot_event"><code class="docutils literal notranslate"><span class="pre">plot_event()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#utils.visualization_utils.plot_img1_vs_img2_bands"><code class="docutils literal notranslate"><span class="pre">plot_img1_vs_img2_bands()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#utils.parse_csv_utils.parse_csv"><code class="docutils literal notranslate"><span class="pre">parse_csv()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#utils.date_utils.get_timestamp"><code class="docutils literal notranslate"><span class="pre">get_timestamp()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#utils.date_utils.parse_string_date"><code class="docutils literal notranslate"><span class="pre">parse_string_date()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#utils.l1_utils.export_band_to_tif"><code class="docutils literal notranslate"><span class="pre">export_band_to_tif()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#utils.l1_utils.get_event_bounding_box"><code class="docutils literal notranslate"><span class="pre">get_event_bounding_box()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#utils.l1_utils.get_l1C_image_default_path"><code class="docutils literal notranslate"><span class="pre">get_l1C_image_default_path()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#utils.l1_utils.get_reprojected_bounds"><code class="docutils literal notranslate"><span class="pre">get_reprojected_bounds()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#utils.l1_utils.read_L1C_event_from_database"><code class="docutils literal notranslate"><span class="pre">read_L1C_event_from_database()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#utils.l1_utils.read_L1C_event_from_path"><code class="docutils literal notranslate"><span class="pre">read_L1C_event_from_path()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#utils.l1_utils.read_L1C_image_from_tif"><code class="docutils literal notranslate"><span class="pre">read_L1C_image_from_tif()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#utils.l1_utils.read_L1C_tile_from_path"><code class="docutils literal notranslate"><span class="pre">read_L1C_tile_from_path()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#utils.l1_utils.reproject_raster"><code class="docutils literal notranslate"><span class="pre">reproject_raster()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#utils.l1_utils.swap_latlon"><code class="docutils literal notranslate"><span class="pre">swap_latlon()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#utils.shape_utils.create_polygon_from_coordinates"><code class="docutils literal notranslate"><span class="pre">create_polygon_from_coordinates()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#utils.shape_utils.create_rectangular_polygon"><code class="docutils literal notranslate"><span class="pre">create_rectangular_polygon()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#utils.shape_utils.get_granules_polys"><code class="docutils literal notranslate"><span class="pre">get_granules_polys()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#utils.raw_utils.export_band_to_tif"><code class="docutils literal notranslate"><span class="pre">export_band_to_tif()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#utils.raw_utils.find_granules_names"><code class="docutils literal notranslate"><span class="pre">find_granules_names()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#utils.raw_utils.get_bands_shift"><code class="docutils literal notranslate"><span class="pre">get_bands_shift()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#utils.raw_utils.get_granule_px_length"><code class="docutils literal notranslate"><span class="pre">get_granule_px_length()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#utils.raw_utils.read_Raw_event_from_database"><code class="docutils literal notranslate"><span class="pre">read_Raw_event_from_database()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#utils.raw_utils.read_Raw_event_from_path"><code class="docutils literal notranslate"><span class="pre">read_Raw_event_from_path()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#utils.raw_utils.read_Raw_granule"><code class="docutils literal notranslate"><span class="pre">read_Raw_granule()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#utils.raw_utils.shift_point_coordinates"><code class="docutils literal notranslate"><span class="pre">shift_point_coordinates()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#utils.raw_utils.swap_latlon"><code class="docutils literal notranslate"><span class="pre">swap_latlon()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#utils.band_shape_utils.image_band_resize"><code class="docutils literal notranslate"><span class="pre">image_band_resize()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#utils.band_shape_utils.image_band_upsample"><code class="docutils literal notranslate"><span class="pre">image_band_upsample()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#utils.database_utils.DatabaseHandler"><code class="docutils literal notranslate"><span class="pre">DatabaseHandler</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#utils.database_utils.DatabaseHandler.fetcher"><code class="docutils literal notranslate"><span class="pre">DatabaseHandler.fetcher()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#utils.database_utils.DatabaseHandler.parser"><code class="docutils literal notranslate"><span class="pre">DatabaseHandler.parser()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#utils.database_utils.DatabaseHandler.single_parser"><code class="docutils literal notranslate"><span class="pre">DatabaseHandler.single_parser()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#utils.database_utils.get_cfg_file_dict"><code class="docutils literal notranslate"><span class="pre">get_cfg_file_dict()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#utils.database_utils.get_event_granule_bb_dict"><code class="docutils literal notranslate"><span class="pre">get_event_granule_bb_dict()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#utils.database_utils.get_event_info"><code class="docutils literal notranslate"><span class="pre">get_event_info()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#utils.database_utils.get_events_list"><code class="docutils literal notranslate"><span class="pre">get_events_list()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#utils.database_utils.get_id_raw_l1_dict"><code class="docutils literal notranslate"><span class="pre">get_id_raw_l1_dict()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#utils.database_utils.get_raw_shift_lut"><code class="docutils literal notranslate"><span class="pre">get_raw_shift_lut()</span></code></a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Useful Info:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="contacts.html">Contacts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="glossario.html">Glossary</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">pyraws</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Utils</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/utils.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="utils">
+<h1>Utils<a class="headerlink" href="#utils" title="Permalink to this heading"></a></h1>
+<p><strong>Table of contents</strong></p>
+<span class="target" id="module-utils.visualization_utils"></span><dl class="py function">
+<dt class="sig sig-object py" id="utils.visualization_utils.equalize_tensor">
+<span class="sig-prename descclassname"><span class="pre">utils.visualization_utils.</span></span><span class="sig-name descname"><span class="pre">equalize_tensor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">raw_granule_tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_std</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/visualization_utils.html#equalize_tensor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.visualization_utils.equalize_tensor" title="Permalink to this definition"></a></dt>
+<dd><p>Equalizes a tensor for a better visualization by clipping outliers of a histogram higher and lower than
+pixels value mean *- n_std times the standarda deviation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>raw_granule_tensor</strong> (<em>torch.tensor</em>) – tensor to equalize.</p></li>
+<li><p><strong>n_std</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of times the standard deviation. Defaults to 2.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>equalized tensor.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>torch.tensor</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.visualization_utils.plot_event">
+<span class="sig-prename descclassname"><span class="pre">utils.visualization_utils.</span></span><span class="sig-name descname"><span class="pre">plot_event</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">img</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">img_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bbox_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alert_matrix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/visualization_utils.html#plot_event"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.visualization_utils.plot_event" title="Permalink to this definition"></a></dt>
+<dd><p>Util function to visualize and compare the bands of two different images. It also allows adding an alert matrix.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>img</strong> (<em>torch.tensor</em>) – img.</p></li>
+<li><p><strong>img_name</strong> (<em>string</em>) – image_name.</p></li>
+<li><p><strong>bbox_list</strong> (<em>skimage properties</em>) – bbox list.</p></li>
+<li><p><strong>alert_matrix</strong> (<em>torch.tensor</em><em>, </em><em>opional</em>) – if not None, the hotmap of normal band is shown. Defaults to None.</p></li>
+<li><p><strong>save_path</strong> (<em>string</em><em>, </em><em>optional</em>) – if not None, the image is saved at save_path. Defaults to None.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.visualization_utils.plot_img1_vs_img2_bands">
+<span class="sig-prename descclassname"><span class="pre">utils.visualization_utils.</span></span><span class="sig-name descname"><span class="pre">plot_img1_vs_img2_bands</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">img1_band</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">img2_band</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">img_name_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alert_matrix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alert_matrix_unregistered</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/visualization_utils.html#plot_img1_vs_img2_bands"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.visualization_utils.plot_img1_vs_img2_bands" title="Permalink to this definition"></a></dt>
+<dd><p>Util function to visualize and compare the bands of two different images. It also allows adding an alert matrix.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>img1_band</strong> (<em>torch.tensor</em>) – first image band.</p></li>
+<li><p><strong>img2_band</strong> (<em>torch.tensor</em>) – second image band.</p></li>
+<li><p><strong>img_name_list</strong> (<em>list</em>) – list of names of different images.</p></li>
+<li><p><strong>alert_matrix</strong> (<em>torch.tensor</em><em>, </em><em>opional</em>) – if not None, the hotmap of normal band is shown. Defaults to None.</p></li>
+<li><p><strong>alert_matrix_unregistered</strong> (<em>torch.tensor</em><em>, </em><em>opional</em>) – if not None, the hotmap of unregstered band is shown.
+Defaults to None.</p></li>
+<li><p><strong>save_path</strong> (<em>string</em><em>, </em><em>optional</em>) – if not None, the image is saved at save_path. Defaults to None.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<span class="target" id="module-utils.parse_csv_utils"></span><dl class="py function">
+<dt class="sig sig-object py" id="utils.parse_csv_utils.parse_csv">
+<span class="sig-prename descclassname"><span class="pre">utils.parse_csv_utils.</span></span><span class="sig-name descname"><span class="pre">parse_csv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">csv_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/parse_csv_utils.html#parse_csv"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.parse_csv_utils.parse_csv" title="Permalink to this definition"></a></dt>
+<dd><p>Parse a CSV file and return a list of rows.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Csv_name<span class="colon">:</span></dt>
+<dd class="field-odd"><p>CSV name.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>(list of rows. Each row is a dictionary.)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<span class="target" id="module-utils.date_utils"></span><dl class="py function">
+<dt class="sig sig-object py" id="utils.date_utils.get_timestamp">
+<span class="sig-prename descclassname"><span class="pre">utils.date_utils.</span></span><span class="sig-name descname"><span class="pre">get_timestamp</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/date_utils.html#get_timestamp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.date_utils.get_timestamp" title="Permalink to this definition"></a></dt>
+<dd><p>Return current timestamp.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>timestamp</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.date_utils.parse_string_date">
+<span class="sig-prename descclassname"><span class="pre">utils.date_utils.</span></span><span class="sig-name descname"><span class="pre">parse_string_date</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">date_string</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/date_utils.html#parse_string_date"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.date_utils.parse_string_date" title="Permalink to this definition"></a></dt>
+<dd><p>Parse a date in string format and returns a datetime.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>date_string</strong> (<em>string</em>) – date string</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>correspondent datetime.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>datetime</p>
+</dd>
+</dl>
+</dd></dl>
+
+<span class="target" id="module-utils.l1_utils"></span><dl class="py function">
+<dt class="sig sig-object py" id="utils.l1_utils.export_band_to_tif">
+<span class="sig-prename descclassname"><span class="pre">utils.l1_utils.</span></span><span class="sig-name descname"><span class="pre">export_band_to_tif</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">band</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">crs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coords</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/l1_utils.html#export_band_to_tif"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.l1_utils.export_band_to_tif" title="Permalink to this definition"></a></dt>
+<dd><p>Export band to TIF.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>band</strong> (<em>torch.tensor</em>) – band to save.</p></li>
+<li><p><strong>crs</strong> (<em>string</em>) – epcs.</p></li>
+<li><p><strong>coords</strong> (<em>list</em>) – list of bands coordinates [UL, BL, BR, UR]. Each point is (LON, LAT).</p></li>
+<li><p><strong>save_path</strong> (<em>_type_</em>) – _description_</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.l1_utils.get_event_bounding_box">
+<span class="sig-prename descclassname"><span class="pre">utils.l1_utils.</span></span><span class="sig-name descname"><span class="pre">get_event_bounding_box</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event_hotmap</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coords_dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/l1_utils.html#get_event_bounding_box"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.l1_utils.get_event_bounding_box" title="Permalink to this definition"></a></dt>
+<dd><p>Returns the bounding box and the coordinates of the bounding box top-left,
+bottom-right corners for each clust of 1 in the event_hotmap.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>event_hotmap</strong> (<em>torch.tensor</em>) – event hotmap. Pixels = 1 indicate event.</p></li>
+<li><p><strong>coords_dict</strong> (<em>dict</em>) – {“lat” : lat, lon : “lon”}, containing coordinates for each pixel in the hotmap.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><p>bounding box
+list: list of coordinates [lat, lon] of top-left,</p>
+<blockquote>
+<div><p>bottom-right coordinates for each cluster of events in the hotmap.</p>
+</div></blockquote>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>skimage.bb</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.l1_utils.get_l1C_image_default_path">
+<span class="sig-prename descclassname"><span class="pre">utils.l1_utils.</span></span><span class="sig-name descname"><span class="pre">get_l1C_image_default_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id_event</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cfg_file_dict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">id_raw_l1_dict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">database</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'THRAWS'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">device(type='cpu')</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/l1_utils.html#get_l1C_image_default_path"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.l1_utils.get_l1C_image_default_path" title="Permalink to this definition"></a></dt>
+<dd><p>Returns th default path to the L1C cropped image including the “”id_event_name”” tif files from database.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>id_event</strong> (<em>str</em>) – event ID.</p></li>
+<li><p><strong>cfg_file_dict</strong> (<em>dict</em><em>, </em><em>optional</em>) – dictionary containing paths to the different pyraws directories.
+If None, internal CSV database will be parsed.</p></li>
+<li><p><strong>id_raw_l1_dict</strong> (<em>dict</em><em>, </em><em>optional</em>) – id-raw-l1 dictionary.
+If None, internal CSV database will be parsed.</p></li>
+<li><p><strong>database</strong> (<em>string</em><em>, </em><em>optional</em>) – database name. Defaults to “THRAWS”.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>default path to the L1C cropped image tif files.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>string</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.l1_utils.get_reprojected_bounds">
+<span class="sig-prename descclassname"><span class="pre">utils.l1_utils.</span></span><span class="sig-name descname"><span class="pre">get_reprojected_bounds</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rasterio_file</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/l1_utils.html#get_reprojected_bounds"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.l1_utils.get_reprojected_bounds" title="Permalink to this definition"></a></dt>
+<dd><p>Returns the 4 corners coordinates by reprojecting files.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>rasterio_file</strong> (<em>rasterio</em>) – rasterio file container.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>list of coordinates.
+dict: key params</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.l1_utils.read_L1C_event_from_database">
+<span class="sig-prename descclassname"><span class="pre">utils.l1_utils.</span></span><span class="sig-name descname"><span class="pre">read_L1C_event_from_database</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id_event</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bands_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cfg_file_dict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">id_raw_l1_dict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">database</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'THRAWS'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reproject_bounds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">device(type='cpu')</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/l1_utils.html#read_L1C_event_from_database"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.l1_utils.read_L1C_event_from_database" title="Permalink to this definition"></a></dt>
+<dd><p>Read specific bands of an L1C Sentinel 2 event, specified in “bands_list” from img_name.
+Every tile of the event is represented as TOA reflectance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>id_event</strong> (<em>str</em>) – event ID.</p></li>
+<li><p><strong>bands_list</strong> (<em>list</em>) – bands list.</p></li>
+<li><p><strong>cfg_file_dict</strong> (<em>dict</em><em>, </em><em>optional</em>) – dictionary containing paths to the different pyraws directories.
+If None, internal CSV database will be parsed.</p></li>
+<li><p><strong>id_raw_l1_dict</strong> (<em>dict</em><em>, </em><em>optional</em>) – id-raw-l1 dictionary. If None, internal CSV database will be parsed.</p></li>
+<li><p><strong>database</strong> (<em>string</em><em>, </em><em>optional</em>) – database name. Defaults to “THRAWS”.</p></li>
+<li><p><strong>reproject_bounds</strong> (<em>bool</em><em>, </em><em>optional</em>) – if True, bounds are reprojected to EPGS:4326.</p></li>
+<li><p><strong>verbose</strong> (<em>bool</em><em>, </em><em>optional</em>) – if True, if True, verbose mode is used. Defaults to True.</p></li>
+<li><p><strong>device</strong> (<em>torch.device</em><em>, </em><em>optional</em>) – torch device. Defaults to torch.device(“cpu”).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – impossible to find information on the database.</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><dl class="simple">
+<dt>dictionary containing [tile_name, tile].</dt><dd><p>Each tile is list of tensors, each of them is made of TOA values of the requested Sentinel 2A image bands.</p>
+</dd>
+<dt>dictionary: dictionary containing [tile_name, coordinates], where coordinates are the corners coordinates of each tile</dt><dd><p>composing the requested image.</p>
+</dd>
+<dt>dictionary: dictionary containing [tile_name, coordinates], where coordinates are the footprint’s coordinates</dt><dd><p>of each tile composing the requested image.</p>
+</dd>
+<dt>dictionary: dictionary containing [tile_name, band_filename_dict], where band_filename_dict is the dictionary</dt><dd><p>associating to every band the original jp2 file.</p>
+</dd>
+</dl>
+<p>string: expected class name.</p>
+</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dictionary</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.l1_utils.read_L1C_event_from_path">
+<span class="sig-prename descclassname"><span class="pre">utils.l1_utils.</span></span><span class="sig-name descname"><span class="pre">read_L1C_event_from_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">l1c_image_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bands_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reproject_bounds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">device(type='cpu')</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/l1_utils.html#read_L1C_event_from_path"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.l1_utils.read_L1C_event_from_path" title="Permalink to this definition"></a></dt>
+<dd><p>Read specific bands of an L1C Sentinel 2 event, specified in “bands_list” from img_name.
+Every tile of the event is represented as TOA reflectance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>id_event</strong> (<em>str</em>) – event ID.</p></li>
+<li><p><strong>bands_list</strong> (<em>list</em>) – bands list.</p></li>
+<li><p><strong>reproject_bounds</strong> (<em>bool</em><em>, </em><em>optional</em>) – if True, bounds are reprojected to EPGS:4326.</p></li>
+<li><p><strong>verbose</strong> (<em>bool</em><em>, </em><em>optional</em>) – if True, if True, verbose mode is used. Defaults to True.</p></li>
+<li><p><strong>device</strong> (<em>torch.device</em><em>, </em><em>optional</em>) – torch device. Defaults to torch.device(“cpu”).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – impossible to find information on the database.</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><dl class="simple">
+<dt>dictionary containing [tile_name, tile]. Each tile is list of tensors,</dt><dd><p>each of them is made of TOA values of the requested Sentinel 2A image bands.</p>
+</dd>
+<dt>dictionary: dictionary containing [tile_name, coordinates], where coordinates are the corners</dt><dd><p>coordinates of each tile composing the requested image.</p>
+</dd>
+<dt>dictionary: dictionary containing [tile_name, coordinates], where coordinates are the footprint’s</dt><dd><p>coordinates of each tile composing the requested image.</p>
+</dd>
+<dt>dictionary: dictionary containing [tile_name, band_filename_dict], where band_filename_dict is the</dt><dd><p>dictionary associating to every band the original jp2 file.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dictionary</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.l1_utils.read_L1C_image_from_tif">
+<span class="sig-prename descclassname"><span class="pre">utils.l1_utils.</span></span><span class="sig-name descname"><span class="pre">read_L1C_image_from_tif</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id_event</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_name_ending</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cfg_file_dict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">id_raw_l1_dict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">database</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'THRAWS'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">device(type='cpu')</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/l1_utils.html#read_L1C_image_from_tif"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.l1_utils.read_L1C_image_from_tif" title="Permalink to this definition"></a></dt>
+<dd><p>Read an L1C Sentine2 image from a cropped TIF. The image is represented as TOA reflectance.
+The image is post processed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>id_event</strong> (<em>str</em>) – event ID.</p></li>
+<li><p><strong>out_name_ending</strong> (<em>src</em><em>, </em><em>optional</em>) – optional ending for the output name. Defaults to None.</p></li>
+<li><p><strong>cfg_file_dict</strong> (<em>dict</em><em>, </em><em>optional</em>) – dictionary containing paths to the different pyraws directories.
+If None, internal CSV database will be parsed.</p></li>
+<li><p><strong>id_raw_l1_dict</strong> (<em>dict</em><em>, </em><em>optional</em>) – id-raw-l1 dictionary. If None, internal CSV database will be parsed.</p></li>
+<li><p><strong>database</strong> (<em>string</em><em>, </em><em>optional</em>) – database name. Defaults to “THRAWS”.</p></li>
+<li><p><strong>device</strong> (<em>torch.device</em><em>, </em><em>optional</em>) – torch device. Defaults to torch.device(“cpu”).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – impossible to find information on the database.</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><dl class="simple">
+<dt>dictionary containing every tile composing the requested image.</dt><dd><p>Each tensor is made of TOA values of the requested Sentinel 2A image bands.</p>
+</dd>
+</dl>
+<p>dictionary: dictionary containing lat and lon for every point.
+string: expected class name.</p>
+</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dictionary</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.l1_utils.read_L1C_tile_from_path">
+<span class="sig-prename descclassname"><span class="pre">utils.l1_utils.</span></span><span class="sig-name descname"><span class="pre">read_L1C_tile_from_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tile_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bands_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reproject_bounds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">device(type='cpu')</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/l1_utils.html#read_L1C_tile_from_path"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.l1_utils.read_L1C_tile_from_path" title="Permalink to this definition"></a></dt>
+<dd><p>Read specific bands of an L1C Sentine2 tile,
+specified in “bands_list”. The tile, located at “tile_path”,
+is divided by a factor specified in the auxiliary file “auxiliary_file_path” to transform it from DN to TOA reflectance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>tile_path</strong> (<em>str</em>) – Sentinel 2 image path.</p></li>
+<li><p><strong>bands_list</strong> (<em>list</em>) – bands list.</p></li>
+<li><p><strong>reproject_bounds</strong> (<em>bool</em><em>, </em><em>optional</em>) – if True, bounds are reprojected to EPGS:4326.</p></li>
+<li><p><strong>verbose</strong> (<em>bool</em><em>, </em><em>optional</em>) – if True, if True, verbose mode is used. Defaults to True.</p></li>
+<li><p><strong>device</strong> (<em>torch.device</em><em>, </em><em>optional</em>) – torch device. Defaults to torch.device(“cpu”).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>ValueError</strong> – Impossible to open auxiliary file.</p></li>
+<li><p><strong>ValueError</strong> – Impossible to open the images with the requested bands.</p></li>
+</ul>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list of the requested Sentinel 2A image bands. Each band is a torch.tensor containing TOA values.
+list: list of tile’s corners’ coordinates extracted from metadata.
+list: list of tile’s footprint’s coordinates extracted from metadata.
+dict: bands_filename_dict</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.l1_utils.reproject_raster">
+<span class="sig-prename descclassname"><span class="pre">utils.l1_utils.</span></span><span class="sig-name descname"><span class="pre">reproject_raster</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rasterio_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_filename</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/l1_utils.html#reproject_raster"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.l1_utils.reproject_raster" title="Permalink to this definition"></a></dt>
+<dd><p>Returns the reprojected raster.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>rasterio_file</strong> (<em>rasterio</em>) – rasterio file container.</p></li>
+<li><p><strong>output_filename</strong> (<em>str</em>) – output_filename of the reprojected raster.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>reprojected raster</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>raster</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.l1_utils.swap_latlon">
+<span class="sig-prename descclassname"><span class="pre">utils.l1_utils.</span></span><span class="sig-name descname"><span class="pre">swap_latlon</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">poly</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/l1_utils.html#swap_latlon"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.l1_utils.swap_latlon" title="Permalink to this definition"></a></dt>
+<dd><p>Function that swaps latitude and logitude values
+:param poly: list of points coordinates
+:type poly: list</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list of points coordinates swapped.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>poly (list)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<span class="target" id="module-utils.shape_utils"></span><dl class="py function">
+<dt class="sig sig-object py" id="utils.shape_utils.create_polygon_from_coordinates">
+<span class="sig-prename descclassname"><span class="pre">utils.shape_utils.</span></span><span class="sig-name descname"><span class="pre">create_polygon_from_coordinates</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lon</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">center_distance_x</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">center_distance_y</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">14000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">json_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/shape_utils.html#create_polygon_from_coordinates"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.shape_utils.create_polygon_from_coordinates" title="Permalink to this definition"></a></dt>
+<dd><p>Creates a rectangular polygon from coordinates (lat, lon). If json_name is not None, the polygon is saved as JSON file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>lat</strong> (<em>float</em>) – center latitude.</p></li>
+<li><p><strong>lon</strong> (<em>float</em>) – center longitude.</p></li>
+<li><p><strong>center_distance_x</strong> (<em>int</em><em>, </em><em>optional</em>) – Horizontal distance from the center in m. Defaults to 5000.</p></li>
+<li><p><strong>center_distance_y</strong> (<em>int</em><em>, </em><em>optional</em>) – Vertical distance from the center in m. Defaults to 14000.</p></li>
+<li><p><strong>json_name</strong> (<em>str</em><em>, </em><em>optional</em>) – output JSON file name. If None, no file is created. Defaults to None.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>polygon dict {“SW” : (lat, lon), “NW” : (lat, lon), “NE” : (lat, lon), “SE” : (lat, lon)}</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.shape_utils.create_rectangular_polygon">
+<span class="sig-prename descclassname"><span class="pre">utils.shape_utils.</span></span><span class="sig-name descname"><span class="pre">create_rectangular_polygon</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">center_coordinates</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">center_distance_x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">center_distance_y</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/shape_utils.html#create_rectangular_polygon"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.shape_utils.create_rectangular_polygon" title="Permalink to this definition"></a></dt>
+<dd><p>Creates a rectangular polygon from coordinates (lat, lon).
+:param center_coordinates: center coordinates {“lat” : lat, “lon” : lon}
+:type center_coordinates: dict
+:param center_distance_x: Horizontal distance from the center in m. Defaults to 5000.
+:type center_distance_x: int, optional
+:param center_distance_y: Vertical distance from the center in m. Defaults to 14000.
+:type center_distance_y: int, optional</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>polygon dict {“SW” : (lat, lon), “NW” : (lat, lon), “NE” : (lat, lon), “SE” : (lat, lon)}</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.shape_utils.get_granules_polys">
+<span class="sig-prename descclassname"><span class="pre">utils.shape_utils.</span></span><span class="sig-name descname"><span class="pre">get_granules_polys</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">requested_bands</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">event_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/shape_utils.html#get_granules_polys"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.shape_utils.get_granules_polys" title="Permalink to this definition"></a></dt>
+<dd><p>Returns the polygons over bands coordinates and correspondent indices.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>requested_bands</strong> (<em>list</em>) – requested bands.</p></li>
+<li><p><strong>event_name</strong> (<em>st</em>) – event ID.</p></li>
+<li><p><strong>device</strong> (<em>torch.device</em>) – device.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>{granule_name : polygon}
+dict: {granule_name (e.g., granule_0_STACKED_T_granule_1) : index of granules stacked along track}</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<span class="target" id="module-utils.constants"></span><span class="target" id="module-utils.raw_utils"></span><dl class="py function">
+<dt class="sig sig-object py" id="utils.raw_utils.export_band_to_tif">
+<span class="sig-prename descclassname"><span class="pre">utils.raw_utils.</span></span><span class="sig-name descname"><span class="pre">export_band_to_tif</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">band</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coords</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/raw_utils.html#export_band_to_tif"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.raw_utils.export_band_to_tif" title="Permalink to this definition"></a></dt>
+<dd><p>Export band to TIF.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>band</strong> (<em>torch.tensor</em>) – band to save.</p></li>
+<li><p><strong>coords</strong> (<em>list</em>) – list of bands coordinates [UL, BL, BR, UR]. Each point is (LON, LAT).</p></li>
+<li><p><strong>save_path</strong> (<em>str</em>) – save path.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.raw_utils.find_granules_names">
+<span class="sig-prename descclassname"><span class="pre">utils.raw_utils.</span></span><span class="sig-name descname"><span class="pre">find_granules_names</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">granules_paths</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/raw_utils.html#find_granules_names"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.raw_utils.find_granules_names" title="Permalink to this definition"></a></dt>
+<dd><p>Extract name of granules from granules path.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>granules_paths</strong> (<em>list</em>) – list of paths to the granules.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>list of granule names.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.raw_utils.get_bands_shift">
+<span class="sig-prename descclassname"><span class="pre">utils.raw_utils.</span></span><span class="sig-name descname"><span class="pre">get_bands_shift</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bands_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">satellite</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">detector_number</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">downsampling</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cfg_file_dict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/raw_utils.html#get_bands_shift"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.raw_utils.get_bands_shift" title="Permalink to this definition"></a></dt>
+<dd><p>It returns the number of backward shift pixels of the various bands with respect to the first band in the list.
+Negative shift means the bands shall translate forward.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>bands_list</strong> (<em>list</em>) – list of bands</p></li>
+<li><p><strong>satellite</strong> (<em>str</em><em>, </em><em>optional</em>) – “S2A” or “S2B” respectively for “Sentinel-2A” data and “Sentinel-2B” data.</p></li>
+<li><p><strong>detector_number</strong> (<em>int</em>) – Detectorn number.</p></li>
+<li><p><strong>downsampling</strong> (<em>boolean</em><em>, </em><em>optional</em>) – if True, shift values for downsampled bands of the chosen satellite are used.
+Otherwise, values for upsampled bands are used. Defaults to True.</p></li>
+<li><p><strong>cfg_file_dict</strong> (<em>dict</em><em>, </em><em>optional</em>) – dictionary containing paths to the different pyraws directories.
+If None, internal CSV database will be parsed. Defaults to None.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>list of relative pixel shift compared to the first band.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.raw_utils.get_granule_px_length">
+<span class="sig-prename descclassname"><span class="pre">utils.raw_utils.</span></span><span class="sig-name descname"><span class="pre">get_granule_px_length</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_stacked_granules</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">satellite</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">detector_number</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cropped_pixels_along</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/raw_utils.html#get_granule_px_length"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.raw_utils.get_granule_px_length" title="Permalink to this definition"></a></dt>
+<dd><p>Returns the length of a granule in px
+:param n_stacked_granules: number of stacked granules.
+:type n_stacked_granules: int
+:param satellite: “S2A” or “S2B” respectively for “Sentinel-2A” data and “Sentinel-2B” data.
+:type satellite: str, optional
+:param detector_number: Detectorn number.
+:type detector_number: int
+:param cropped_pixels_along: Number of cropped pixels along the along-track direction
+:type cropped_pixels_along: int</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Length of a granule in px.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.raw_utils.read_Raw_event_from_database">
+<span class="sig-prename descclassname"><span class="pre">utils.raw_utils.</span></span><span class="sig-name descname"><span class="pre">read_Raw_event_from_database</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id_event</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bands_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cfg_file_dict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">id_raw_l1_dict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">database</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'THRAWS'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">device(type='cpu')</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/raw_utils.html#read_Raw_event_from_database"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.raw_utils.read_Raw_event_from_database" title="Permalink to this definition"></a></dt>
+<dd><p>Read specific bands of the Raw Sentinel-2 event “”id_event””, specified in “bands_list”.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>id_event</strong> (<em>str</em>) – event ID.</p></li>
+<li><p><strong>bands_list</strong> (<em>list</em>) – bands list.</p></li>
+<li><p><strong>cfg_file_dict</strong> (<em>dict</em><em>, </em><em>optional</em>) – dictionary containing paths to the different pyraws directories.
+If None, internal CSV database will be parsed.</p></li>
+<li><p><strong>id_raw_l1_dict</strong> (<em>dict</em><em>, </em><em>optional</em>) – id-raw-l1 dictionary. If None, internal CSV database will be parsed.</p></li>
+<li><p><strong>database</strong> (<em>string</em><em>, </em><em>optional</em>) – database name. Defaults to “THRAWS”.</p></li>
+<li><p><strong>verbose</strong> (<em>bool</em><em>, </em><em>optional</em>) – if True, if True, verbose mode is used. Defaults to True.</p></li>
+<li><p><strong>device</strong> (<em>torch.device</em><em>, </em><em>optional</em>) – torch device. Defaults to torch.device(“cpu”).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – impossible to find information on the database.</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tensor containing TOA values of the requested Sentinel 2A image bands.
+string: expected class name.
+list: list of granules names.
+list: list of raw data useful granules.
+list: list of complementary raw data granules (to coregister without 0).
+list: list of polygon coordinates for each granule.
+list: list of cloud coverage percentage for each granule.
+dict: {useful granule : bbox}.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>torch.tensor</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.raw_utils.read_Raw_event_from_path">
+<span class="sig-prename descclassname"><span class="pre">utils.raw_utils.</span></span><span class="sig-name descname"><span class="pre">read_Raw_event_from_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dir_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bands_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">device(type='cpu')</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/raw_utils.html#read_Raw_event_from_path"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.raw_utils.read_Raw_event_from_path" title="Permalink to this definition"></a></dt>
+<dd><p>Read specific bands of an Raw Sentine2 event, specified in “bands_list”.
+The image contains several granules  at “dir_path”.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dir_path</strong> (<em>str</em>) – Sentinel 2 Raw image path.</p></li>
+<li><p><strong>bands_list</strong> (<em>list</em>) – bands list.</p></li>
+<li><p><strong>verbose</strong> (<em>bool</em><em>, </em><em>optional</em>) – if True, if True, verbose mode is used. Defaults to True.</p></li>
+<li><p><strong>device</strong> (<em>torch.device</em><em>, </em><em>optional</em>) – torch device. Defaults to torch.device(“cpu”).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – Impossible to open the events with the requested bands.</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list of G granules, each of them is a list of the requested Sentinel 2A bands.
+list: list of granules paths.
+list: list of granules polygon coordinates.
+list: list of cloud coverage percentages.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.raw_utils.read_Raw_granule">
+<span class="sig-prename descclassname"><span class="pre">utils.raw_utils.</span></span><span class="sig-name descname"><span class="pre">read_Raw_granule</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">granule_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bands_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">device(type='cpu')</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/raw_utils.html#read_Raw_granule"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.raw_utils.read_Raw_granule" title="Permalink to this definition"></a></dt>
+<dd><p>Read specific bands of an Raw Sentine2 granule, specified in “bands_list”.
+The image contains several granules  at “dir_path”.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>granule_path</strong> (<em>str</em>) – Sentinel 2 Raw granule path.</p></li>
+<li><p><strong>bands_list</strong> (<em>list</em>) – bands list.</p></li>
+<li><p><strong>verbose</strong> (<em>bool</em><em>, </em><em>optional</em>) – if True, if True, verbose mode is used. Defaults to True.</p></li>
+<li><p><strong>device</strong> (<em>torch.device</em><em>, </em><em>optional</em>) – torch device. Defaults to torch.device(“cpu”).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – Impossible to open the images with the requested bands.</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>it includes G granules, each of them is a list including  torch.tensor for each Sentinel 2A image band.
+list: metadata including original polygon coordinates.
+list: metadata including polygon cloud cover percentage.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.raw_utils.shift_point_coordinates">
+<span class="sig-prename descclassname"><span class="pre">utils.raw_utils.</span></span><span class="sig-name descname"><span class="pre">shift_point_coordinates</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">point_coordinates</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">point_distance_y</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/raw_utils.html#shift_point_coordinates"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.raw_utils.shift_point_coordinates" title="Permalink to this definition"></a></dt>
+<dd><p>Vertical shift of point coordinates.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>point_coordinates</strong> (<em>list</em>) – [lan, lon] - point coordinates.</p></li>
+<li><p><strong>point_distance_y</strong> (<em>int</em>) – vertical shift. Use negative for shift towards north.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>coordinates of the shifted point.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.raw_utils.swap_latlon">
+<span class="sig-prename descclassname"><span class="pre">utils.raw_utils.</span></span><span class="sig-name descname"><span class="pre">swap_latlon</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">poly</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/raw_utils.html#swap_latlon"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.raw_utils.swap_latlon" title="Permalink to this definition"></a></dt>
+<dd><p>Function that swaps latitude and logitude values
+:param poly: list of points coordinates
+:type poly: list</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list of points coordinates swapped.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>poly (list)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<span class="target" id="module-utils.band_shape_utils"></span><dl class="py function">
+<dt class="sig sig-object py" id="utils.band_shape_utils.image_band_resize">
+<span class="sig-prename descclassname"><span class="pre">utils.band_shape_utils.</span></span><span class="sig-name descname"><span class="pre">image_band_resize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">img_upsample_band</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">band_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">upsampled_img_spatial_resolution</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interpolate_mode</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/band_shape_utils.html#image_band_resize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.band_shape_utils.image_band_resize" title="Permalink to this definition"></a></dt>
+<dd><p>Resize an upsampled image band to a the orginal spatial resolution through an interpolate mode.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>img_upsample_band</strong> (<em>torch.tensor</em>) – upsampled image to resize</p></li>
+<li><p><strong>band_name</strong> (<em>string</em>) – band name</p></li>
+<li><p><strong>upsampled_img_spatial_resolution</strong> (<em>float</em>) – spatial resolution of the input upsampled image.</p></li>
+<li><p><strong>interpolate_mode</strong> (<em>string</em>) – interpolated mode.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>ValueError</strong> – unsupported band name.</p></li>
+<li><p><strong>ValueError</strong> – unsupported interpolated mode.</p></li>
+</ul>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>resized image.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>torch.tensor</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.band_shape_utils.image_band_upsample">
+<span class="sig-prename descclassname"><span class="pre">utils.band_shape_utils.</span></span><span class="sig-name descname"><span class="pre">image_band_upsample</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">img_band</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">band_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_spatial_resolution</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">upsample_mode</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/band_shape_utils.html#image_band_upsample"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.band_shape_utils.image_band_upsample" title="Permalink to this definition"></a></dt>
+<dd><p>Upsample an image band to a target spatial resolution through an upsample mode.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>img_band</strong> (<em>torch.tensor</em>) – image band.</p></li>
+<li><p><strong>band_name</strong> (<em>string</em>) – band name.</p></li>
+<li><p><strong>target_spatial_resolution</strong> (<em>float</em>) – target resolution (m).</p></li>
+<li><p><strong>upsample_mode</strong> (<em>string</em>) – band name.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>ValueError</strong> – unsupported band name.</p></li>
+<li><p><strong>ValueError</strong> – unsupported upsample mode.</p></li>
+</ul>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>upsampled band.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>torch.tensor</p>
+</dd>
+</dl>
+</dd></dl>
+
+<span class="target" id="module-utils.database_utils"></span><dl class="py class">
+<dt class="sig sig-object py" id="utils.database_utils.DatabaseHandler">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">utils.database_utils.</span></span><span class="sig-name descname"><span class="pre">DatabaseHandler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">db_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">datapath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'/Users/robertodelprete/Desktop/PyRawS/data'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/database_utils.html#DatabaseHandler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.database_utils.DatabaseHandler" title="Permalink to this definition"></a></dt>
+<dd><p>Creates an Raw-L1C csv database for the APIs.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="utils.database_utils.DatabaseHandler.fetcher">
+<span class="sig-name descname"><span class="pre">fetcher</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/database_utils.html#DatabaseHandler.fetcher"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.database_utils.DatabaseHandler.fetcher" title="Permalink to this definition"></a></dt>
+<dd><p>Fetches the products in the the database.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="utils.database_utils.DatabaseHandler.parser">
+<span class="sig-name descname"><span class="pre">parser</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/database_utils.html#DatabaseHandler.parser"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.database_utils.DatabaseHandler.parser" title="Permalink to this definition"></a></dt>
+<dd><p>Parses all the Raw products and creates the database.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="utils.database_utils.DatabaseHandler.single_parser">
+<span class="sig-name descname"><span class="pre">single_parser</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">raw_Event_folderpath</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/database_utils.html#DatabaseHandler.single_parser"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.database_utils.DatabaseHandler.single_parser" title="Permalink to this definition"></a></dt>
+<dd><p>Parses a single Raw product.
+:param raw_Event_folderpath: datapath of the Raw event.
+:type raw_Event_folderpath: str</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.database_utils.get_cfg_file_dict">
+<span class="sig-prename descclassname"><span class="pre">utils.database_utils.</span></span><span class="sig-name descname"><span class="pre">get_cfg_file_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/database_utils.html#get_cfg_file_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.database_utils.get_cfg_file_dict" title="Permalink to this definition"></a></dt>
+<dd><p>Returns a dictionary containing paths to the different pyraws directories.
+:returns: cfg file dict.
+:rtype: dict</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.database_utils.get_event_granule_bb_dict">
+<span class="sig-prename descclassname"><span class="pre">utils.database_utils.</span></span><span class="sig-name descname"><span class="pre">get_event_granule_bb_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">database</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'THRAWS'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cfg_file_dict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/database_utils.html#get_event_granule_bb_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.database_utils.get_event_granule_bb_dict" title="Permalink to this definition"></a></dt>
+<dd><p>Function to extract the dictionary {useful_granule : bounding_box_list} from the bbox_str got from the database.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>event_id</strong> (<em>string</em>) – event ID.</p></li>
+<li><p><strong>database</strong> (<em>string</em><em>, </em><em>optional</em>) – database name. Defaults to “”THRAWS””.</p></li>
+<li><p><strong>cfg_file_dict</strong> (<em>dict</em><em>, </em><em>optional</em>) – dictionary containing paths to the different pyraws directories.
+If None, internal CSV database will be parsed.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>{useful_granule : bounding_box_list} for the requested event.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.database_utils.get_event_info">
+<span class="sig-prename descclassname"><span class="pre">utils.database_utils.</span></span><span class="sig-name descname"><span class="pre">get_event_info</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cfg_file_dict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">id_raw_l1_dict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">database</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'THRAWS'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/database_utils.html#get_event_info"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.database_utils.get_event_info" title="Permalink to this definition"></a></dt>
+<dd><p>From the event_ID, it returns raw directory path, the path to the l1 image, to the L1C auxiliary file,
+and the class of the image. If no <a href="#id1"><span class="problematic" id="id2">`</span></a>id_raw_l1_dict`is provided, it is done by parsing the internal CSV database file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>event_id</strong> (<em>string</em>) – image name.</p></li>
+<li><p><strong>cfg_file_dict</strong> (<em>dict</em><em>, </em><em>optional</em>) – dictionary containing paths to the different pyraws directories.
+If None, internal CSV database will be parsed.</p></li>
+<li><p><strong>id_raw_l1_dict</strong> (<em>dict</em><em>, </em><em>optional</em>) – id-raw-l1 dictionary. If None, internal CSV database will be parsed.</p></li>
+<li><p><strong>database</strong> (<em>string</em><em>, </em><em>optional</em>) – database name. Defaults to “THRAWS”.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If the image is not in the database.</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>path to the Raw image.
+string: path to the L1 image.
+string: path to the post-processed L1C tiff file.
+string: expected class.
+list: list of raw useful tiles.
+list: list of complementary raw tiles (to coregister without 0).
+dict: event coordinates dict {“lat” : lat, “lon” : lon}.
+list: list of the requested polygon coordinates.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>string</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.database_utils.get_events_list">
+<span class="sig-prename descclassname"><span class="pre">utils.database_utils.</span></span><span class="sig-name descname"><span class="pre">get_events_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">database</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'THRAWS'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cfg_file_dict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/database_utils.html#get_events_list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.database_utils.get_events_list" title="Permalink to this definition"></a></dt>
+<dd><p>Returns the list of events in the database.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>database</strong> (<em>string</em><em>, </em><em>optional</em>) – database name. Defaults to “”THRAWS””.</p></li>
+<li><p><strong>cfg_file_dict</strong> (<em>dict</em><em>, </em><em>optional</em>) – dictionary containing paths to the different pyraws directories.
+If None, internal CSV database will be parsed.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>list of events.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.database_utils.get_id_raw_l1_dict">
+<span class="sig-prename descclassname"><span class="pre">utils.database_utils.</span></span><span class="sig-name descname"><span class="pre">get_id_raw_l1_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">database</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'THRAWS'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cfg_file_dict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/database_utils.html#get_id_raw_l1_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.database_utils.get_id_raw_l1_dict" title="Permalink to this definition"></a></dt>
+<dd><p>Returns a dictionary containing raw (directory name), l1c (product ID and correspondent granule) and class,
+raw useful and complementary tiles.
+:param database: database name. Defaults to “”THRAWS””.
+:type database: string, optional
+:param cfg_file_dict: dictionary containing paths to the different pyraws directories.</p>
+<blockquote>
+<div><p>If None, internal CSV database will be parsed.</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>label_raw-l1_dict</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.database_utils.get_raw_shift_lut">
+<span class="sig-prename descclassname"><span class="pre">utils.database_utils.</span></span><span class="sig-name descname"><span class="pre">get_raw_shift_lut</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">satellite</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">detector_number</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">downsampling</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cfg_file_dict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/database_utils.html#get_raw_shift_lut"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.database_utils.get_raw_shift_lut" title="Permalink to this definition"></a></dt>
+<dd><p>Get Raw shift LUT.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>satellite</strong> (<em>str</em><em>, </em><em>optional</em>) – “S2A” or “S2B” respectively for “Sentinel-2A” data and “Sentinel-2B” data.</p></li>
+<li><p><strong>detector_number</strong> (<em>int</em>) – Detectorn number.</p></li>
+<li><p><strong>downsampling</strong> (<em>boolean</em><em>, </em><em>optional</em>) – if True, shift values for downsampled bands of the chosen satellite are used.
+Otherwise, values for upsampled bands are used. Defaults to True.</p></li>
+<li><p><strong>cfg_file_dict</strong> (<em>dict</em><em>, </em><em>optional</em>) – cfg_file_dict (dict, optional): dictionary containing paths to
+the different pyraws directories. If None, internal CSV database will be parsed.
+Defaults to None.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>returns the Raw shift LUT.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="l1.html" class="btn btn-neutral float-left" title="L1" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="contacts.html" class="btn btn-neutral float-right" title="Contacts" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Roberto Del Prete, Gabriele Meoni.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

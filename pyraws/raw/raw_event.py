@@ -3,16 +3,29 @@ from termcolor import colored
 import geopy.distance
 
 
-from .raw_granule import Raw_granule
-from ..utils.constants import BANDS_RAW_SHAPE_DICT
-from ..utils.raw_utils import (
+from pyraws.raw.raw_granule import Raw_granule
+from pyraws.utils.constants import BANDS_RAW_SHAPE_DICT
+from pyraws.utils.raw_utils import (
     read_Raw_event_from_database,
     find_granules_names,
     read_Raw_event_from_path,
 )
 
 
+
 class Raw_event:
+    """Creates an raw event from a granules collection and band_names.
+    It is possible to associate an image class to the event.
+
+    Args:
+        granules_collection (list, optional): list of Raw_granule. Defaults to None.
+        bands_names (list, optional): list of band names. Defaults to None.
+        event_class (string, optional): class name. Defaults to None.
+        raw_useful_granules_idx (list, optional): list of useful granules indices. Defaults to None.
+        raw_complementary_granules_idx (list, optional): list of complementary granules indices. Defaults to None.
+        useful_granule_bounding_box_dict (dict, optional): {useful granule : bounding boxes}. Defaults to None.
+        device (torch.device, optional): device for each raw granule in the image. Defaults to torch.device("cpu").
+    """
     __device = None
     __bands_names = []
     __granules_collection = []
@@ -31,18 +44,6 @@ class Raw_event:
         useful_granule_bounding_box_dict=None,
         device=torch.device("cpu"),
     ):
-        """Creates an raw event from a granules collection and band_names.
-        It is possible to associate an image class to the event.
-
-        Args:
-            granules_collection (list, optional): list of Raw_granule. Defaults to None.
-            bands_names (list, optional): list of band names. Defaults to None.
-            event_class (string, optional): class name. Defaults to None.
-            raw_useful_granules_idx (list, optional): list of useful granules indices. Defaults to None.
-            raw_complementary_granules_idx (list, optional): list of complementary granules indices. Defaults to None.
-            useful_granule_bounding_box_dict (dict, optional): {useful granule : bounding boxes}. Defaults to None.
-            device (torch.device, optional): device for each raw granule in the image. Defaults to torch.device("cpu").
-        """
         if bands_names is None:
             self.__bands_names = []
         else:

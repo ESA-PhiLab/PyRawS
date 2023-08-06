@@ -1,6 +1,6 @@
 import geopandas as gpd
 import geopy
-from ..raw.raw_event import Raw_event
+from pyraws.raw.raw_event import Raw_event
 from shapely.geometry import Polygon
 import numpy as np
 

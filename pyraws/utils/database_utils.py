@@ -8,7 +8,7 @@ import os
 import pandas as pd
 from termcolor import colored
 import csv
-from .constants import DATABASE_FILE_DICTIONARY, BAND_NAMES_REAL_ORDER
+from pyraws.utils.constants import DATABASE_FILE_DICTIONARY, BAND_NAMES_REAL_ORDER
 from pathlib import Path
 import xml.etree.ElementTree as ET
 from shapely.geometry import Polygon

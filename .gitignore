@@ -5,6 +5,7 @@ pyraws/sys_cfg.py
 pyraws/data/*
 scripts_and_studies/Test/
 *.pkl
+*.DS_Store
 scripts_and_studies/coregistration_study/superglue_models
 pyraws/sys_config.py
 dist

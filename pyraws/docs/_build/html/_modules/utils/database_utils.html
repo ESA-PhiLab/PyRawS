@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>utils.database_utils &mdash; pyraws 0.0.3 documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/sphinx_highlight.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            pyraws
+              <img src="../../_static/PyRawS_logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">First Steps:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../configuration.html">Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../quickstart.html">Quickstart</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../API.html">API demonstration</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../database.html">Database</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../raw.html">Raw</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../l1.html">L1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../utils.html">Utils</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Useful Info:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../contacts.html">Contacts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../glossario.html">Glossary</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">pyraws</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">utils.database_utils</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for utils.database_utils</h1><div class="highlight"><pre>
+<span></span><span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">pyraws.sys_cfg</span> <span class="kn">import</span> <span class="n">PYRAWS_HOME_PATH</span><span class="p">,</span> <span class="n">DATA_PATH</span>
+<span class="k">except</span><span class="p">:</span>  <span class="c1"># noqa: E722</span>
+    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+        <span class="s2">&quot;sys_cfg.py not found. Please, refer to README.md for instructions on how to generate it.&quot;</span>
+    <span class="p">)</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">termcolor</span> <span class="kn">import</span> <span class="n">colored</span>
+<span class="kn">import</span> <span class="nn">csv</span>
+<span class="kn">from</span> <span class="nn">pyraws.utils.constants</span> <span class="kn">import</span> <span class="n">DATABASE_FILE_DICTIONARY</span><span class="p">,</span> <span class="n">BAND_NAMES_REAL_ORDER</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span> <span class="nn">xml.etree.ElementTree</span> <span class="k">as</span> <span class="nn">ET</span>
+<span class="kn">from</span> <span class="nn">shapely.geometry</span> <span class="kn">import</span> <span class="n">Polygon</span>
+<span class="kn">from</span> <span class="nn">ast</span> <span class="kn">import</span> <span class="n">literal_eval</span>
+
+
+<div class="viewcode-block" id="DatabaseHandler"><a class="viewcode-back" href="../../utils.html#utils.database_utils.DatabaseHandler">[docs]</a><span class="k">class</span> <span class="nc">DatabaseHandler</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Creates an Raw-L1C csv database for the APIs.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">db_name</span><span class="p">,</span> <span class="n">datapath</span><span class="o">=</span><span class="n">DATA_PATH</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initializes the Raw-L1C database.</span>
+<span class="sd">        Args:</span>
+<span class="sd">            db_name (str): The name of the dataset as named in the data folder.</span>
+<span class="sd">            datapath (str, optional): Paht to the folder where the database is located.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">datapath</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">datapath</span><span class="p">)</span> <span class="o">/</span> <span class="n">db_name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fetcher</span><span class="p">()</span>
+
+        <span class="n">columns</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s2">&quot;ID_event&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Start&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;End&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Sat&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;class&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Polygon&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Raw_useful_granules&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Raw_complementary_granules&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;raw_files&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;l1c_files&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;bbox_list&quot;</span><span class="p">,</span>
+        <span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">db</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="n">x</span><span class="p">:</span> <span class="p">[]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">columns</span><span class="p">})</span>
+
+<div class="viewcode-block" id="DatabaseHandler.fetcher"><a class="viewcode-back" href="../../utils.html#utils.database_utils.DatabaseHandler.fetcher">[docs]</a>    <span class="k">def</span> <span class="nf">fetcher</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Fetches the products in the the database.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Raw</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">datapath</span> <span class="o">/</span> <span class="s2">&quot;raw&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">L1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">datapath</span> <span class="o">/</span> <span class="s2">&quot;l1c&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">L1_products</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">L1</span><span class="o">.</span><span class="n">iterdir</span><span class="p">()</span> <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">is_dir</span><span class="p">()]</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Found L1c products: &quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">L1_products</span><span class="p">))</span>
+        <span class="k">except</span><span class="p">:</span>  <span class="c1"># noqa: E722</span>
+            <span class="nb">print</span><span class="p">(</span>
+                <span class="s2">&quot;L1 folder not found. If this behaviour is not desidered, please, refer to README.md for instructions.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Fetching the database...&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Raw_products</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">Raw</span><span class="o">.</span><span class="n">iterdir</span><span class="p">()</span> <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">is_dir</span><span class="p">()]</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Raw_products</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;No Raw products found. Aborting...&quot;</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Completed.&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="DatabaseHandler.single_parser"><a class="viewcode-back" href="../../utils.html#utils.database_utils.DatabaseHandler.single_parser">[docs]</a>    <span class="k">def</span> <span class="nf">single_parser</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">raw_Event_folderpath</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Parses a single Raw product.</span>
+<span class="sd">        Args:</span>
+<span class="sd">            raw_Event_folderpath (str): datapath of the Raw event.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">id_event</span> <span class="o">=</span> <span class="n">raw_Event_folderpath</span><span class="o">.</span><span class="n">name</span>
+
+        <span class="k">def</span> <span class="nf">gain_xml</span><span class="p">(</span><span class="n">prod_path</span><span class="p">:</span> <span class="n">Path</span><span class="p">):</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Helper function to get an xml file.</span>
+<span class="sd">            Args:</span>
+<span class="sd">                prod_path (str): datapath of the Raw event.</span>
+<span class="sd">            Returns:</span>
+<span class="sd">                Invetory Metadata xml path of one of the Raw granules.</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="n">xmls</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="n">x</span>
+                <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">prod_path</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">&quot;**/*&quot;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;Inventory_Metadata.xml&quot;</span><span class="p">)</span>
+            <span class="p">]</span>
+            <span class="k">return</span> <span class="n">xmls</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="k">def</span> <span class="nf">meta_extract</span><span class="p">(</span><span class="n">xml_path</span><span class="p">):</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Helper function to get an xml file.</span>
+<span class="sd">            Args:</span>
+<span class="sd">                xml_path (str): datapath of the Raw event.</span>
+<span class="sd">            Returns:</span>
+<span class="sd">                meta (dict): metadata dictionary containing useful information for the event.</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="n">tree</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">xml_path</span><span class="p">)</span>
+            <span class="n">root</span> <span class="o">=</span> <span class="n">tree</span><span class="o">.</span><span class="n">getroot</span><span class="p">()</span>
+            <span class="n">keys</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">root</span><span class="o">.</span><span class="n">attrib</span><span class="o">.</span><span class="n">keys</span><span class="p">()]</span>
+            <span class="c1"># Find the xmlns attribute</span>
+            <span class="n">xsi_xmlns</span> <span class="o">=</span> <span class="s2">&quot;{&quot;</span> <span class="o">+</span> <span class="n">root</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="n">keys</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">+</span> <span class="s2">&quot;}&quot;</span>
+            <span class="n">info</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="n">root</span><span class="o">.</span><span class="n">iter</span><span class="p">():</span>
+                <span class="k">for</span> <span class="n">query</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;Satellite_Code&quot;</span><span class="p">]:</span>
+                    <span class="k">if</span> <span class="n">child</span><span class="o">.</span><span class="n">tag</span><span class="o">.</span><span class="n">removeprefix</span><span class="p">(</span><span class="n">xsi_xmlns</span><span class="p">)</span> <span class="o">==</span> <span class="n">query</span><span class="p">:</span>
+                        <span class="n">info</span><span class="p">[</span><span class="n">query</span><span class="p">]</span> <span class="o">=</span> <span class="n">child</span><span class="o">.</span><span class="n">text</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">geo_localization</span> <span class="o">=</span> <span class="n">root</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;.//</span><span class="si">{</span><span class="n">xsi_xmlns</span><span class="si">}</span><span class="s2">Geographic_Localization&quot;</span><span class="p">)</span>
+                <span class="n">points</span> <span class="o">=</span> <span class="n">geo_localization</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;.//</span><span class="si">{</span><span class="n">xsi_xmlns</span><span class="si">}</span><span class="s2">Geo_Pnt&quot;</span><span class="p">)</span>
+
+                <span class="c1"># extract latitude and longitude from each point</span>
+                <span class="n">coordinates</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="k">for</span> <span class="n">point</span> <span class="ow">in</span> <span class="n">points</span><span class="p">:</span>
+                    <span class="n">latitude</span> <span class="o">=</span> <span class="n">point</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">xsi_xmlns</span><span class="si">}</span><span class="s2">LATITUDE&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span>
+                    <span class="n">longitude</span> <span class="o">=</span> <span class="n">point</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">xsi_xmlns</span><span class="si">}</span><span class="s2">LONGITUDE&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span>
+                    <span class="n">coordinates</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="nb">float</span><span class="p">(</span><span class="n">longitude</span><span class="p">),</span> <span class="nb">float</span><span class="p">(</span><span class="n">latitude</span><span class="p">)])</span>
+
+                <span class="n">polygon</span> <span class="o">=</span> <span class="n">Polygon</span><span class="p">(</span><span class="n">coordinates</span><span class="p">)</span>
+                <span class="n">info</span><span class="p">[</span><span class="s2">&quot;polygon&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">polygon</span><span class="o">.</span><span class="n">wkt</span>
+            <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+                <span class="n">info</span><span class="p">[</span><span class="s2">&quot;polygon&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">return</span> <span class="n">info</span>
+
+        <span class="n">xml_path</span> <span class="o">=</span> <span class="n">gain_xml</span><span class="p">(</span><span class="n">raw_Event_folderpath</span><span class="p">)</span>
+        <span class="n">meta</span> <span class="o">=</span> <span class="n">meta_extract</span><span class="p">(</span><span class="n">xml_path</span><span class="p">)</span>
+        <span class="n">raw_files</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">raw_Event_folderpath</span><span class="o">.</span><span class="n">iterdir</span><span class="p">()]</span>
+
+        <span class="n">l1c_files</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">L1_products</span>
+        <span class="n">l1c_event_folder</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">l1c_files</span> <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">id_event</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">l1c_event_folder</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">l1c_subfiles</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">l1c_event_folder</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">iterdir</span><span class="p">()</span> <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">is_dir</span><span class="p">()]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">l1c_subfiles</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;event&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">raw_Event_folderpath</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;l1c_files&quot;</span><span class="p">:</span> <span class="n">l1c_subfiles</span><span class="p">,</span>
+            <span class="s2">&quot;raw_files&quot;</span><span class="p">:</span> <span class="n">raw_files</span><span class="p">,</span>
+            <span class="s2">&quot;Satellite&quot;</span><span class="p">:</span> <span class="n">meta</span><span class="p">[</span><span class="s2">&quot;Satellite_Code&quot;</span><span class="p">],</span>
+            <span class="s2">&quot;poly&quot;</span><span class="p">:</span> <span class="n">meta</span><span class="p">[</span><span class="s2">&quot;polygon&quot;</span><span class="p">],</span>
+        <span class="p">}</span></div>
+
+<div class="viewcode-block" id="DatabaseHandler.parser"><a class="viewcode-back" href="../../utils.html#utils.database_utils.DatabaseHandler.parser">[docs]</a>    <span class="k">def</span> <span class="nf">parser</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Parses all the Raw products and creates the database.&quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">raw_path</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Raw_products</span><span class="p">):</span>
+            <span class="n">meta</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">single_parser</span><span class="p">(</span><span class="n">raw_path</span><span class="p">)</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s2">&quot;ID_event&quot;</span><span class="p">:</span> <span class="n">meta</span><span class="p">[</span><span class="s2">&quot;event&quot;</span><span class="p">],</span>
+                <span class="s2">&quot;Start&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+                <span class="s2">&quot;End&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+                <span class="s2">&quot;Sat&quot;</span><span class="p">:</span> <span class="n">meta</span><span class="p">[</span><span class="s2">&quot;Satellite&quot;</span><span class="p">],</span>
+                <span class="s2">&quot;class&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+                <span class="s2">&quot;Polygon&quot;</span><span class="p">:</span> <span class="n">meta</span><span class="p">[</span><span class="s2">&quot;poly&quot;</span><span class="p">],</span>
+                <span class="s2">&quot;Raw_useful_granules&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+                <span class="s2">&quot;Raw_complementary_granules&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+                <span class="s2">&quot;Raw_files&quot;</span><span class="p">:</span> <span class="n">meta</span><span class="p">[</span><span class="s2">&quot;raw_files&quot;</span><span class="p">],</span>
+                <span class="s2">&quot;l1c_files&quot;</span><span class="p">:</span> <span class="n">meta</span><span class="p">[</span><span class="s2">&quot;l1c_files&quot;</span><span class="p">],</span>
+                <span class="s2">&quot;bbox_list&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="p">}</span>
+            <span class="n">new_row</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">orient</span><span class="o">=</span><span class="s2">&quot;index&quot;</span><span class="p">)</span>
+            <span class="n">new_row</span> <span class="o">=</span> <span class="n">new_row</span><span class="o">.</span><span class="n">transpose</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">db</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="p">,</span> <span class="n">new_row</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">db</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="get_cfg_file_dict"><a class="viewcode-back" href="../../utils.html#utils.database_utils.get_cfg_file_dict">[docs]</a><span class="k">def</span> <span class="nf">get_cfg_file_dict</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns a dictionary containing paths to the different pyraws directories.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        dict: cfg file dict.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">PYRAWS_PACKAGE_PATH</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">PYRAWS_HOME_PATH</span><span class="p">,</span> <span class="s2">&quot;pyraws&quot;</span><span class="p">)</span>
+    <span class="n">SCRIPTS_PATH</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">PYRAWS_PACKAGE_PATH</span><span class="p">,</span> <span class="s2">&quot;scripts&quot;</span><span class="p">)</span>
+    <span class="n">NOTEBOOKS_PATH</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">PYRAWS_PACKAGE_PATH</span><span class="p">,</span> <span class="s2">&quot;notebooks&quot;</span><span class="p">)</span>
+
+    <span class="n">SCRIPTS_PATH</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">PYRAWS_PACKAGE_PATH</span><span class="p">,</span> <span class="s2">&quot;scripts&quot;</span><span class="p">)</span>
+    <span class="n">DATABASE_PATH</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">PYRAWS_PACKAGE_PATH</span><span class="p">,</span> <span class="s2">&quot;database&quot;</span><span class="p">)</span>
+
+    <span class="n">GEOIDS_PATH</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">PYRAWS_PACKAGE_PATH</span><span class="p">,</span> <span class="s2">&quot;geoids&quot;</span><span class="p">)</span>
+
+    <span class="n">paths_list</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">SCRIPTS_PATH</span><span class="p">,</span>
+        <span class="n">PYRAWS_PACKAGE_PATH</span><span class="p">,</span>
+        <span class="n">PYRAWS_HOME_PATH</span><span class="p">,</span>
+        <span class="n">DATA_PATH</span><span class="p">,</span>
+        <span class="n">NOTEBOOKS_PATH</span><span class="p">,</span>
+        <span class="n">SCRIPTS_PATH</span><span class="p">,</span>
+        <span class="n">DATABASE_PATH</span><span class="p">,</span>
+        <span class="n">GEOIDS_PATH</span><span class="p">,</span>
+    <span class="p">]</span>
+    <span class="n">cfg_dir_list</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s2">&quot;scripts&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;PYRAWS_pkg&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;pyraws&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;data&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;notebooks&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;scripts&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;database&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;geoids&quot;</span><span class="p">,</span>
+    <span class="p">]</span>
+    <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">cfg_dir_list</span><span class="p">,</span> <span class="n">paths_list</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="get_raw_shift_lut"><a class="viewcode-back" href="../../utils.html#utils.database_utils.get_raw_shift_lut">[docs]</a><span class="k">def</span> <span class="nf">get_raw_shift_lut</span><span class="p">(</span>
+    <span class="n">satellite</span><span class="p">,</span> <span class="n">detector_number</span><span class="p">,</span> <span class="n">downsampling</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">cfg_file_dict</span><span class="o">=</span><span class="kc">None</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get Raw shift LUT.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        satellite (str, optional): &quot;S2A&quot; or &quot;S2B&quot; respectively for &quot;Sentinel-2A&quot; data and &quot;Sentinel-2B&quot; data.</span>
+<span class="sd">        detector_number (int): Detectorn number.</span>
+<span class="sd">        downsampling (boolean, optional): if True, shift values for downsampled bands of the chosen satellite are used.</span>
+<span class="sd">                                        Otherwise, values for upsampled bands are used. Defaults to True.</span>
+<span class="sd">        cfg_file_dict (dict, optional): cfg_file_dict (dict, optional): dictionary containing paths to</span>
+<span class="sd">                                        the different pyraws directories. If None, internal CSV database will be parsed.</span>
+<span class="sd">                                        Defaults to None.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        dict: returns the Raw shift LUT.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">cfg_file_dict</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">cfg_file_dict</span> <span class="o">=</span> <span class="n">get_cfg_file_dict</span><span class="p">()</span>
+
+    <span class="n">csv_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">cfg_file_dict</span><span class="p">[</span><span class="s2">&quot;database&quot;</span><span class="p">],</span> <span class="s2">&quot;shift_lut.csv&quot;</span><span class="p">)</span>
+
+    <span class="n">lut_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">csv_path</span><span class="p">)</span>
+    <span class="n">lut_df</span> <span class="o">=</span> <span class="n">lut_df</span><span class="p">[</span><span class="n">lut_df</span><span class="p">[</span><span class="s2">&quot;satellite&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">satellite</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">downsampling</span><span class="p">:</span>
+        <span class="n">lut_df</span> <span class="o">=</span> <span class="n">lut_df</span><span class="p">[</span><span class="n">lut_df</span><span class="p">[</span><span class="s2">&quot;registration_mode&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;downsampling&quot;</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">lut_df</span> <span class="o">=</span> <span class="n">lut_df</span><span class="p">[</span><span class="n">lut_df</span><span class="p">[</span><span class="s2">&quot;registration_mode&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;upsampling&quot;</span><span class="p">]</span>
+
+    <span class="n">lut_df</span> <span class="o">=</span> <span class="n">lut_df</span><span class="p">[</span><span class="n">lut_df</span><span class="p">[</span><span class="s2">&quot;detector&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">detector_number</span><span class="p">]</span>
+
+    <span class="n">BAND_SHIFTS_NAMES</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s2">&quot;S08_02&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;S03_08&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;S10_03&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;S04_10&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;S05_04&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;S11_05&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;S06_11&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;S07_06&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;S8A_07&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;S12_8A&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;S01_12&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;S09_01&quot;</span><span class="p">,</span>
+    <span class="p">]</span>
+
+    <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span>
+        <span class="nb">zip</span><span class="p">(</span>
+            <span class="n">BAND_NAMES_REAL_ORDER</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">+</span> <span class="p">[</span><span class="n">BAND_NAMES_REAL_ORDER</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span>
+            <span class="p">[</span>
+                <span class="p">[</span>
+                    <span class="o">-</span><span class="nb">float</span><span class="p">(</span>
+                        <span class="n">lut_df</span><span class="p">[</span><span class="n">band_name</span><span class="p">]</span>
+                        <span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                        <span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;[&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+                        <span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;]&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+                        <span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+                    <span class="p">),</span>
+                    <span class="o">-</span><span class="nb">float</span><span class="p">(</span>
+                        <span class="n">lut_df</span><span class="p">[</span><span class="n">band_name</span><span class="p">]</span>
+                        <span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                        <span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;[&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+                        <span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;]&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+                        <span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+                    <span class="p">),</span>
+                <span class="p">]</span>
+                <span class="k">for</span> <span class="n">band_name</span> <span class="ow">in</span> <span class="n">BAND_SHIFTS_NAMES</span>
+            <span class="p">]</span>
+            <span class="o">+</span> <span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+        <span class="p">)</span>
+    <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="get_id_raw_l1_dict"><a class="viewcode-back" href="../../utils.html#utils.database_utils.get_id_raw_l1_dict">[docs]</a><span class="k">def</span> <span class="nf">get_id_raw_l1_dict</span><span class="p">(</span><span class="n">database</span><span class="o">=</span><span class="s2">&quot;THRAWS&quot;</span><span class="p">,</span> <span class="n">cfg_file_dict</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns a dictionary containing raw (directory name), l1c (product ID and correspondent granule) and class,</span>
+<span class="sd">    raw useful and complementary tiles.</span>
+<span class="sd">    Args:</span>
+<span class="sd">        database (string, optional): database name. Defaults to &quot;&quot;THRAWS&quot;&quot;.</span>
+<span class="sd">        cfg_file_dict (dict, optional): dictionary containing paths to the different pyraws directories.</span>
+<span class="sd">                                       If None, internal CSV database will be parsed.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        dict: label_raw-l1_dict</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">cfg_file_dict</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">cfg_file_dict</span> <span class="o">=</span> <span class="n">get_cfg_file_dict</span><span class="p">()</span>
+    <span class="n">image_csv_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+        <span class="n">cfg_file_dict</span><span class="p">[</span><span class="s2">&quot;database&quot;</span><span class="p">],</span> <span class="n">DATABASE_FILE_DICTIONARY</span><span class="p">[</span><span class="n">database</span><span class="p">]</span>
+    <span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">l1c_name_list</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">class_list</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">id_list</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">raw_name_list</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">raw_useful_granules_list</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">raw_complementary_granules_list</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">event_coordinates_list</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">requested_polygon_list</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">bbox_event_list</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">image_csv_path</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8-sig&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">csv_file</span><span class="p">:</span>
+            <span class="n">csv_reader</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">DictReader</span><span class="p">(</span><span class="n">csv_file</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">csv_reader</span><span class="p">:</span>
+                <span class="n">id_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;ID_event&quot;</span><span class="p">])</span>
+                <span class="n">l1c_name_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;ID_event&quot;</span><span class="p">])</span>
+                <span class="n">class_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;class&quot;</span><span class="p">])</span>
+                <span class="n">raw_name_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;ID_event&quot;</span><span class="p">])</span>
+                <span class="n">raw_useful_granules_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;Raw_useful_granules&quot;</span><span class="p">])</span>
+                <span class="n">raw_complementary_granules_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="n">row</span><span class="p">[</span><span class="s2">&quot;Raw_complementary_granules&quot;</span><span class="p">]</span>
+                <span class="p">)</span>
+                <span class="n">event_coordinates_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;Coords (Lat, Lon)&quot;</span><span class="p">])</span>
+                <span class="n">polygon</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;Polygon&quot;</span><span class="p">]</span>
+                <span class="n">bbox_event_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;bbox_list&quot;</span><span class="p">])</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">polygon</span> <span class="o">=</span> <span class="n">polygon</span><span class="p">[</span><span class="mi">10</span><span class="p">:</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)</span>
+                    <span class="n">requested_polygon_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                        <span class="p">[</span>
+                            <span class="p">[</span>
+                                <span class="nb">float</span><span class="p">(</span><span class="n">polygon</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]),</span>
+                                <span class="nb">float</span><span class="p">(</span><span class="n">polygon</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]),</span>
+                            <span class="p">]</span>
+                        <span class="p">]</span>
+                        <span class="o">+</span> <span class="p">[</span>
+                            <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]),</span> <span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">])]</span>
+                            <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">polygon</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+                        <span class="p">]</span>
+                    <span class="p">)</span>
+                <span class="k">except</span><span class="p">:</span>  <span class="c1"># noqa: E722</span>
+                    <span class="n">requested_polygon_list</span><span class="o">.</span><span class="n">append</span><span class="p">([[</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]])</span>
+    <span class="k">except</span><span class="p">:</span>  <span class="c1"># noqa: E722</span>
+        <span class="nb">print</span><span class="p">(</span>
+            <span class="n">colored</span><span class="p">(</span><span class="s2">&quot;ERROR&quot;</span><span class="p">,</span> <span class="s2">&quot;red&quot;</span><span class="p">)</span>
+            <span class="o">+</span> <span class="s2">&quot;. Impossible to parse the file: &quot;</span>
+            <span class="o">+</span> <span class="n">colored</span><span class="p">(</span><span class="n">image_csv_path</span><span class="p">,</span> <span class="s2">&quot;blue&quot;</span><span class="p">)</span>
+            <span class="o">+</span> <span class="s2">&quot;.&quot;</span>
+        <span class="p">)</span>
+        <span class="k">return</span>
+    <span class="c1">#</span>
+    <span class="n">id_raw_l1_dict_list</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">id_list</span><span class="p">)):</span>
+        <span class="n">id_raw_l1_dict_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;raw&quot;</span><span class="p">:</span> <span class="n">raw_name_list</span><span class="p">[</span><span class="n">n</span><span class="p">],</span>
+                <span class="s2">&quot;l1c&quot;</span><span class="p">:</span> <span class="n">l1c_name_list</span><span class="p">[</span><span class="n">n</span><span class="p">],</span>
+                <span class="s2">&quot;class&quot;</span><span class="p">:</span> <span class="n">class_list</span><span class="p">[</span><span class="n">n</span><span class="p">],</span>
+                <span class="s2">&quot;raw_useful_granules&quot;</span><span class="p">:</span> <span class="n">raw_useful_granules_list</span><span class="p">[</span><span class="n">n</span><span class="p">],</span>
+                <span class="s2">&quot;raw_complementary_granules&quot;</span><span class="p">:</span> <span class="n">raw_complementary_granules_list</span><span class="p">[</span><span class="n">n</span><span class="p">],</span>
+                <span class="s2">&quot;events_coords&quot;</span><span class="p">:</span> <span class="n">event_coordinates_list</span><span class="p">[</span><span class="n">n</span><span class="p">],</span>
+                <span class="s2">&quot;requested_polygon&quot;</span><span class="p">:</span> <span class="n">requested_polygon_list</span><span class="p">[</span><span class="n">n</span><span class="p">],</span>
+                <span class="s2">&quot;bbox_list&quot;</span><span class="p">:</span> <span class="n">bbox_event_list</span><span class="p">[</span><span class="n">n</span><span class="p">],</span>
+            <span class="p">}</span>
+        <span class="p">)</span>
+
+    <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">id_list</span><span class="p">,</span> <span class="n">id_raw_l1_dict_list</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="get_event_granule_bb_dict"><a class="viewcode-back" href="../../utils.html#utils.database_utils.get_event_granule_bb_dict">[docs]</a><span class="k">def</span> <span class="nf">get_event_granule_bb_dict</span><span class="p">(</span><span class="n">event_id</span><span class="p">,</span> <span class="n">database</span><span class="o">=</span><span class="s2">&quot;THRAWS&quot;</span><span class="p">,</span> <span class="n">cfg_file_dict</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Function to extract the dictionary {useful_granule : bounding_box_list} from the bbox_str got from the database.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        event_id (string): event ID.</span>
+<span class="sd">        database (string, optional): database name. Defaults to &quot;&quot;THRAWS&quot;&quot;.</span>
+<span class="sd">        cfg_file_dict (dict, optional): dictionary containing paths to the different pyraws directories.</span>
+<span class="sd">                                    If None, internal CSV database will be parsed.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        dict: {useful_granule : bounding_box_list} for the requested event.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">event_dict</span> <span class="o">=</span> <span class="n">get_id_raw_l1_dict</span><span class="p">(</span><span class="n">database</span><span class="o">=</span><span class="n">database</span><span class="p">,</span> <span class="n">cfg_file_dict</span><span class="o">=</span><span class="n">cfg_file_dict</span><span class="p">)[</span>
+        <span class="n">event_id</span>
+    <span class="p">]</span>
+    <span class="n">raw_useful_granules_bb_dict</span> <span class="o">=</span> <span class="n">literal_eval</span><span class="p">(</span><span class="n">event_dict</span><span class="p">[</span><span class="s2">&quot;bbox_list&quot;</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">raw_useful_granules_bb_dict</span></div>
+
+
+<div class="viewcode-block" id="get_events_list"><a class="viewcode-back" href="../../utils.html#utils.database_utils.get_events_list">[docs]</a><span class="k">def</span> <span class="nf">get_events_list</span><span class="p">(</span><span class="n">database</span><span class="o">=</span><span class="s2">&quot;THRAWS&quot;</span><span class="p">,</span> <span class="n">cfg_file_dict</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns the list of events in the database.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        database (string, optional): database name. Defaults to &quot;&quot;THRAWS&quot;&quot;.</span>
+<span class="sd">        cfg_file_dict (dict, optional): dictionary containing paths to the different pyraws directories.</span>
+<span class="sd">                                      If None, internal CSV database will be parsed.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        str: list of events.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">my_dict</span> <span class="o">=</span> <span class="n">get_id_raw_l1_dict</span><span class="p">(</span><span class="n">database</span><span class="o">=</span><span class="n">database</span><span class="p">,</span> <span class="n">cfg_file_dict</span><span class="o">=</span><span class="n">cfg_file_dict</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">my_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span></div>
+
+
+<div class="viewcode-block" id="get_event_info"><a class="viewcode-back" href="../../utils.html#utils.database_utils.get_event_info">[docs]</a><span class="k">def</span> <span class="nf">get_event_info</span><span class="p">(</span>
+    <span class="n">event_id</span><span class="p">,</span> <span class="n">cfg_file_dict</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">id_raw_l1_dict</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">database</span><span class="o">=</span><span class="s2">&quot;THRAWS&quot;</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;From the event_ID, it returns raw directory path, the path to the l1 image, to the L1C auxiliary file,</span>
+<span class="sd">    and the class of the image. If no `id_raw_l1_dict`is provided, it is done by parsing the internal CSV database file.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        event_id (string): image name.</span>
+<span class="sd">        cfg_file_dict (dict, optional): dictionary containing paths to the different pyraws directories.</span>
+<span class="sd">                                      If None, internal CSV database will be parsed.</span>
+<span class="sd">        id_raw_l1_dict (dict, optional): id-raw-l1 dictionary. If None, internal CSV database will be parsed.</span>
+<span class="sd">        database (string, optional): database name. Defaults to &quot;THRAWS&quot;.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: If the image is not in the database.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        string: path to the Raw image.</span>
+<span class="sd">        string: path to the L1 image.</span>
+<span class="sd">        string: path to the post-processed L1C tiff file.</span>
+<span class="sd">        string: expected class.</span>
+<span class="sd">        list: list of raw useful tiles.</span>
+<span class="sd">        list: list of complementary raw tiles (to coregister without 0).</span>
+<span class="sd">        dict: event coordinates dict {&quot;lat&quot; : lat, &quot;lon&quot; : lon}.</span>
+<span class="sd">        list: list of the requested polygon coordinates.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">parse_string</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">skip_marks</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">return_int</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="n">str_tiles</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="nb">str</span> <span class="o">=</span> <span class="nb">str</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="nb">str</span><span class="p">)):</span>
+            <span class="k">return</span> <span class="p">[</span><span class="s2">&quot;&quot;</span><span class="p">]</span>
+        <span class="n">last_char_pos</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">while</span> <span class="nb">str</span><span class="p">[</span><span class="n">last_char_pos</span><span class="p">:]</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+            <span class="n">comma_pos</span> <span class="o">=</span> <span class="nb">str</span><span class="p">[</span><span class="n">last_char_pos</span><span class="p">:]</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="n">last_char_pos</span>
+            <span class="k">if</span> <span class="n">skip_marks</span><span class="p">:</span>
+                <span class="n">str_tile</span> <span class="o">=</span> <span class="nb">str</span><span class="p">[</span><span class="n">last_char_pos</span> <span class="o">+</span> <span class="mi">1</span> <span class="p">:</span> <span class="n">comma_pos</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">str_tile</span> <span class="o">=</span> <span class="nb">str</span><span class="p">[</span><span class="n">last_char_pos</span><span class="p">:</span><span class="n">comma_pos</span><span class="p">]</span>
+
+            <span class="k">if</span> <span class="n">return_int</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">str_tile</span> <span class="o">==</span> <span class="s2">&quot;None&quot;</span><span class="p">:</span>
+                    <span class="n">str_tiles</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">str_tiles</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">str_tile</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">str_tiles</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">str_tile</span><span class="p">)</span>
+
+            <span class="n">last_char_pos</span> <span class="o">=</span> <span class="n">comma_pos</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="n">skip_marks</span><span class="p">:</span>
+            <span class="n">str_tile</span> <span class="o">=</span> <span class="nb">str</span><span class="p">[</span><span class="n">last_char_pos</span> <span class="o">+</span> <span class="mi">1</span> <span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">str_tile</span> <span class="o">=</span> <span class="nb">str</span><span class="p">[</span><span class="n">last_char_pos</span><span class="p">:]</span>
+
+        <span class="k">if</span> <span class="n">return_int</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">str_tile</span> <span class="o">==</span> <span class="s2">&quot;None&quot;</span><span class="p">:</span>
+                <span class="n">str_tiles</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">str_tiles</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">str_tile</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">str_tiles</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">str_tile</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">str_tiles</span>
+
+    <span class="k">if</span> <span class="n">cfg_file_dict</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">cfg_file_dict</span> <span class="o">=</span> <span class="n">get_cfg_file_dict</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">id_raw_l1_dict</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">id_raw_l1_dict</span> <span class="o">=</span> <span class="n">get_id_raw_l1_dict</span><span class="p">(</span><span class="n">database</span><span class="p">,</span> <span class="n">cfg_file_dict</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">event_class</span> <span class="o">=</span> <span class="n">id_raw_l1_dict</span><span class="p">[</span><span class="n">event_id</span><span class="p">][</span><span class="s2">&quot;class&quot;</span><span class="p">]</span>
+        <span class="n">l1c_dir_name</span> <span class="o">=</span> <span class="n">id_raw_l1_dict</span><span class="p">[</span><span class="n">event_id</span><span class="p">][</span><span class="s2">&quot;l1c&quot;</span><span class="p">]</span>
+        <span class="n">raw_dir_name</span> <span class="o">=</span> <span class="n">id_raw_l1_dict</span><span class="p">[</span><span class="n">event_id</span><span class="p">][</span><span class="s2">&quot;raw&quot;</span><span class="p">]</span>
+        <span class="n">raw_useful_granules_str</span> <span class="o">=</span> <span class="n">id_raw_l1_dict</span><span class="p">[</span><span class="n">event_id</span><span class="p">][</span><span class="s2">&quot;raw_useful_granules&quot;</span><span class="p">]</span>
+        <span class="n">raw_complementary_granules_str</span> <span class="o">=</span> <span class="n">id_raw_l1_dict</span><span class="p">[</span><span class="n">event_id</span><span class="p">][</span>
+            <span class="s2">&quot;raw_complementary_granules&quot;</span>
+        <span class="p">]</span>
+    <span class="k">except</span><span class="p">:</span>  <span class="c1"># noqa: E722</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="n">colored</span><span class="p">(</span><span class="s2">&quot;ERROR&quot;</span><span class="p">,</span> <span class="s2">&quot;red&quot;</span><span class="p">)</span>
+            <span class="o">+</span> <span class="s2">&quot;. The image: &quot;</span>
+            <span class="o">+</span> <span class="n">colored</span><span class="p">(</span><span class="n">event_id</span><span class="p">,</span> <span class="s2">&quot;blue&quot;</span><span class="p">)</span>
+            <span class="o">+</span> <span class="s2">&quot; is not in the database &quot;</span>
+            <span class="o">+</span> <span class="n">colored</span><span class="p">(</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">cfg_file_dict</span><span class="p">[</span><span class="s2">&quot;database&quot;</span><span class="p">],</span> <span class="n">database</span> <span class="o">+</span> <span class="s2">&quot;.csv&quot;</span><span class="p">),</span> <span class="s2">&quot;blue&quot;</span>
+            <span class="p">)</span>
+            <span class="o">+</span> <span class="s2">&quot;.&quot;</span>
+        <span class="p">)</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="n">raw_useful_granules_str</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">raw_useful_granules_str</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">):</span>
+        <span class="n">raw_useful_granules_str</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">raw_useful_granules_str</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;],&quot;</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="s2">&quot;[&quot;</span> <span class="ow">in</span> <span class="n">raw_useful_granules_str</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span>
+            <span class="s2">&quot;]&quot;</span> <span class="ow">in</span> <span class="n">raw_useful_granules_str</span>
+        <span class="p">):</span>  <span class="c1"># Single granules list</span>
+            <span class="n">raw_useful_granules</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="k">if</span> <span class="p">((</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;None&quot;</span><span class="p">))</span> <span class="k">else</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span>
+                <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">raw_useful_granules_str</span><span class="p">]</span>
+            <span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">raw_useful_granules</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">y</span><span class="p">)]</span> <span class="k">if</span> <span class="p">(</span><span class="n">x</span> <span class="o">!=</span> <span class="s2">&quot;None&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">y</span> <span class="o">!=</span> <span class="s2">&quot;None&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
+                <span class="k">for</span> <span class="p">[</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">]</span> <span class="ow">in</span> <span class="p">[</span>
+                    <span class="n">x</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;[&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;]&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)</span>
+                    <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">raw_useful_granules_str</span>
+                <span class="p">]</span>
+            <span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">raw_useful_granules</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">if</span> <span class="n">raw_complementary_granules_str</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">raw_complementary_granules_str</span> <span class="o">=</span> <span class="n">raw_complementary_granules_str</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="n">raw_img_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">cfg_file_dict</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">],</span> <span class="n">database</span><span class="p">,</span> <span class="s2">&quot;raw&quot;</span><span class="p">,</span> <span class="n">raw_dir_name</span><span class="p">)</span>
+    <span class="n">l1_img_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">cfg_file_dict</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">],</span> <span class="n">database</span><span class="p">,</span> <span class="s2">&quot;l1c&quot;</span><span class="p">,</span> <span class="n">l1c_dir_name</span><span class="p">)</span>
+    <span class="n">l1c_post_processed_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+        <span class="n">cfg_file_dict</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">],</span> <span class="n">database</span><span class="p">,</span> <span class="s2">&quot;l1c&quot;</span><span class="p">,</span> <span class="s2">&quot;l1c_cropped_tif&quot;</span><span class="p">,</span> <span class="n">event_id</span>
+    <span class="p">)</span>
+
+    <span class="n">raw_complementary_granules</span> <span class="o">=</span> <span class="n">parse_string</span><span class="p">(</span>
+        <span class="n">raw_complementary_granules_str</span><span class="p">,</span> <span class="n">skip_marks</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">return_int</span><span class="o">=</span><span class="kc">True</span>
+    <span class="p">)</span>
+    <span class="n">coords</span> <span class="o">=</span> <span class="n">id_raw_l1_dict</span><span class="p">[</span><span class="n">event_id</span><span class="p">][</span><span class="s2">&quot;events_coords&quot;</span><span class="p">]</span>
+    <span class="n">requested_polygon</span> <span class="o">=</span> <span class="n">id_raw_l1_dict</span><span class="p">[</span><span class="n">event_id</span><span class="p">][</span><span class="s2">&quot;requested_polygon&quot;</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="p">(</span>
+        <span class="n">raw_img_path</span><span class="p">,</span>
+        <span class="n">l1_img_path</span><span class="p">,</span>
+        <span class="n">l1c_post_processed_path</span><span class="p">,</span>
+        <span class="n">event_class</span><span class="p">,</span>
+        <span class="n">raw_useful_granules</span><span class="p">,</span>
+        <span class="n">raw_complementary_granules</span><span class="p">,</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;lat&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">coords</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]),</span>
+            <span class="s2">&quot;lon&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">coords</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]),</span>
+        <span class="p">},</span>
+        <span class="n">requested_polygon</span><span class="p">,</span>
+    <span class="p">)</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Roberto Del Prete, Gabriele Meoni.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

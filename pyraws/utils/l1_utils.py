@@ -12,8 +12,8 @@ from skimage.measure import label, regionprops
 from termcolor import colored
 import torch
 from tqdm import tqdm
-from ..utils.constants import S2_DEFAULT_QUANTIFICATION_VALUE
-from ..utils.database_utils import get_event_info
+from pyraws.utils.constants import S2_DEFAULT_QUANTIFICATION_VALUE
+from pyraws.utils.database_utils import get_event_info
 from xml.dom import minidom
 
 

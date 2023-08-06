@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>API demonstration &mdash; pyraws 0.0.3 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+        <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Database" href="database.html" />
+    <link rel="prev" title="Quickstart" href="quickstart.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            pyraws
+              <img src="_static/PyRawS_logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">First Steps:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="configuration.html">Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quickstart</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">API demonstration</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="database.html">Database</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raw.html">Raw</a></li>
+<li class="toctree-l1"><a class="reference internal" href="l1.html">L1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils.html">Utils</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Useful Info:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="contacts.html">Contacts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="glossario.html">Glossary</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">pyraws</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">API demonstration</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/API.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="api-demonstration">
+<h1>API demonstration<a class="headerlink" href="#api-demonstration" title="Permalink to this heading"></a></h1>
+<p><strong>Table of contents</strong></p>
+<div class="cell markdown docutils container">
+<p>This notebook is to show and demonstrate the use of Application
+Program Interface (API) developed in the frame of the <code class="docutils literal notranslate"><span class="pre">PYRAWS</span></code>
+project to open and process <code class="docutils literal notranslate"><span class="pre">Sentinel-2</span> <span class="pre">Raw</span> <span class="pre">data</span></code>, corresponding to
+a decompressed version of <a class="reference external" href="https://sentinel.esa.int/documents/247904/685211/sentinel-2-products-specification-document">Sentinel-2 L0
+data</a>
+with additional metada. The API are demonstrated on the
+<code class="docutils literal notranslate"><span class="pre">Temperature</span> <span class="pre">Hotspots</span> <span class="pre">RAW</span> <span class="pre">Sentinel-2</span> <span class="pre">(THRAWS)</span></code> dataset. We will
+introduce the use of the <code class="docutils literal notranslate"><span class="pre">Raw_event</span></code> and <code class="docutils literal notranslate"><span class="pre">raw_granule</span></code> classes to
+process <code class="docutils literal notranslate"><span class="pre">Raw</span> <span class="pre">granules</span></code> and <code class="docutils literal notranslate"><span class="pre">Raw</span> <span class="pre">events</span></code> containing images of
+volcanic eruptions. It will show how to stack different
+<code class="docutils literal notranslate"><span class="pre">Raw</span> <span class="pre">granules</span></code> acquired during the movement of the satellite along
+track and how to perform a coarse onboard coregistration of <code class="docutils literal notranslate"><span class="pre">Raw</span></code>
+bands. Furthermore, it will introduce the APIs to extract specific
+bands coordinates. Finally, after introducing the equivalent
+<code class="docutils literal notranslate"><span class="pre">L1C_tiles</span></code> and <code class="docutils literal notranslate"><span class="pre">L1C_event</span></code>, the notebook will show the API to
+mosaic the <code class="docutils literal notranslate"><span class="pre">L1C</span></code>tiles and crop them around the specific
+<code class="docutils literal notranslate"><span class="pre">raw_granule</span></code> bands coordinats to have both the <code class="docutils literal notranslate"><span class="pre">L1c</span></code> and <code class="docutils literal notranslate"><span class="pre">Raw</span></code>
+products looking at the same area. Finally, it will show how to
+process the <code class="docutils literal notranslate"><span class="pre">L1C</span></code> information to doublechek the presence of an
+eruption by exploiting an algorithm developed on <code class="docutils literal notranslate"><span class="pre">L1c</span></code> data that
+would work for <code class="docutils literal notranslate"><span class="pre">Raw</span></code> data.</p>
+</div>
+<div class="cell markdown docutils container">
+<p class="rubric" id="imports-paths-and-variables">1) Imports, paths and variables</p>
+</div>
+<div class="cell markdown docutils container">
+<p>Limit CUDA visible devices</p>
+</div>
+<div class="cell code docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;CUDA_VISIBLE_DEVICES&#39;</span><span class="p">]</span><span class="o">=</span><span class="s1">&#39;5&#39;</span>
+</pre></div>
+</div>
+</div>
+<div class="cell markdown docutils container">
+<p>Autoreload</p>
+</div>
+<div class="cell code docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="n">load_ext</span> <span class="n">autoreload</span>
+<span class="o">%</span><span class="n">autoreload</span> <span class="mi">2</span>
+</pre></div>
+</div>
+</div>
+<div class="cell markdown docutils container">
+<p>Imports</p>
+</div>
+<div class="cell code docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">sys</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">&quot;..&quot;</span><span class="p">,</span> <span class="s2">&quot;..&quot;</span><span class="p">))</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">&quot;..&quot;</span><span class="p">,</span> <span class="s2">&quot;..&quot;</span><span class="p">,</span> <span class="s2">&quot;scripts_and_studies&quot;</span><span class="p">,</span> <span class="s2">&quot;hta_detection_algorithms&quot;</span><span class="p">))</span>
+<span class="kn">from</span> <span class="nn">pyraws.raw.raw_event</span> <span class="kn">import</span> <span class="n">Raw_event</span>
+<span class="kn">from</span> <span class="nn">pyraws.l1.l1_event</span> <span class="kn">import</span> <span class="n">L1C_event</span>
+<span class="kn">from</span> <span class="nn">pyraws.utils.l1_utils</span> <span class="kn">import</span> <span class="n">read_L1C_image_from_tif</span>
+<span class="kn">from</span> <span class="nn">pyraws.utils.visualization_utils</span> <span class="kn">import</span> <span class="n">plot_img1_vs_img2_bands</span>
+<span class="kn">from</span> <span class="nn">s2pix_detector</span> <span class="kn">import</span> <span class="n">s2pix_detector</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
+<span class="kn">from</span> <span class="nn">geopy.geocoders</span> <span class="kn">import</span> <span class="n">Nominatim</span>
+<span class="kn">import</span> <span class="nn">geopandas</span>
+<span class="kn">from</span> <span class="nn">geopandas</span> <span class="kn">import</span> <span class="n">GeoSeries</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">from</span> <span class="nn">shapely.geometry</span> <span class="kn">import</span> <span class="n">Polygon</span>
+<span class="kn">from</span> <span class="nn">termcolor</span> <span class="kn">import</span> <span class="n">colored</span>
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">skimage.measure</span> <span class="kn">import</span> <span class="n">label</span><span class="p">,</span> <span class="n">regionprops</span>
+<span class="kn">import</span> <span class="nn">matplotlib.patches</span> <span class="k">as</span> <span class="nn">patches</span>
+</pre></div>
+</div>
+</div>
+<div class="cell markdown docutils container">
+<p>This import is to remove odd errors on <code class="docutils literal notranslate"><span class="pre">libiomp5md.dll</span></code>. If you do
+not have them, you can skip it</p>
+</div>
+<div class="cell code docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;KMP_DUPLICATE_LIB_OK&#39;</span><span class="p">]</span><span class="o">=</span><span class="s1">&#39;True&#39;</span>
+</pre></div>
+</div>
+</div>
+<div class="cell markdown docutils container">
+<p>Set torch device. Use “CUDA” as default if available.</p>
+</div>
+<div class="cell code docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">():</span>
+    <span class="n">device</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="s2">&quot;cuda&quot;</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">device</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="s2">&quot;cpu&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell markdown docutils container">
+<p>Set size of figure plots.</p>
+</div>
+<div class="cell code docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;figure.figsize&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="cell markdown docutils container">
+<p class="rubric" id="raw-event-and-raw-granule">2) - Raw_event and raw_granule</p>
+</div>
+<div class="cell markdown docutils container">
+<p>To request <code class="docutils literal notranslate"><span class="pre">Raw</span></code> files it is necessary to query the database by
+specifying a polygon (area) and a date range (start - end). For the
+event <code class="docutils literal notranslate"><span class="pre">Etna_00</span></code>, shown in the image above, the blue rectangular is
+the polygon used to query the database (the eruption is the blue spot
+in the image in the center of the rectangular). Upon a query, the
+database will download the collection of <code class="docutils literal notranslate"><span class="pre">Raw</span> <span class="pre">granules</span></code> whose
+reference band (<code class="docutils literal notranslate"><span class="pre">B02</span></code>) intersects the blue polygon in the specified
+date range . An <code class="docutils literal notranslate"><span class="pre">Raw</span> <span class="pre">granule</span></code> (<strong>red rectangulars</strong>) corresponds to
+the area acquired by the all <code class="docutils literal notranslate"><span class="pre">13</span> <span class="pre">Sentinel-2</span> <span class="pre">bands</span></code> <strong>of a single
+detector</strong> over a single acquisition (lasting 3.6 s). The various Raw
+granules in the collection might be produced in different instants
+and by different detectors (Sentinel 2 has 12 detectors staggered
+across track). We named this collection of <code class="docutils literal notranslate"><span class="pre">Raw</span> <span class="pre">granules</span></code> referred
+to a specific event (<code class="docutils literal notranslate"><span class="pre">Etna_00</span></code>) an <code class="docutils literal notranslate"><span class="pre">Raw</span> <span class="pre">event</span></code>. Such concepts of
+<code class="docutils literal notranslate"><span class="pre">Raw</span> <span class="pre">granule</span></code> and <code class="docutils literal notranslate"><span class="pre">Raw</span> <span class="pre">event</span></code> (collection of the
+<code class="docutils literal notranslate"><span class="pre">Raw</span> <span class="pre">granules</span></code>) are made through the classes <code class="docutils literal notranslate"><span class="pre">Raw_granule</span></code> and
+<code class="docutils literal notranslate"><span class="pre">Raw_event</span></code>. When an object <code class="docutils literal notranslate"><span class="pre">Raw_event</span></code> is created, it
+instatiates a collection of <code class="docutils literal notranslate"><span class="pre">Raw_granule</span></code> objects each one
+containing the information related to each <code class="docutils literal notranslate"><span class="pre">Raw</span> <span class="pre">granule</span></code>.</p>
+</div>
+<div class="cell markdown docutils container">
+<p>To create an <code class="docutils literal notranslate"><span class="pre">Raw_event</span></code> object, please specify the
+<code class="docutils literal notranslate"><span class="pre">requested_bands</span></code> and the requested <code class="docutils literal notranslate"><span class="pre">event_name</span></code>.</p>
+</div>
+<div class="cell code docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">requested_bands</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;B8A&quot;</span><span class="p">,</span><span class="s2">&quot;B11&quot;</span><span class="p">,</span><span class="s2">&quot;B12&quot;</span><span class="p">]</span>
+<span class="n">event_name</span><span class="o">=</span><span class="s2">&quot;Etna_00&quot;</span>
+</pre></div>
+</div>
+</div>
+<div class="cell markdown docutils container">
+<p>The next lines will parse query the <code class="docutils literal notranslate"><span class="pre">thraw_db.csv</span></code> database with
+the requested <code class="docutils literal notranslate"><span class="pre">event_name</span></code>, enabling the creation of the
+<code class="docutils literal notranslate"><span class="pre">Raw_event</span></code> with the requested bands.</p>
+</div>
+<div class="cell code docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">event</span><span class="o">=</span><span class="n">Raw_event</span><span class="p">(</span><span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell code docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">event</span><span class="o">.</span><span class="n">from_database</span><span class="p">(</span><span class="n">event_name</span><span class="p">,</span> <span class="n">requested_bands</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell markdown docutils container">
+<p class="rubric" id="showing-raw-granules-info">3) - Showing Raw granules info</p>
+</div>
+<div class="cell markdown docutils container">
+<p>The next lines will show the information related to the granules that
+compose the instantiated <code class="docutils literal notranslate"><span class="pre">Raw_event</span></code>.</p>
+</div>
+<div class="cell code docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">event</span><span class="o">.</span><span class="n">show_granules_info</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell markdown docutils container">
+<p><strong>Interpretation of granules information.</strong> As you can see, the
+<code class="docutils literal notranslate"><span class="pre">Raw_event</span></code> is composed of a collection of <code class="docutils literal notranslate"><span class="pre">Raw_granule</span></code> objects,
+matching the <code class="docutils literal notranslate"><span class="pre">Raw_granules</span></code> whose reference band interesects the
+area used to request for Raw data. The method
+<code class="docutils literal notranslate"><span class="pre">show_granules_info()</span></code> of the class <code class="docutils literal notranslate"><span class="pre">Raw_event</span></code> prints all the
+granules composing an <strong>Raw_event</strong>. For each of the granules, the
+function shows the <code class="docutils literal notranslate"><span class="pre">granule</span> <span class="pre">name</span></code>, <code class="docutils literal notranslate"><span class="pre">sensing</span> <span class="pre">time</span></code>,
+<code class="docutils literal notranslate"><span class="pre">Creation</span> <span class="pre">time</span></code>, <code class="docutils literal notranslate"><span class="pre">detector</span> <span class="pre">number</span></code>, <code class="docutils literal notranslate"><span class="pre">originality</span></code>, <code class="docutils literal notranslate"><span class="pre">parents</span></code>,
+<code class="docutils literal notranslate"><span class="pre">polygon</span> <span class="pre">coordinates</span></code> (of vertices), <code class="docutils literal notranslate"><span class="pre">cloud</span> <span class="pre">coverage</span></code>
+(percentage/100). <code class="docutils literal notranslate"><span class="pre">originality</span></code> and <code class="docutils literal notranslate"><span class="pre">parents</span></code> are needed in case
+the granule is created through some processing of other granules
+(such as stacking or coregistration, see next cells). If this is not
+the case, <code class="docutils literal notranslate"><span class="pre">originality</span></code> will be <code class="docutils literal notranslate"><span class="pre">True</span></code> and the list of granules
+parents will be empty. If the granule is created by stacking two
+granules, <code class="docutils literal notranslate"><span class="pre">originality</span></code> will be <code class="docutils literal notranslate"><span class="pre">False</span></code> and <code class="docutils literal notranslate"><span class="pre">parents</span></code> will
+contain the name of the granules used for stacking. In this case, all
+the information are also shown for <code class="docutils literal notranslate"><span class="pre">parents</span></code>.</p>
+</div>
+<div class="cell markdown docutils container">
+<p>In the next lines, we will select the granule <code class="docutils literal notranslate"><span class="pre">0</span></code> and will show the
+bands requested when the <code class="docutils literal notranslate"><span class="pre">Raw_event</span></code> was created.</p>
+</div>
+<div class="cell code docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">raw_granule</span><span class="o">=</span><span class="n">event</span><span class="o">.</span><span class="n">get_granule</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">raw_granule</span><span class="o">.</span><span class="n">show_bands</span><span class="p">(</span><span class="n">downsampling</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell markdown docutils container">
+<p class="rubric" id="compose-granules">4) - Compose granules</p>
+</div>
+<div class="cell markdown docutils container">
+<p>The APIs offer utils to compose granules along and across track.
+However, the granules from an event cannot composed arbitrarily.
+Indeed, to compose two granules <strong>along track</strong> they must have the
+same <strong>detector number</strong> and the <strong>sensing-time</strong> to be different of
+3.6 s (3 or 4 seconds). For the event <code class="docutils literal notranslate"><span class="pre">Etna_00</span></code>, granules [0,2],
+[1,3], [3,5] can be stacked along tracks. The next line will stack
+granules [0,2] along track. The string “T” means that the granule 0
+will be stacked on top of 2.</p>
+</div>
+<div class="cell code docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">raw_granule_0_2_stacked</span><span class="o">=</span><span class="n">event</span><span class="o">.</span><span class="n">stack_granules</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span> <span class="s2">&quot;T&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell markdown docutils container">
+<p><strong>Showing stacked granule info.</strong> By using the method
+<code class="docutils literal notranslate"><span class="pre">get_granule_info()</span></code> of the classs <code class="docutils literal notranslate"><span class="pre">raw_granule</span></code>, you can get the
+granule information. You can see that granule is now marked as <strong>not
+original</strong> (<code class="docutils literal notranslate"><span class="pre">originality</span></code> is set to <code class="docutils literal notranslate"><span class="pre">False</span></code>). This is because the
+<code class="docutils literal notranslate"><span class="pre">raw_granule_0_2_stacked</span></code> is the result of combination of two
+granules. In this case, the <code class="docutils literal notranslate"><span class="pre">get_granule_info()</span></code> function will show
+will print <code class="docutils literal notranslate"><span class="pre">sensing</span> <span class="pre">time</span></code>, <code class="docutils literal notranslate"><span class="pre">acquisition</span> <span class="pre">time</span></code>,
+<code class="docutils literal notranslate"><span class="pre">detector</span> <span class="pre">number</span></code> for the granule parents. <code class="docutils literal notranslate"><span class="pre">originality</span></code> will be
+<code class="docutils literal notranslate"><span class="pre">False</span></code> and the list of granules parents will be not <code class="docutils literal notranslate"><span class="pre">None</span></code>. You
+can notice that the granule name is composed by the parents’name
+separated by the keyword <strong>STACKED_T</strong>, where <strong>T</strong> means the first
+granule is stacked at the top of the second one.</p>
+</div>
+<div class="cell code docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">raw_granule_0_2_stacked</span><span class="o">.</span><span class="n">show_granule_info</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell markdown docutils container">
+<p>The same effect can be used by using the <code class="docutils literal notranslate"><span class="pre">Raw_event</span></code> method
+<code class="docutils literal notranslate"><span class="pre">get_stackable_granules()</span></code>, which permits extracting the couples of
+granules that can be stacked along-track automatically.</p>
+</div>
+<div class="cell code docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">stackable_granules</span><span class="p">,</span> <span class="n">stackable_couples</span><span class="o">=</span><span class="n">event</span><span class="o">.</span><span class="n">stack_granules_couples</span><span class="p">()</span>
+<span class="n">raw_granule_0_2_stacked</span><span class="o">=</span><span class="n">stackable_granules</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">raw_granule_0_2_stacked</span><span class="o">.</span><span class="n">show_granule_info</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell markdown docutils container">
+<p>You can now see by superimposing the bands of stacked granules. As
+you can see that bands do not look coregistered. This is because the
+pushbroom nature of Sentinel-2, for which every band is looking at
+different areas during a single acquisition (granule) (and <code class="docutils literal notranslate"><span class="pre">SWIR</span></code>
+and <code class="docutils literal notranslate"><span class="pre">visible</span></code> bands are respectively rotated).</p>
+</div>
+<div class="cell code docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">raw_granule_0_2_stacked</span><span class="o">.</span><span class="n">coarse_coregistration</span><span class="p">(</span><span class="n">crop_empty_pixels</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">show_bands_superimposition</span><span class="p">(</span><span class="n">equalize</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell code docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">raw_granule_0_2_stacked</span><span class="o">.</span><span class="n">coarse_coregistration_old</span><span class="p">(</span><span class="n">crop_empty_pixels</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">show_bands_superimposition</span><span class="p">(</span><span class="n">equalize</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell markdown docutils container">
+<p class="rubric" id="coarse-bands-coregistration">5) - Coarse bands coregistration</p>
+</div>
+<div class="cell markdown docutils container">
+<p>In some cases, the <strong>event</strong> (<em>fire/volcanic eruption</em>) will be not
+contained in a single granule. In other cases, if the eruption is
+located close to the top/bottom margin, the information of some of
+the bands could be missing because of lack of bands registration.
+Therefore, we stack to granules <strong>along track</strong> to try to overcome to
+this limitation.</p>
+</div>
+<div class="cell markdown docutils container">
+<p><strong>Bands can now be roughly coregistered</strong>. Coregistration is perfomed
+by shifting the bands of a number of pixel
+S_{k,l}|_{(S,D)}=<span class="math notranslate nohighlight">\([N_{B_k,B_l}, M_{B_k,B_l}]|_{(S,D)}\)</span>
+specific for the couple of bands <span class="math notranslate nohighlight">\((B_k,B_l)\)</span> produced by the
+detector having detector number <span class="math notranslate nohighlight">\(D\)</span> in the satellite <span class="math notranslate nohighlight">\(S\)</span>
+(S2A or S2B). <span class="math notranslate nohighlight">\(N_{B_k,B_l}\)</span> is the number of along-track shift
+pixels, used to compensate the systematic band shifts due to the
+pushbroom nature of the sensor. Similarly, <span class="math notranslate nohighlight">\(M_{B_k,B_l}\)</span> is the
+average number of across-track pixels in the <code class="docutils literal notranslate"><span class="pre">THRAW</span></code> dataset for a
+certain couple <span class="math notranslate nohighlight">\((S,D)\)</span>. To this aim, <span class="math notranslate nohighlight">\(S_{k,l}|_{(S,D)}\)</span>
+are stored in a <code class="docutils literal notranslate"><span class="pre">Look</span> <span class="pre">Up</span> <span class="pre">Table</span></code> and used regardelss the position of
+the satellite. It shall be noted that <span class="math notranslate nohighlight">\(S_{k,l}|_{(S,D)}\)</span>
+indicates the number of pixels shift for which the band <span class="math notranslate nohighlight">\(B_l\)</span>
+shall be moved to match the band <span class="math notranslate nohighlight">\(B_k\)</span>. Since <span class="math notranslate nohighlight">\((B_k,B_l)\)</span>
+could have different resolution, <span class="math notranslate nohighlight">\(S_{k,l}|_{(S,D)}\)</span> is
+expressed with respect to <span class="math notranslate nohighlight">\(B_l\)</span> resolution. Having more than 2
+bands leads to coregister al the bands with respect to the first one.
+For instance, when using [<code class="docutils literal notranslate"><span class="pre">B8A</span></code>, <code class="docutils literal notranslate"><span class="pre">B11</span></code>,<code class="docutils literal notranslate"><span class="pre">B12</span></code>] bands <code class="docutils literal notranslate"><span class="pre">B12</span></code>
+and <code class="docutils literal notranslate"><span class="pre">B11</span></code> are coregistered with respect to <code class="docutils literal notranslate"><span class="pre">B8A</span></code>.</p>
+</div>
+<div class="cell markdown docutils container">
+<p>The next line extracts the granule 2 from the event and performs the
+coregistration.</p>
+</div>
+<div class="cell code docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Get granule 2</span>
+<span class="n">raw_granule</span><span class="o">=</span><span class="n">event</span><span class="o">.</span><span class="n">get_granule</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="c1"># Get granule 2 from the Raw event and perform coarse coregistration</span>
+<span class="n">raw_granule_registered</span><span class="o">=</span><span class="n">event</span><span class="o">.</span><span class="n">coarse_coregistration</span><span class="p">(</span><span class="n">granules_idx</span><span class="o">=</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell markdown docutils container">
+<p>Showing unregistered vs coarse registered granule.</p>
+</div>
+<div class="cell code docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Plotting unregistered vs registered granule</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Unregistered&quot;</span><span class="p">)</span>
+<span class="n">raw_granule_tensor</span><span class="o">=</span><span class="n">raw_granule</span><span class="o">.</span><span class="n">as_tensor</span><span class="p">(</span><span class="n">downsampling</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="c1"># Plot normalizing on the max</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">raw_granule_tensor</span><span class="o">/</span><span class="n">raw_granule_tensor</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Coarse coregistered&quot;</span><span class="p">)</span>
+<span class="n">raw_granule_registered_tensor</span><span class="o">=</span><span class="n">raw_granule_registered</span><span class="o">.</span><span class="n">as_tensor</span><span class="p">(</span><span class="n">downsampling</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="c1"># Plot normalizing on the max</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">raw_granule_registered_tensor</span><span class="o">/</span><span class="n">raw_granule_registered_tensor</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell markdown docutils container">
+<p>As you can see in the image above, on the bottom of the registered
+images there is an image where only one band is not null. This is due
+to the fact that <code class="docutils literal notranslate"><span class="pre">B11</span></code> and <code class="docutils literal notranslate"><span class="pre">B12</span></code> are shifted to match <code class="docutils literal notranslate"><span class="pre">B8A</span></code>,
+leaving some area uncovered. This could create a problem every time
+the <strong>high temperature anomaly</strong> (<em>fire/volcanic eruption</em>) will be
+placed in that area. To overcome to this limitation, it is possible
+to fill the missing pixels by filling the missing pixels with the
+ones of adjacent granules. To this aim, you can call the
+<code class="docutils literal notranslate"><span class="pre">coarse_coregistration</span></code> function with the flag
+<code class="docutils literal notranslate"><span class="pre">use_complementary_granules</span></code> set to <code class="docutils literal notranslate"><span class="pre">True</span></code>. In this way, if
+appropriate adjacent filler granules are available, they will be
+retrieved and adjacent pixels used to fill the missing pixels.
+FIlling will be performed across-track as well.</p>
+</div>
+<div class="cell code docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Get granule 2 from the Raw event and perform coarse coregistration with filling elements</span>
+<span class="n">raw_granule_registered_filled</span><span class="o">=</span><span class="n">event</span><span class="o">.</span><span class="n">coarse_coregistration</span><span class="p">(</span><span class="n">granules_idx</span><span class="o">=</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">use_complementary_granules</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell markdown docutils container">
+<p>As you can see in the image below, missing pixels are now filled.</p>
+</div>
+<div class="cell code docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Plotting unregistered vs registered granule</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Unregistered&quot;</span><span class="p">)</span>
+<span class="n">raw_granule_tensor</span><span class="o">=</span><span class="n">raw_granule</span><span class="o">.</span><span class="n">as_tensor</span><span class="p">(</span><span class="n">downsampling</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="c1"># Plot normalizing on the max</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">raw_granule_tensor</span><span class="o">/</span><span class="n">raw_granule_tensor</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Coarse coregistered (filled)&quot;</span><span class="p">)</span>
+<span class="n">raw_granule_registered_filled_tensor</span><span class="o">=</span><span class="n">raw_granule_registered_filled</span><span class="o">.</span><span class="n">as_tensor</span><span class="p">(</span><span class="n">downsampling</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="c1"># Plot normalizing on the max</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">raw_granule_registered_filled_tensor</span><span class="o">/</span><span class="n">raw_granule_registered_filled_tensor</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<div class="cell markdown docutils container">
+<p>Alternatively, it is also possible to crop those empty pixels. To
+this aim, you can call the <code class="docutils literal notranslate"><span class="pre">coarse_coregistration</span></code> function with
+the flag <code class="docutils literal notranslate"><span class="pre">crop_empty_pixels</span></code> set to <code class="docutils literal notranslate"><span class="pre">True</span></code>. If you set both the
+<code class="docutils literal notranslate"><span class="pre">use_complementary_granules</span></code> and <code class="docutils literal notranslate"><span class="pre">crop_empty_pixels</span></code> flags to
+<code class="docutils literal notranslate"><span class="pre">True</span></code>, filler elements will be used when available, otherwise
+missing pixels will be cropped.</p>
+</div>
+<div class="cell code docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Get granule 2 from the L0 event and perform coarse coregistration with filling elements</span>
+<span class="n">raw_granule_registered_cropped</span><span class="o">=</span><span class="n">event</span><span class="o">.</span><span class="n">coarse_coregistration</span><span class="p">(</span><span class="n">granules_idx</span><span class="o">=</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">crop_empty_pixels</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell markdown docutils container">
+<p>The next plot shows all the possible cases.</p>
+</div>
+<div class="cell code docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">raw_granule_registered_cropped_tensor</span><span class="o">=</span><span class="n">raw_granule_registered_cropped</span><span class="o">.</span><span class="n">as_tensor</span><span class="p">(</span><span class="n">downsampling</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Unregistered&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">raw_granule_tensor</span><span class="o">/</span><span class="n">raw_granule_tensor</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Coarse coregistered&quot;</span><span class="p">)</span>
+<span class="c1"># Plot normalizing on the max</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">raw_granule_registered_tensor</span><span class="o">/</span><span class="n">raw_granule_registered_tensor</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Coarse coregistered (filled)&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">raw_granule_registered_filled_tensor</span><span class="o">/</span><span class="n">raw_granule_registered_filled_tensor</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Coarse coregistered (cropped)&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">raw_granule_registered_cropped_tensor</span><span class="o">/</span><span class="n">raw_granule_registered_cropped_tensor</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell markdown docutils container">
+<p class="rubric" id="getting-raw-granule-and-bands-coordinates">6) - Getting Raw granule and bands coordinates</p>
+</div>
+<div class="cell markdown docutils container">
+<p><strong>Get image coordinates.</strong></p>
+</div>
+<div class="cell markdown docutils container">
+<p>Granules coordinates are stored <code class="docutils literal notranslate"><span class="pre">InventoryMetadata.xml</span></code>. The
+ploygon represents the <code class="docutils literal notranslate"><span class="pre">Granule</span> <span class="pre">Footprint</span></code>, meaning the area
+covered by all the bands of one detector. The next lines extract the
+granule 2 from the Raw_event and performs the coregistration with
+filling elements. Then, it extract the coordinates of the entire
+granule.</p>
+</div>
+<div class="cell code docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">raw_granule_coregistered</span><span class="o">=</span><span class="n">event</span><span class="o">.</span><span class="n">coarse_coregistration</span><span class="p">(</span><span class="n">granules_idx</span><span class="o">=</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">use_complementary_granules</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">downsampling</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">coordinates</span><span class="o">=</span><span class="n">raw_granule_coregistered</span><span class="o">.</span><span class="n">get_granule_coordinates</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell markdown docutils container">
+<p>The next lines show the area covered by the granule.</p>
+</div>
+<div class="cell code docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">plot_granule_coordinates</span><span class="p">(</span><span class="n">coordinates</span><span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">world</span> <span class="o">=</span> <span class="n">geopandas</span><span class="o">.</span><span class="n">read_file</span><span class="p">(</span><span class="n">geopandas</span><span class="o">.</span><span class="n">datasets</span><span class="o">.</span><span class="n">get_path</span><span class="p">(</span><span class="s1">&#39;naturalearth_lowres&#39;</span><span class="p">))</span>
+        <span class="n">world</span><span class="o">=</span><span class="n">world</span><span class="o">.</span><span class="n">to_crs</span><span class="p">(</span><span class="s2">&quot;EPSG:4326&quot;</span><span class="p">)</span>
+        <span class="n">geolocator</span> <span class="o">=</span> <span class="n">Nominatim</span><span class="p">(</span><span class="n">user_agent</span><span class="o">=</span><span class="s2">&quot;google&quot;</span><span class="p">)</span>
+        <span class="n">reverse</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">geolocator</span><span class="o">.</span><span class="n">reverse</span><span class="p">,</span> <span class="n">language</span><span class="o">=</span><span class="s2">&quot;en&quot;</span><span class="p">)</span>
+        <span class="n">address</span><span class="o">=</span><span class="n">reverse</span><span class="p">(</span><span class="n">coordinates</span><span class="p">[</span><span class="mi">0</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">country</span><span class="o">=</span><span class="n">address</span><span class="p">[</span><span class="o">-</span><span class="n">address</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">):][</span><span class="mi">1</span><span class="p">:]</span>
+        <span class="n">coordinates</span><span class="o">=</span><span class="p">[(</span><span class="n">y</span><span class="p">,</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">)</span> <span class="ow">in</span> <span class="n">coordinates</span><span class="p">]</span>
+        <span class="n">poly</span><span class="o">=</span><span class="n">GeoSeries</span><span class="p">([</span><span class="n">Polygon</span><span class="p">([</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">coordinates</span> <span class="o">+</span><span class="p">[</span><span class="n">coordinates</span><span class="p">[</span><span class="mi">0</span><span class="p">]]])])</span>
+        <span class="n">poly</span><span class="o">=</span><span class="n">poly</span><span class="o">.</span><span class="n">set_crs</span><span class="p">(</span><span class="s2">&quot;EPSG:4326&quot;</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">=</span><span class="n">world</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s1">&#39;name == </span><span class="se">\&quot;</span><span class="s1">&#39;</span><span class="o">+</span><span class="n">country</span><span class="o">+</span><span class="s1">&#39;</span><span class="se">\&quot;</span><span class="s1">&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+        <span class="n">poly</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">facecolor</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">,</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Address: &quot;</span><span class="p">,</span> <span class="n">colored</span><span class="p">(</span><span class="n">address</span><span class="p">,</span> <span class="s2">&quot;red&quot;</span><span class="p">))</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Impossible to plot granule over the requested area.&quot;</span><span class="p">)</span>
+
+<span class="n">plot_granule_coordinates</span><span class="p">(</span><span class="n">coordinates</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell markdown docutils container">
+<p>Moreover, it is also possible to perform georeferencing of the single
+bands. The next lines shows how to get the coordinates of the
+coregistered bands.</p>
+</div>
+<div class="cell code docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">band_shifted_dict</span><span class="o">=</span><span class="n">raw_granule_coregistered</span><span class="o">.</span><span class="n">get_bands_coordinates</span><span class="p">()</span>
+<span class="n">band_shifted_dict</span>
+</pre></div>
+</div>
+</div>
+<div class="cell markdown docutils container">
+<p>Showing bands coregistered bands positions.</p>
+</div>
+<div class="cell code docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">plot_granule_coordinates</span><span class="p">(</span><span class="n">coordinates</span><span class="p">,</span> <span class="n">coordinates_shifted_dict</span><span class="p">):</span>
+    <span class="n">world</span> <span class="o">=</span> <span class="n">geopandas</span><span class="o">.</span><span class="n">read_file</span><span class="p">(</span><span class="n">geopandas</span><span class="o">.</span><span class="n">datasets</span><span class="o">.</span><span class="n">get_path</span><span class="p">(</span><span class="s1">&#39;naturalearth_lowres&#39;</span><span class="p">))</span>
+    <span class="n">world</span><span class="o">=</span><span class="n">world</span><span class="o">.</span><span class="n">to_crs</span><span class="p">(</span><span class="s2">&quot;EPSG:4326&quot;</span><span class="p">)</span>
+    <span class="n">geolocator</span> <span class="o">=</span> <span class="n">Nominatim</span><span class="p">(</span><span class="n">user_agent</span><span class="o">=</span><span class="s2">&quot;google&quot;</span><span class="p">)</span>
+    <span class="n">reverse</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">geolocator</span><span class="o">.</span><span class="n">reverse</span><span class="p">,</span> <span class="n">language</span><span class="o">=</span><span class="s2">&quot;en&quot;</span><span class="p">)</span>
+    <span class="n">address</span><span class="o">=</span><span class="n">reverse</span><span class="p">(</span><span class="n">coordinates</span><span class="p">[</span><span class="mi">0</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">country</span><span class="o">=</span><span class="n">address</span><span class="p">[</span><span class="o">-</span><span class="n">address</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">):][</span><span class="mi">1</span><span class="p">:]</span>
+    <span class="n">coordinates</span><span class="o">=</span><span class="p">[(</span><span class="n">y</span><span class="p">,</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">)</span> <span class="ow">in</span> <span class="n">coordinates</span><span class="p">]</span>
+    <span class="n">poly</span><span class="o">=</span><span class="n">GeoSeries</span><span class="p">([</span><span class="n">Polygon</span><span class="p">([</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">coordinates</span> <span class="o">+</span><span class="p">[</span><span class="n">coordinates</span><span class="p">[</span><span class="mi">0</span><span class="p">]]])])</span>
+    <span class="n">poly</span><span class="o">=</span><span class="n">poly</span><span class="o">.</span><span class="n">set_crs</span><span class="p">(</span><span class="s2">&quot;EPSG:4326&quot;</span><span class="p">)</span>
+    <span class="n">band_names</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">coordinates_shifted_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+    <span class="n">color_mask</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;blue&#39;</span><span class="p">,</span> <span class="s1">&#39;yellow&#39;</span><span class="p">,</span> <span class="s1">&#39;green&#39;</span><span class="p">]</span>
+    <span class="n">ax</span><span class="o">=</span><span class="n">world</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s1">&#39;name == </span><span class="se">\&quot;</span><span class="s1">&#39;</span><span class="o">+</span><span class="n">country</span><span class="o">+</span><span class="s1">&#39;</span><span class="se">\&quot;</span><span class="s1">&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+    <span class="n">poly</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">facecolor</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">,</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">coordinates_shifted_dict</span><span class="p">)):</span>
+        <span class="n">coordinates_shifted_band</span><span class="o">=</span><span class="n">coordinates_shifted_dict</span><span class="p">[</span><span class="n">band_names</span><span class="p">[</span><span class="n">n</span><span class="p">]]</span>
+        <span class="n">address_shifted</span><span class="o">=</span><span class="n">reverse</span><span class="p">(</span><span class="n">coordinates_shifted_dict</span><span class="p">[</span><span class="n">band_names</span><span class="p">[</span><span class="n">n</span><span class="p">]][</span><span class="mi">0</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">country_shifted</span><span class="o">=</span><span class="n">address_shifted</span><span class="p">[</span><span class="o">-</span><span class="n">address_shifted</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">):][</span><span class="mi">1</span><span class="p">:]</span>
+        <span class="n">coordinates_shifted_band</span><span class="o">=</span><span class="p">[(</span><span class="n">y</span><span class="p">,</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">)</span> <span class="ow">in</span> <span class="n">coordinates_shifted_band</span><span class="p">]</span>
+        <span class="n">poly_shifted</span><span class="o">=</span><span class="n">GeoSeries</span><span class="p">([</span><span class="n">Polygon</span><span class="p">([</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">coordinates_shifted_band</span> <span class="o">+</span><span class="p">[</span><span class="n">coordinates_shifted_band</span><span class="p">[</span><span class="mi">0</span><span class="p">]]])])</span>
+        <span class="n">poly_shifted</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">facecolor</span><span class="o">=</span><span class="n">color_mask</span><span class="p">[</span><span class="n">n</span><span class="o">%</span><span class="mi">3</span><span class="p">],</span> <span class="n">edgecolor</span><span class="o">=</span><span class="n">color_mask</span><span class="p">[</span><span class="n">n</span><span class="o">%</span><span class="mi">3</span><span class="p">],</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Address: &quot;</span><span class="p">,</span> <span class="n">colored</span><span class="p">(</span><span class="n">address</span><span class="p">,</span> <span class="s2">&quot;red&quot;</span><span class="p">))</span>
+
+<span class="n">plot_granule_coordinates</span><span class="p">(</span><span class="n">coordinates</span><span class="p">,</span><span class="n">band_shifted_dict</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell markdown docutils container">
+<p>To compare the coordinates of your the different bands, you can use
+the <code class="docutils literal notranslate"><span class="pre">create_geee_polygon</span></code> function and use the polygons on
+<code class="docutils literal notranslate"><span class="pre">Google</span> <span class="pre">Earth</span> <span class="pre">Engine</span></code> and visually compare them with respect the
+bands images and with respect to the polygon area.</p>
+</div>
+<div class="cell code docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">create_geee_polygon</span><span class="p">(</span><span class="n">coordinates</span><span class="p">,</span> <span class="n">polygon_name</span><span class="p">,</span> <span class="n">switch_lat_lon</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">switch_lat_lon</span><span class="p">:</span>
+        <span class="n">pol_coordinates</span><span class="o">=</span><span class="p">[[</span><span class="n">y</span><span class="p">,</span><span class="n">x</span><span class="p">]</span> <span class="k">for</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">)</span> <span class="ow">in</span> <span class="n">coordinates</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">pol_coordinates</span><span class="o">=</span><span class="n">coordinates</span>
+    <span class="n">pol_string</span><span class="o">=</span><span class="s2">&quot;var &quot;</span><span class="o">+</span><span class="n">polygon_name</span> <span class="o">+</span> <span class="s2">&quot; = ee.Geometry.Polygon(&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">pol_coordinates</span><span class="p">)</span><span class="o">+</span><span class="s2">&quot;);&quot;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">pol_string</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">pol_string</span>
+</pre></div>
+</div>
+</div>
+<div class="cell markdown docutils container">
+<p class="rubric" id="open-and-crop-l1c-tiles">7) - Open and crop L1C tiles</p>
+</div>
+<div class="cell markdown docutils container">
+<p class="rubric" id="a-open-l1c-tiles-and-events">7.a) - Open L1C tiles and events</p>
+</div>
+<div class="cell markdown docutils container">
+<p>Getting <code class="docutils literal notranslate"><span class="pre">L1C</span></code> event corresponding to the <code class="docutils literal notranslate"><span class="pre">L0</span></code> event.</p>
+</div>
+<div class="cell code docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">l1c_event</span><span class="o">=</span><span class="n">L1C_event</span><span class="p">(</span><span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
+<span class="n">l1c_event</span><span class="o">.</span><span class="n">from_database</span><span class="p">(</span><span class="n">event_name</span><span class="p">,</span> <span class="n">requested_bands</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell markdown docutils container">
+<p>Printing <code class="docutils literal notranslate"><span class="pre">L1C</span></code> tiles info.</p>
+</div>
+<div class="cell code docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">l1c_event</span><span class="o">.</span><span class="n">show_tiles_info</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell markdown docutils container">
+<p class="rubric" id="b-mosaicing-and-cropping-l1c-tiles-on-an-l0-band-coordinates">7.b) Mosaicing and cropping L1C tiles on an L0 band
+coordinates.</p>
+</div>
+<div class="cell markdown docutils container">
+<p>It is now possible to mosaic L1C tiles and crop them over the area of
+the previous L0 granules. In this way, it is possible to process L1C
+tiles and reproject the retrieved information (e.g., event bounding
+boxes) on the correspondent L0 granule. The cropped L1C file is a
+“TIF” file. An <code class="docutils literal notranslate"><span class="pre">ending</span></code> is added to keep track of the indices of
+the granules used(i.e. ending = “2”).</p>
+</div>
+<div class="cell code docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">ending</span><span class="o">=</span><span class="s2">&quot;2&quot;</span>
+<span class="n">output_cropped_tile_path</span><span class="o">=</span><span class="n">l1c_event</span><span class="o">.</span><span class="n">crop_tile</span><span class="p">(</span><span class="n">band_shifted_dict</span><span class="p">[</span><span class="n">requested_bands</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="kc">None</span><span class="p">,</span><span class="n">out_name_ending</span><span class="o">=</span><span class="n">ending</span><span class="p">,</span> <span class="n">lat_lon_format</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell code docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">output_cropped_tile_path</span>
+</pre></div>
+</div>
+</div>
+<div class="cell markdown docutils container">
+<p>Plotting results.</p>
+</div>
+<div class="cell markdown docutils container">
+<p><strong>Raw granule</strong></p>
+</div>
+<div class="cell code docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">raw_granule_coregistered</span><span class="o">.</span><span class="n">show_bands_superimposition</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell markdown docutils container">
+<p><strong>L1C cropped tile</strong></p>
+</div>
+<div class="cell code docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">l1c_tif</span><span class="p">,</span> <span class="n">coords_dict</span><span class="p">,</span> <span class="n">expected_class</span><span class="o">=</span><span class="n">read_L1C_image_from_tif</span><span class="p">(</span><span class="n">event_name</span><span class="p">,</span> <span class="n">ending</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">l1c_tif</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell code docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">raw_granule_coregistered</span><span class="o">.</span><span class="n">show_bands_superimposition</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell markdown docutils container">
+<p class="rubric" id="processing-l1c-tiles">8) - Processing L1C tiles</p>
+</div>
+<div class="cell markdown docutils container">
+<p>It is now possible to process the cropped <code class="docutils literal notranslate"><span class="pre">L1C</span></code> data to spot a
+volcanic eruption by using a simplified version of the algorithm
+<a class="reference external" href="https://www.mdpi.com/2072-4292/12/5/820">Massimetti, Francesco, et
+al.</a>.</p>
+</div>
+<div class="cell markdown docutils container">
+<p>Get <strong>hotmap</strong>.</p>
+</div>
+<div class="cell code docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">_</span><span class="p">,</span> <span class="n">l1c_filtered_alert_matrix</span><span class="p">,</span> <span class="n">l1c_alert_matrix</span><span class="o">=</span><span class="n">s2pix_detector</span><span class="p">(</span><span class="n">l1c_tif</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell markdown docutils container">
+<p>Show <strong>alert matrix</strong> and <strong>filtered_alert_map</strong>.</p>
+</div>
+<div class="cell code docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">plot_img1_vs_img2_bands</span><span class="p">(</span><span class="n">l1c_tif</span><span class="p">,</span> <span class="n">l1c_tif</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;alert_map&quot;</span><span class="p">,</span> <span class="s2">&quot;filtered_alert_map&quot;</span><span class="p">],</span> <span class="n">l1c_alert_matrix</span><span class="p">,</span> <span class="n">l1c_filtered_alert_matrix</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell markdown docutils container">
+<p>Show <strong>Raw granule</strong> and equivalent <strong>L1C cropped area</strong> with the
+correspondent <strong>filtere_alert_map</strong>.</p>
+</div>
+<div class="cell code docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">raw_granule_tensor</span><span class="o">=</span><span class="n">raw_granule_coregistered</span><span class="o">.</span><span class="n">as_tensor</span><span class="p">()</span>
+<span class="n">plot_img1_vs_img2_bands</span><span class="p">(</span><span class="n">raw_granule_tensor</span><span class="o">/</span><span class="n">raw_granule_tensor</span><span class="o">.</span><span class="n">max</span><span class="p">(),</span> <span class="n">l1c_tif</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;L0&quot;</span><span class="p">,</span> <span class="s2">&quot;L1C + Hotmap&quot;</span><span class="p">],</span> <span class="kc">None</span><span class="p">,</span> <span class="n">l1c_filtered_alert_matrix</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell markdown docutils container">
+<p>Show <strong>L1C cropped area</strong> with the correspondent
+<strong>filtere_alert_map</strong> and <strong>bounding boxes</strong>.</p>
+</div>
+<div class="cell code docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">mask</span><span class="o">=</span><span class="n">l1c_filtered_alert_matrix</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+<span class="n">lbl</span> <span class="o">=</span> <span class="n">label</span><span class="p">(</span><span class="n">mask</span><span class="p">)</span>
+<span class="n">props</span> <span class="o">=</span> <span class="n">regionprops</span><span class="p">(</span><span class="n">lbl</span><span class="p">)</span>
+<span class="n">l1c_numpy</span><span class="o">=</span><span class="n">l1c_tif</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">l1c_tif</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">prop</span> <span class="ow">in</span> <span class="n">props</span><span class="p">:</span>
+     <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Found bbox&#39;</span><span class="p">,</span> <span class="n">prop</span><span class="o">.</span><span class="n">bbox</span><span class="p">)</span>
+     <span class="n">bbox</span> <span class="o">=</span> <span class="n">prop</span><span class="o">.</span><span class="n">bbox</span>         <span class="c1">#   x,       y,        width, height</span>
+     <span class="n">rect</span> <span class="o">=</span> <span class="n">patches</span><span class="o">.</span><span class="n">Rectangle</span><span class="p">((</span><span class="n">bbox</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">bbox</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="nb">abs</span><span class="p">(</span><span class="n">bbox</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="n">bbox</span><span class="p">[</span><span class="mi">3</span><span class="p">]),</span> <span class="nb">abs</span><span class="p">(</span><span class="n">bbox</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="n">bbox</span><span class="p">[</span><span class="mi">2</span><span class="p">]),</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="n">facecolor</span><span class="o">=</span><span class="s1">&#39;none&#39;</span><span class="p">)</span>
+     <span class="n">ax</span><span class="o">.</span><span class="n">add_patch</span><span class="p">(</span><span class="n">rect</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="quickstart.html" class="btn btn-neutral float-left" title="Quickstart" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="database.html" class="btn btn-neutral float-right" title="Database" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Roberto Del Prete, Gabriele Meoni.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

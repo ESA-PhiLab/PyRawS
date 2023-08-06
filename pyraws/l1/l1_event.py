@@ -1,7 +1,7 @@
-from .l1_tile import L1C_tile
-from ..utils.date_utils import get_timestamp
-from ..utils.constants import BAND_SPATIAL_RESOLUTION_DICT
-from ..utils.l1_utils import (
+from pyraws.l1.l1_tile import L1C_tile
+from pyraws.utils.date_utils import get_timestamp
+from pyraws.utils.constants import BAND_SPATIAL_RESOLUTION_DICT
+from pyraws.utils.l1_utils import (
     get_l1C_image_default_path,
     read_L1C_event_from_database,
     read_L1C_event_from_path,
@@ -20,6 +20,16 @@ from tqdm import tqdm
 
 
 class L1C_event:
+    """Creates an L1C image from a tiles collection and band_names.
+        It is possible to associate an image class to the image.
+
+        Args:
+            tiles_collection (list, optional): list of L1C_tile. Defaults to None.
+            bands_names (list, optional): list of band names. Defaults to None.
+            event_class (string, optional): class name. Defaults to None.
+            event_name (str, optional): event name. Defaults to None.
+            device (torch.device, optional): device for each L0 tile in the image. Defaults to torch.device("cpu").
+    """
     __device = None
     __bands_names = []
     __tiles_collection = []
@@ -33,16 +43,7 @@ class L1C_event:
         event_name=None,
         device=torch.device("cpu"),
     ):
-        """Creates an L1C image from a tiles collection and band_names.
-        It is possible to associate an image class to the image.
 
-        Args:
-            tiles_collection (list, optional): list of L1C_tile. Defaults to None.
-            bands_names (list, optional): list of band names. Defaults to None.
-            event_class (string, optional): class name. Defaults to None.
-            event_name (str, optional): event name. Defaults to None.
-            device (torch.device, optional): device for each L0 tile in the image. Defaults to torch.device("cpu").
-        """
         if bands_names is None:
             self.__bands_names = []
         else:
