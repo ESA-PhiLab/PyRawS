@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>utils.visualization_utils &mdash; pyraws 0.0.3 documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/sphinx_highlight.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            pyraws
+              <img src="../../_static/PyRawS_logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">First Steps:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../configuration.html">Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../quickstart.html">Quickstart</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../API.html">API demonstration</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../database.html">Database</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../raw.html">Raw</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../l1.html">L1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../utils.html">Utils</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Useful Info:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../contacts.html">Contacts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../glossario.html">Glossary</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">pyraws</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">utils.visualization_utils</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for utils.visualization_utils</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.patches</span> <span class="k">as</span> <span class="nn">patches</span>
+
+
+<span class="k">def</span> <span class="nf">image_histogram_equalization</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">number_bins</span><span class="o">=</span><span class="mi">255</span><span class="p">):</span>
+    <span class="c1"># from http://www.janeriksolem.net/histogram-equalization-with-python-and.html</span>
+
+    <span class="c1"># get image histogram</span>
+    <span class="n">image_histogram</span><span class="p">,</span> <span class="n">bins</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span><span class="n">image</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span> <span class="n">number_bins</span><span class="p">,</span> <span class="n">density</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">cdf</span> <span class="o">=</span> <span class="n">image_histogram</span><span class="o">.</span><span class="n">cumsum</span><span class="p">()</span>  <span class="c1"># cumulative distribution function</span>
+    <span class="n">cdf</span> <span class="o">=</span> <span class="p">(</span><span class="n">number_bins</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">cdf</span> <span class="o">/</span> <span class="n">cdf</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>  <span class="c1"># normalize</span>
+
+    <span class="c1"># use linear interpolation of cdf to find new pixel values</span>
+    <span class="n">image_equalized</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">image</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span> <span class="n">bins</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">cdf</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">image_equalized</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">image</span><span class="o">.</span><span class="n">shape</span><span class="p">),</span> <span class="n">cdf</span>
+
+
+<div class="viewcode-block" id="equalize_tensor"><a class="viewcode-back" href="../../utils.html#utils.visualization_utils.equalize_tensor">[docs]</a><span class="k">def</span> <span class="nf">equalize_tensor</span><span class="p">(</span><span class="n">raw_granule_tensor</span><span class="p">,</span> <span class="n">n_std</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Equalizes a tensor for a better visualization by clipping outliers of a histogram higher and lower than</span>
+<span class="sd">    pixels value mean \*- n_std times the standarda deviation.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        raw_granule_tensor (torch.tensor): tensor to equalize.</span>
+<span class="sd">        n_std (int, optional): Number of times the standard deviation. Defaults to 2.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        torch.tensor: equalized tensor.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">raw_granule_tensor_equalized</span> <span class="o">=</span> <span class="n">raw_granule_tensor</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">raw_granule_tensor</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]):</span>
+        <span class="n">band</span> <span class="o">=</span> <span class="n">raw_granule_tensor_equalized</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">n</span><span class="p">]</span>
+        <span class="n">band_mean</span><span class="p">,</span> <span class="n">band_std</span> <span class="o">=</span> <span class="n">band</span><span class="o">.</span><span class="n">mean</span><span class="p">(),</span> <span class="n">band</span><span class="o">.</span><span class="n">std</span><span class="p">()</span>
+        <span class="c1">#   Histogram clipping:</span>
+        <span class="n">band</span><span class="p">[</span><span class="n">band</span> <span class="o">&lt;</span> <span class="n">band_mean</span> <span class="o">-</span> <span class="n">n_std</span> <span class="o">*</span> <span class="n">band_std</span><span class="p">]</span> <span class="o">=</span> <span class="n">band_mean</span> <span class="o">-</span> <span class="n">n_std</span> <span class="o">*</span> <span class="n">band_std</span>
+        <span class="n">band</span><span class="p">[</span><span class="n">band</span> <span class="o">&gt;</span> <span class="n">band_mean</span> <span class="o">+</span> <span class="n">n_std</span> <span class="o">*</span> <span class="n">band_std</span><span class="p">]</span> <span class="o">=</span> <span class="n">band_mean</span> <span class="o">+</span> <span class="n">n_std</span> <span class="o">*</span> <span class="n">band_std</span>
+
+        <span class="n">band</span><span class="p">,</span> <span class="n">cdf</span> <span class="o">=</span> <span class="n">image_histogram_equalization</span><span class="p">(</span><span class="n">band</span><span class="o">.</span><span class="n">numpy</span><span class="p">(),</span> <span class="n">number_bins</span><span class="o">=</span><span class="mi">2</span><span class="o">**</span><span class="mi">16</span><span class="p">)</span>
+        <span class="n">band</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">band</span><span class="p">)</span>
+        <span class="c1">#   band_clahe = clahe.apply((band.numpy() * CONVERSION ).astype(np.uint8))</span>
+        <span class="c1">#   raw_granule_tensor_equalized[:,:,n]= torch.from_numpy(band_clahe/CONVERSION)</span>
+        <span class="n">raw_granule_tensor_equalized</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="n">band</span>
+
+    <span class="k">return</span> <span class="n">raw_granule_tensor_equalized</span></div>
+
+
+<div class="viewcode-block" id="plot_img1_vs_img2_bands"><a class="viewcode-back" href="../../utils.html#utils.visualization_utils.plot_img1_vs_img2_bands">[docs]</a><span class="k">def</span> <span class="nf">plot_img1_vs_img2_bands</span><span class="p">(</span>
+    <span class="n">img1_band</span><span class="p">,</span>
+    <span class="n">img2_band</span><span class="p">,</span>
+    <span class="n">img_name_list</span><span class="p">,</span>
+    <span class="n">alert_matrix</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">alert_matrix_unregistered</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">save_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Util function to visualize and compare the bands of two different images. It also allows adding an alert matrix.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        img1_band (torch.tensor): first image band.</span>
+<span class="sd">        img2_band (torch.tensor): second image band.</span>
+<span class="sd">        img_name_list (list): list of names of different images.</span>
+<span class="sd">        alert_matrix (torch.tensor, opional): if not None, the hotmap of normal band is shown. Defaults to None.</span>
+<span class="sd">        alert_matrix_unregistered (torch.tensor, opional): if not None, the hotmap of unregstered band is shown.</span>
+<span class="sd">                                                           Defaults to None.</span>
+<span class="sd">        save_path (string, optional): if not None, the image is saved at save_path. Defaults to None.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">cmap</span> <span class="o">=</span> <span class="s2">&quot;bone&quot;</span>
+    <span class="n">fig</span><span class="p">,</span> <span class="p">(</span><span class="n">ax1</span><span class="p">,</span> <span class="n">ax2</span><span class="p">)</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">ax1</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">img1_band</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">(),</span> <span class="n">cmap</span><span class="o">=</span><span class="n">cmap</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">alert_matrix</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">ax1</span><span class="o">.</span><span class="n">contour</span><span class="p">(</span><span class="n">alert_matrix</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">(),</span> <span class="n">colors</span><span class="o">=</span><span class="s2">&quot;r&quot;</span><span class="p">)</span>
+    <span class="n">ax1</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">ax1</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s2">&quot;off&quot;</span><span class="p">)</span>
+    <span class="n">ax1</span><span class="o">.</span><span class="n">title</span><span class="o">.</span><span class="n">set_text</span><span class="p">(</span><span class="n">img_name_list</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">ax2</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">img2_band</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">(),</span> <span class="n">cmap</span><span class="o">=</span><span class="n">cmap</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">alert_matrix_unregistered</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">ax2</span><span class="o">.</span><span class="n">contour</span><span class="p">(</span><span class="n">alert_matrix_unregistered</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">(),</span> <span class="n">colors</span><span class="o">=</span><span class="s2">&quot;r&quot;</span><span class="p">)</span>
+    <span class="n">ax2</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">ax2</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s2">&quot;off&quot;</span><span class="p">)</span>
+    <span class="n">ax2</span><span class="o">.</span><span class="n">title</span><span class="o">.</span><span class="n">set_text</span><span class="p">(</span><span class="n">img_name_list</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">fig</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">save_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">save_path</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="plot_event"><a class="viewcode-back" href="../../utils.html#utils.visualization_utils.plot_event">[docs]</a><span class="k">def</span> <span class="nf">plot_event</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">img_name</span><span class="p">,</span> <span class="n">bbox_list</span><span class="p">,</span> <span class="n">alert_matrix</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">save_path</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Util function to visualize and compare the bands of two different images. It also allows adding an alert matrix.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        img (torch.tensor): img.</span>
+<span class="sd">        img_name (string): image_name.</span>
+<span class="sd">        bbox_list (skimage properties): bbox list.</span>
+<span class="sd">        alert_matrix (torch.tensor, opional): if not None, the hotmap of normal band is shown. Defaults to None.</span>
+<span class="sd">        save_path (string, optional): if not None, the image is saved at save_path. Defaults to None.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">cmap</span> <span class="o">=</span> <span class="s2">&quot;bone&quot;</span>
+    <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">img</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">(),</span> <span class="n">cmap</span><span class="o">=</span><span class="n">cmap</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">alert_matrix</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">contour</span><span class="p">(</span><span class="n">alert_matrix</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">(),</span> <span class="n">colors</span><span class="o">=</span><span class="s2">&quot;r&quot;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s2">&quot;off&quot;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">title</span><span class="o">.</span><span class="n">set_text</span><span class="p">(</span><span class="n">img_name</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">prop</span> <span class="ow">in</span> <span class="n">bbox_list</span><span class="p">:</span>
+        <span class="n">bbox</span> <span class="o">=</span> <span class="n">prop</span><span class="o">.</span><span class="n">bbox</span>  <span class="c1"># x, y, width, height</span>
+        <span class="n">rect</span> <span class="o">=</span> <span class="n">patches</span><span class="o">.</span><span class="n">Rectangle</span><span class="p">(</span>
+            <span class="p">(</span><span class="n">bbox</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">bbox</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span>
+            <span class="nb">abs</span><span class="p">(</span><span class="n">bbox</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">bbox</span><span class="p">[</span><span class="mi">3</span><span class="p">]),</span>
+            <span class="nb">abs</span><span class="p">(</span><span class="n">bbox</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">bbox</span><span class="p">[</span><span class="mi">2</span><span class="p">]),</span>
+            <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+            <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;y&quot;</span><span class="p">,</span>
+            <span class="n">facecolor</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">add_patch</span><span class="p">(</span><span class="n">rect</span><span class="p">)</span>
+
+    <span class="n">fig</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">save_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">save_path</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Roberto Del Prete, Gabriele Meoni.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

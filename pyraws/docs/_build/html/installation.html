@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Installation &mdash; pyraws 0.0.3 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Configuration" href="configuration.html" />
+    <link rel="prev" title="Welcome to pyraws’s documentation!" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            pyraws
+              <img src="_static/PyRawS_logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">First Steps:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#a-via-pip">a) Via pip</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#b-build-from-source">b) Build from Source</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#c-with-docker">c) With Docker</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="configuration.html">Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quickstart</a></li>
+<li class="toctree-l1"><a class="reference internal" href="API.html">API demonstration</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="database.html">Database</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raw.html">Raw</a></li>
+<li class="toctree-l1"><a class="reference internal" href="l1.html">L1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils.html">Utils</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Useful Info:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="glossario.html">Glossary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contacts.html">Contacts</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">pyraws</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Installation</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/installation.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="installation">
+<h1>Installation<a class="headerlink" href="#installation" title="Permalink to this heading"></a></h1>
+<p>PyRawS is a Python package that can be installed in different ways. The installation process depends on the OS you are using. We suggest to use Linux or Mac OS.
+You can install PyRawS in the following ways:</p>
+<p><strong>Table of contents</strong></p>
+<nav class="contents local" id="contents">
+<ul class="simple">
+<li><p><a class="reference internal" href="#a-via-pip" id="id1">a) Via pip</a></p></li>
+<li><p><a class="reference internal" href="#b-build-from-source" id="id2">b) Build from Source</a></p></li>
+<li><p><a class="reference internal" href="#c-with-docker" id="id3">c) With Docker</a></p></li>
+</ul>
+</nav>
+<section id="a-via-pip">
+<h2><a class="toc-backref" href="#id1" role="doc-backlink">a) Via pip</a><a class="headerlink" href="#a-via-pip" title="Permalink to this heading"></a></h2>
+<p>You can install pyraws from pypi, from CLI execute:</p>
+<p>You can install  <cite>pyraws</cite> with [pypy](<a class="reference external" href="https://www.pypy.org/">https://www.pypy.org/</a>) by running the following command from CLI:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>pyraws
+</pre></div>
+</div>
+</section>
+<section id="b-build-from-source">
+<h2><a class="toc-backref" href="#id2" role="doc-backlink">b) Build from Source</a><a class="headerlink" href="#b-build-from-source" title="Permalink to this heading"></a></h2>
+<p>Before all, clone this repository. We suggest using git from CLI, execute:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/ESA-PhiLab/PyRawS
+</pre></div>
+</div>
+<p>Create the PyRawS environment</p>
+<ul>
+<li><p>On Linux</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># For Linux, the installation is straightforward.</span>
+<span class="c1"># You just need to run the following command from the main directory:</span>
+<span class="se">\b</span>in<span class="se">\b</span>ash<span class="se">\ </span><span class="nb">source</span><span class="w"> </span>pyraws_install.sh
+
+<span class="c1"># NB: Your data should be placed in the data directory in the main.</span>
+</pre></div>
+</div>
+</li>
+<li><p>On Other OS</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># To install the environment, we suggest to use anaconda.</span>
+<span class="c1"># You can create a dedicated conda environment by using the `environment.yml` file by running the following command from the main directory:</span>
+conda<span class="w"> </span>env<span class="w"> </span>create<span class="w"> </span>-f<span class="w"> </span>environment.yml
+
+<span class="c1"># To activate your environment, please execute:</span>
+conda<span class="w"> </span>activate<span class="w"> </span>PyRawS
+</pre></div>
+</div>
+</li>
+</ul>
+</section>
+<section id="c-with-docker">
+<h2><a class="toc-backref" href="#id3" role="doc-backlink">c) With Docker</a><a class="headerlink" href="#c-with-docker" title="Permalink to this heading"></a></h2>
+<p>To use PyRawS with docker, use one of the following methods.</p>
+<p><em>Method 1: Pull the docker image from Docker Hub</em></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker<span class="w"> </span>pull<span class="w"> </span>sirbastiano94/pyraws:latest
+</pre></div>
+</div>
+<p><em>Method 2: Build docker image</em></p>
+<p>Follow these steps:</p>
+<ol class="arabic">
+<li><p>Clone the repository and build the docker image by running the following command from the main directory:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker<span class="w"> </span>build<span class="w"> </span>-t<span class="w"> </span>pyraws:latest<span class="w">  </span>--build-arg<span class="w"> </span><span class="nv">CACHEBUST</span><span class="o">=</span><span class="k">$(</span>date<span class="w"> </span>+%s<span class="k">)</span><span class="w"> </span>-f<span class="w"> </span>dockerfile<span class="w"> </span>.
+</pre></div>
+</div>
+</li>
+<li><p>Run the docker image by executing:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker<span class="w"> </span>run<span class="w"> </span>-it<span class="w"> </span>--rm<span class="w"> </span>-p<span class="w"> </span><span class="m">8888</span>:8888<span class="w"> </span>pyraws:latest
+</pre></div>
+</div>
+</li>
+</ol>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="Welcome to pyraws’s documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="configuration.html" class="btn btn-neutral float-right" title="Configuration" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Roberto Del Prete, Gabriele Meoni.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

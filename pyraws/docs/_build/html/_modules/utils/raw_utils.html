@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>utils.raw_utils &mdash; pyraws 0.0.3 documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/sphinx_highlight.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            pyraws
+              <img src="../../_static/PyRawS_logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">First Steps:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../configuration.html">Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../quickstart.html">Quickstart</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../API.html">API demonstration</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../database.html">Database</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../raw.html">Raw</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../l1.html">L1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../utils.html">Utils</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Useful Info:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../contacts.html">Contacts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../glossario.html">Glossary</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">pyraws</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">utils.raw_utils</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for utils.raw_utils</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">glob</span> <span class="kn">import</span> <span class="n">glob</span>
+<span class="kn">from</span> <span class="nn">xml.dom</span> <span class="kn">import</span> <span class="n">minidom</span>
+<span class="kn">from</span> <span class="nn">termcolor</span> <span class="kn">import</span> <span class="n">colored</span>
+<span class="kn">from</span> <span class="nn">.database_utils</span> <span class="kn">import</span> <span class="n">get_raw_shift_lut</span><span class="p">,</span> <span class="n">get_event_info</span><span class="p">,</span> <span class="n">get_event_granule_bb_dict</span>
+<span class="kn">from</span> <span class="nn">.constants</span> <span class="kn">import</span> <span class="n">BANDS_RAW_SHAPE_DICT</span><span class="p">,</span> <span class="n">BAND_SPATIAL_RESOLUTION_DICT</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">geopy.distance</span>
+<span class="kn">from</span> <span class="nn">tifffile</span> <span class="kn">import</span> <span class="n">imread</span>
+<span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
+<span class="kn">from</span> <span class="nn">rasterio.control</span> <span class="kn">import</span> <span class="n">GroundControlPoint</span> <span class="k">as</span> <span class="n">GCP</span>
+<span class="kn">from</span> <span class="nn">rasterio.transform</span> <span class="kn">import</span> <span class="n">from_gcps</span>
+<span class="kn">import</span> <span class="nn">rasterio</span>
+
+
+<div class="viewcode-block" id="get_bands_shift"><a class="viewcode-back" href="../../utils.html#utils.raw_utils.get_bands_shift">[docs]</a><span class="k">def</span> <span class="nf">get_bands_shift</span><span class="p">(</span>
+    <span class="n">bands_list</span><span class="p">,</span> <span class="n">satellite</span><span class="p">,</span> <span class="n">detector_number</span><span class="p">,</span> <span class="n">downsampling</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">cfg_file_dict</span><span class="o">=</span><span class="kc">None</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;It returns the number of backward shift pixels of the various bands with respect to the first band in the list.</span>
+<span class="sd">    Negative shift means the bands shall translate forward.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        bands_list (list): list of bands</span>
+<span class="sd">        satellite (str, optional): &quot;S2A&quot; or &quot;S2B&quot; respectively for &quot;Sentinel-2A&quot; data and &quot;Sentinel-2B&quot; data.</span>
+<span class="sd">        detector_number (int): Detectorn number.</span>
+<span class="sd">        downsampling (boolean, optional): if True, shift values for downsampled bands of the chosen satellite are used.</span>
+<span class="sd">                                          Otherwise, values for upsampled bands are used. Defaults to True.</span>
+<span class="sd">        cfg_file_dict (dict, optional): dictionary containing paths to the different pyraws directories.</span>
+<span class="sd">                                        If None, internal CSV database will be parsed. Defaults to None.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        list: list of relative pixel shift compared to the first band.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">lut_df</span> <span class="o">=</span> <span class="n">get_raw_shift_lut</span><span class="p">(</span><span class="n">satellite</span><span class="p">,</span> <span class="n">detector_number</span><span class="p">,</span> <span class="n">downsampling</span><span class="p">,</span> <span class="n">cfg_file_dict</span><span class="p">)</span>
+    <span class="n">lut_df_keys</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">lut_df</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+    <span class="n">b_m</span> <span class="o">=</span> <span class="n">bands_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">b_m</span> <span class="o">==</span> <span class="s2">&quot;B02&quot;</span><span class="p">:</span>
+        <span class="n">b_m_index</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">b_m_index</span> <span class="o">=</span> <span class="n">lut_df_keys</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">b_m</span><span class="p">)</span>
+
+    <span class="n">bands_shift_0</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">BAND_SPATIAL_RESOLUTION_ACROSS_TRACK_DICT</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+        <span class="nb">zip</span><span class="p">(</span>
+            <span class="nb">list</span><span class="p">(</span><span class="n">BAND_SPATIAL_RESOLUTION_DICT</span><span class="o">.</span><span class="n">keys</span><span class="p">()),</span>
+            <span class="p">[</span>
+                <span class="mi">20</span>
+                <span class="k">if</span> <span class="n">BAND_SPATIAL_RESOLUTION_DICT</span><span class="p">[</span><span class="n">band_name</span><span class="p">]</span> <span class="o">==</span> <span class="mi">60</span>
+                <span class="k">else</span> <span class="n">BAND_SPATIAL_RESOLUTION_DICT</span><span class="p">[</span><span class="n">band_name</span><span class="p">]</span>
+                <span class="k">for</span> <span class="n">band_name</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">BAND_SPATIAL_RESOLUTION_DICT</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+            <span class="p">],</span>
+        <span class="p">)</span>
+    <span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">b_s</span> <span class="ow">in</span> <span class="n">bands_list</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
+        <span class="k">if</span> <span class="n">b_s</span> <span class="o">==</span> <span class="s2">&quot;B02&quot;</span><span class="p">:</span>
+            <span class="n">b_s_index</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">b_s_index</span> <span class="o">=</span> <span class="n">lut_df_keys</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">b_s</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">b_m_index</span> <span class="o">&lt;</span> <span class="n">b_s_index</span><span class="p">:</span>
+            <span class="n">s_along_track_ms</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+                <span class="p">[</span>
+                    <span class="n">BAND_SPATIAL_RESOLUTION_DICT</span><span class="p">[</span><span class="n">lut_df_keys</span><span class="p">[</span><span class="n">k</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]]</span>
+                    <span class="o">/</span> <span class="n">BAND_SPATIAL_RESOLUTION_DICT</span><span class="p">[</span><span class="n">b_s</span><span class="p">]</span>
+                    <span class="o">*</span> <span class="n">lut_df</span><span class="p">[</span><span class="n">lut_df_keys</span><span class="p">[</span><span class="n">k</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]][</span><span class="mi">0</span><span class="p">]</span>
+                    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">b_m_index</span><span class="p">,</span> <span class="n">b_s_index</span><span class="p">)</span>
+                <span class="p">]</span>
+            <span class="p">)</span>
+            <span class="n">s_across_track_ms</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+                <span class="p">[</span>
+                    <span class="n">BAND_SPATIAL_RESOLUTION_ACROSS_TRACK_DICT</span><span class="p">[</span><span class="n">lut_df_keys</span><span class="p">[</span><span class="n">k</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]]</span>
+                    <span class="o">/</span> <span class="n">BAND_SPATIAL_RESOLUTION_ACROSS_TRACK_DICT</span><span class="p">[</span><span class="n">b_s</span><span class="p">]</span>
+                    <span class="o">*</span> <span class="n">lut_df</span><span class="p">[</span><span class="n">lut_df_keys</span><span class="p">[</span><span class="n">k</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]][</span><span class="mi">1</span><span class="p">]</span>
+                    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">b_m_index</span><span class="p">,</span> <span class="n">b_s_index</span><span class="p">)</span>
+                <span class="p">]</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">s_along_track_ms</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+                <span class="p">[</span>
+                    <span class="o">-</span><span class="n">BAND_SPATIAL_RESOLUTION_DICT</span><span class="p">[</span><span class="n">lut_df_keys</span><span class="p">[</span><span class="n">k</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]]</span>
+                    <span class="o">/</span> <span class="n">BAND_SPATIAL_RESOLUTION_DICT</span><span class="p">[</span><span class="n">b_s</span><span class="p">]</span>
+                    <span class="o">*</span> <span class="n">lut_df</span><span class="p">[</span><span class="n">lut_df_keys</span><span class="p">[</span><span class="n">k</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]][</span><span class="mi">0</span><span class="p">]</span>
+                    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">b_s_index</span><span class="p">,</span> <span class="n">b_m_index</span><span class="p">)</span>
+                <span class="p">]</span>
+            <span class="p">)</span>
+            <span class="n">s_across_track_ms</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+                <span class="p">[</span>
+                    <span class="o">-</span><span class="n">BAND_SPATIAL_RESOLUTION_ACROSS_TRACK_DICT</span><span class="p">[</span><span class="n">lut_df_keys</span><span class="p">[</span><span class="n">k</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]]</span>
+                    <span class="o">/</span> <span class="n">BAND_SPATIAL_RESOLUTION_ACROSS_TRACK_DICT</span><span class="p">[</span><span class="n">b_s</span><span class="p">]</span>
+                    <span class="o">*</span> <span class="n">lut_df</span><span class="p">[</span><span class="n">lut_df_keys</span><span class="p">[</span><span class="n">k</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]][</span><span class="mi">1</span><span class="p">]</span>
+                    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">b_s_index</span><span class="p">,</span> <span class="n">b_m_index</span><span class="p">)</span>
+                <span class="p">]</span>
+            <span class="p">)</span>
+
+        <span class="n">bands_shift_0</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">s_along_track_ms</span><span class="o">.</span><span class="n">sum</span><span class="p">(),</span> <span class="n">s_across_track_ms</span><span class="o">.</span><span class="n">sum</span><span class="p">()])</span>
+
+    <span class="k">return</span> <span class="n">bands_shift_0</span></div>
+
+
+<div class="viewcode-block" id="get_granule_px_length"><a class="viewcode-back" href="../../utils.html#utils.raw_utils.get_granule_px_length">[docs]</a><span class="k">def</span> <span class="nf">get_granule_px_length</span><span class="p">(</span>
+    <span class="n">n_stacked_granules</span><span class="p">,</span> <span class="n">satellite</span><span class="p">,</span> <span class="n">detector_number</span><span class="p">,</span> <span class="n">cropped_pixels_along</span><span class="o">=</span><span class="kc">None</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns the length of a granule in px</span>
+<span class="sd">    Args:</span>
+<span class="sd">        n_stacked_granules (int): number of stacked granules.</span>
+<span class="sd">        satellite (str, optional): &quot;S2A&quot; or &quot;S2B&quot; respectively for &quot;Sentinel-2A&quot; data and &quot;Sentinel-2B&quot; data.</span>
+<span class="sd">        detector_number (int): Detectorn number.</span>
+<span class="sd">        cropped_pixels_along (int): Number of cropped pixels along the along-track direction</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        int: Length of a granule in px.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">b09_size</span> <span class="o">=</span> <span class="n">BANDS_RAW_SHAPE_DICT</span><span class="p">[</span><span class="s2">&quot;B09&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="n">cropped_pixels_along</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">b09_size</span> <span class="o">-=</span> <span class="n">cropped_pixels_along</span>
+
+    <span class="n">b_02_b09_shift</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span>
+        <span class="n">get_bands_shift</span><span class="p">([</span><span class="s2">&quot;B02&quot;</span><span class="p">,</span> <span class="s2">&quot;B09&quot;</span><span class="p">],</span> <span class="n">satellite</span><span class="p">,</span> <span class="n">detector_number</span><span class="p">,</span> <span class="n">downsampling</span><span class="o">=</span><span class="kc">False</span><span class="p">)[</span>
+            <span class="mi">0</span>
+        <span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="nb">int</span><span class="p">(</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span>
+            <span class="p">(</span><span class="n">n_stacked_granules</span> <span class="o">*</span> <span class="n">b09_size</span> <span class="o">+</span> <span class="n">b_02_b09_shift</span><span class="p">)</span>
+            <span class="o">*</span> <span class="n">BAND_SPATIAL_RESOLUTION_DICT</span><span class="p">[</span><span class="s2">&quot;B09&quot;</span><span class="p">]</span>
+            <span class="o">/</span> <span class="n">BAND_SPATIAL_RESOLUTION_DICT</span><span class="p">[</span><span class="s2">&quot;B02&quot;</span><span class="p">]</span>
+        <span class="p">)</span>
+    <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="read_Raw_granule"><a class="viewcode-back" href="../../utils.html#utils.raw_utils.read_Raw_granule">[docs]</a><span class="k">def</span> <span class="nf">read_Raw_granule</span><span class="p">(</span>
+    <span class="n">granule_path</span><span class="p">,</span> <span class="n">bands_list</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="s2">&quot;cpu&quot;</span><span class="p">)</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Read specific bands of an Raw Sentine2 granule, specified in &quot;bands_list&quot;.</span>
+<span class="sd">    The image contains several granules  at &quot;dir_path&quot;.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        granule_path (str): Sentinel 2 Raw granule path.</span>
+<span class="sd">        bands_list (list): bands list.</span>
+<span class="sd">        verbose (bool, optional): if True, if True, verbose mode is used. Defaults to True.</span>
+<span class="sd">        device (torch.device, optional): torch device. Defaults to torch.device(&quot;cpu&quot;).</span>
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: Impossible to open the images with the requested bands.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        list: it includes G granules, each of them is a list including  torch.tensor for each Sentinel 2A image band.</span>
+<span class="sd">        list: metadata including original polygon coordinates.</span>
+<span class="sd">        list: metadata including polygon cloud cover percentage.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">metadata_xml_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">granule_path</span><span class="p">,</span> <span class="s2">&quot;Inventory_Metadata.xml&quot;</span><span class="p">)</span>
+    <span class="n">granule_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">granule_path</span><span class="p">,</span> <span class="s2">&quot;TIF&quot;</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">bands_img_paths</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">glob</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">granule_path</span><span class="p">,</span> <span class="s2">&quot;*&quot;</span><span class="p">)))</span>
+        <span class="n">band_name_file_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+            <span class="nb">zip</span><span class="p">(</span><span class="n">bands_list</span><span class="p">,</span> <span class="n">bands_list</span><span class="p">)</span>
+        <span class="p">)</span>  <span class="c1"># This dictionary is to match the desired band with the file. We initialized with bands_list also as</span>
+        <span class="c1"># value because they will be fixed in the next for loop.</span>
+
+        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">bands_img_paths</span><span class="p">:</span>
+            <span class="n">band_number</span> <span class="o">=</span> <span class="n">name</span><span class="p">[</span><span class="n">name</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;_B&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span> <span class="p">:</span> <span class="n">name</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;.tif&quot;</span><span class="p">)]</span>
+            <span class="k">if</span> <span class="n">name</span><span class="p">[</span><span class="n">name</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;.tif&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span> <span class="p">:]</span> <span class="o">==</span> <span class="s2">&quot;tif&quot;</span> <span class="ow">and</span> <span class="n">band_number</span> <span class="ow">in</span> <span class="n">bands_list</span><span class="p">:</span>
+                <span class="n">band_name_file_dict</span><span class="p">[</span>
+                    <span class="n">name</span><span class="p">[</span><span class="n">name</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;_B&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span> <span class="p">:</span> <span class="n">name</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;.tif&quot;</span><span class="p">)]</span>
+                <span class="p">]</span> <span class="o">=</span> <span class="n">name</span>
+
+        <span class="n">sentinel_raw_granule</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">band</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">bands_list</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="s2">&quot;Parsing sentinel bands&quot;</span><span class="p">):</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Taking band: &quot;</span> <span class="o">+</span> <span class="n">colored</span><span class="p">(</span><span class="n">band</span><span class="p">,</span> <span class="s2">&quot;green&quot;</span><span class="p">))</span>
+                <span class="n">band_k</span> <span class="o">=</span> <span class="n">imread</span><span class="p">(</span><span class="n">band_name_file_dict</span><span class="p">[</span><span class="n">band</span><span class="p">])[:,</span> <span class="p">:,</span> <span class="mi">0</span><span class="p">]</span>
+                <span class="n">sentinel_raw_granule</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="n">torch</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">band_k</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">))</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+                <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">band</span> <span class="ow">in</span> <span class="n">bands_list</span><span class="p">:</span>
+                <span class="n">band_k</span> <span class="o">=</span> <span class="n">imread</span><span class="p">(</span><span class="n">band_name_file_dict</span><span class="p">[</span><span class="n">band</span><span class="p">])[:,</span> <span class="p">:,</span> <span class="mi">0</span><span class="p">]</span>
+                <span class="n">sentinel_raw_granule</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="n">torch</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">band_k</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">))</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+                <span class="p">)</span>
+    <span class="k">except</span><span class="p">:</span>  <span class="c1"># noqa: E722</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="n">colored</span><span class="p">(</span><span class="s2">&quot;Error. &quot;</span><span class="p">,</span> <span class="s2">&quot;red&quot;</span><span class="p">)</span>
+            <span class="o">+</span> <span class="s2">&quot; impossible to open: &quot;</span>
+            <span class="o">+</span> <span class="n">colored</span><span class="p">(</span><span class="n">granule_path</span><span class="p">,</span> <span class="s2">&quot;blue&quot;</span><span class="p">)</span>
+            <span class="o">+</span> <span class="s2">&quot; with the requested bands.&quot;</span>
+        <span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="c1"># Parsing XML metadata</span>
+        <span class="n">xml_content</span> <span class="o">=</span> <span class="n">minidom</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">metadata_xml_path</span><span class="p">)</span>
+        <span class="n">polygon_content</span> <span class="o">=</span> <span class="n">xml_content</span><span class="o">.</span><span class="n">getElementsByTagName</span><span class="p">(</span><span class="s2">&quot;Geographic_Localization&quot;</span><span class="p">)</span>
+        <span class="n">polygon_coords_children</span> <span class="o">=</span> <span class="n">polygon_content</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">getElementsByTagName</span><span class="p">(</span><span class="s2">&quot;Geo_Pnt&quot;</span><span class="p">)</span>
+
+        <span class="n">polygon_coordinates_list</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">point</span> <span class="ow">in</span> <span class="n">polygon_coords_children</span><span class="p">[</span>
+            <span class="p">:</span><span class="o">-</span><span class="mi">1</span>
+        <span class="p">]:</span>  <span class="c1"># Last one is excluded to avoid repetition of the first point.</span>
+            <span class="n">latitude</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">point</span><span class="o">.</span><span class="n">getElementsByTagName</span><span class="p">(</span><span class="s2">&quot;LATITUDE&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">firstChild</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+            <span class="n">longitude</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span>
+                <span class="n">point</span><span class="o">.</span><span class="n">getElementsByTagName</span><span class="p">(</span><span class="s2">&quot;LONGITUDE&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">firstChild</span><span class="o">.</span><span class="n">data</span>
+            <span class="p">)</span>
+            <span class="n">polygon_coordinates_list</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">latitude</span><span class="p">,</span> <span class="n">longitude</span><span class="p">])</span>
+
+        <span class="n">cloud_percentage</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span>
+            <span class="n">xml_content</span><span class="o">.</span><span class="n">getElementsByTagName</span><span class="p">(</span><span class="s2">&quot;CloudPercentage&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">firstChild</span><span class="o">.</span><span class="n">data</span>
+        <span class="p">)</span>
+    <span class="k">except</span><span class="p">:</span>  <span class="c1"># noqa: E722</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="n">colored</span><span class="p">(</span><span class="s2">&quot;Error. &quot;</span><span class="p">,</span> <span class="s2">&quot;red&quot;</span><span class="p">)</span>
+            <span class="o">+</span> <span class="s2">&quot; impossible to read: &quot;</span>
+            <span class="o">+</span> <span class="n">colored</span><span class="p">(</span><span class="n">xml_content</span><span class="p">,</span> <span class="s2">&quot;blue&quot;</span><span class="p">)</span>
+            <span class="o">+</span> <span class="s2">&quot; Raw granule metatada.&quot;</span>
+        <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">sentinel_raw_granule</span><span class="p">,</span> <span class="n">polygon_coordinates_list</span><span class="p">,</span> <span class="n">cloud_percentage</span></div>
+
+
+<div class="viewcode-block" id="read_Raw_event_from_path"><a class="viewcode-back" href="../../utils.html#utils.raw_utils.read_Raw_event_from_path">[docs]</a><span class="k">def</span> <span class="nf">read_Raw_event_from_path</span><span class="p">(</span>
+    <span class="n">dir_path</span><span class="p">,</span> <span class="n">bands_list</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="s2">&quot;cpu&quot;</span><span class="p">)</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Read specific bands of an Raw Sentine2 event, specified in &quot;bands_list&quot;.</span>
+<span class="sd">    The image contains several granules  at &quot;dir_path&quot;.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        dir_path (str): Sentinel 2 Raw image path.</span>
+<span class="sd">        bands_list (list): bands list.</span>
+<span class="sd">        verbose (bool, optional): if True, if True, verbose mode is used. Defaults to True.</span>
+<span class="sd">        device (torch.device, optional): torch device. Defaults to torch.device(&quot;cpu&quot;).</span>
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: Impossible to open the events with the requested bands.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        list: list of G granules, each of them is a list of the requested Sentinel 2A bands.</span>
+<span class="sd">        list: list of granules paths.</span>
+<span class="sd">        list: list of granules polygon coordinates.</span>
+<span class="sd">        list: list of cloud coverage percentages.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">granules_path</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">glob</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dir_path</span><span class="p">,</span> <span class="s2">&quot;*&quot;</span><span class="p">)))</span>
+        <span class="n">granules_list</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">granules_polygons_coordinates_list</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">cloud_percentages_list</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">granule_path</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">granules_path</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="s2">&quot;Parsing granules...&quot;</span><span class="p">):</span>
+                <span class="n">granule</span><span class="p">,</span> <span class="n">polygon_coordinates</span><span class="p">,</span> <span class="n">cloud_percentage</span> <span class="o">=</span> <span class="n">read_Raw_granule</span><span class="p">(</span>
+                    <span class="n">granule_path</span><span class="p">,</span> <span class="n">bands_list</span><span class="p">,</span> <span class="n">verbose</span><span class="p">,</span> <span class="n">device</span>
+                <span class="p">)</span>
+                <span class="n">granules_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">granule</span><span class="p">)</span>
+                <span class="n">granules_polygons_coordinates_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">polygon_coordinates</span><span class="p">)</span>
+                <span class="n">cloud_percentages_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cloud_percentage</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">granule_path</span> <span class="ow">in</span> <span class="n">granules_path</span><span class="p">:</span>
+                <span class="n">granule</span><span class="p">,</span> <span class="n">polygon_coordinates</span><span class="p">,</span> <span class="n">cloud_percentage</span> <span class="o">=</span> <span class="n">read_Raw_granule</span><span class="p">(</span>
+                    <span class="n">granule_path</span><span class="p">,</span> <span class="n">bands_list</span><span class="p">,</span> <span class="n">verbose</span><span class="p">,</span> <span class="n">device</span>
+                <span class="p">)</span>
+                <span class="n">granules_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">granule</span><span class="p">)</span>
+                <span class="n">granules_polygons_coordinates_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">polygon_coordinates</span><span class="p">)</span>
+                <span class="n">cloud_percentages_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cloud_percentage</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="n">granules_list</span><span class="p">,</span>
+            <span class="n">granules_path</span><span class="p">,</span>
+            <span class="n">granules_polygons_coordinates_list</span><span class="p">,</span>
+            <span class="n">cloud_percentages_list</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="k">except</span><span class="p">:</span>  <span class="c1"># noqa: E722</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="n">colored</span><span class="p">(</span><span class="s2">&quot;Error. &quot;</span><span class="p">,</span> <span class="s2">&quot;red&quot;</span><span class="p">)</span>
+            <span class="o">+</span> <span class="s2">&quot; impossible to open: &quot;</span>
+            <span class="o">+</span> <span class="n">colored</span><span class="p">(</span><span class="n">dir_path</span><span class="p">,</span> <span class="s2">&quot;blue&quot;</span><span class="p">)</span>
+            <span class="o">+</span> <span class="s2">&quot; with the requested bands.&quot;</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="find_granules_names"><a class="viewcode-back" href="../../utils.html#utils.raw_utils.find_granules_names">[docs]</a><span class="k">def</span> <span class="nf">find_granules_names</span><span class="p">(</span><span class="n">granules_paths</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Extract name of granules from granules path.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        granules_paths (list): list of paths to the granules.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        list: list of granule names.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">granule_names</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">granule_path</span> <span class="ow">in</span> <span class="n">granules_paths</span><span class="p">:</span>
+        <span class="n">first_name_char_pos</span> <span class="o">=</span> <span class="o">-</span><span class="n">granule_path</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">sep</span><span class="p">)</span>
+        <span class="n">granule_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">granule_path</span><span class="p">[</span><span class="n">first_name_char_pos</span><span class="p">:])</span>
+    <span class="k">return</span> <span class="n">granule_names</span></div>
+
+
+<div class="viewcode-block" id="read_Raw_event_from_database"><a class="viewcode-back" href="../../utils.html#utils.raw_utils.read_Raw_event_from_database">[docs]</a><span class="k">def</span> <span class="nf">read_Raw_event_from_database</span><span class="p">(</span>
+    <span class="n">id_event</span><span class="p">,</span>
+    <span class="n">bands_list</span><span class="p">,</span>
+    <span class="n">cfg_file_dict</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">id_raw_l1_dict</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">database</span><span class="o">=</span><span class="s2">&quot;THRAWS&quot;</span><span class="p">,</span>
+    <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">device</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="s2">&quot;cpu&quot;</span><span class="p">),</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Read specific bands of the Raw Sentinel-2 event &quot;&quot;id_event&quot;&quot;, specified in &quot;bands_list&quot;.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        id_event (str): event ID.</span>
+<span class="sd">        bands_list (list): bands list.</span>
+<span class="sd">        cfg_file_dict (dict, optional): dictionary containing paths to the different pyraws directories.</span>
+<span class="sd">                                        If None, internal CSV database will be parsed.</span>
+<span class="sd">        id_raw_l1_dict (dict, optional): id-raw-l1 dictionary. If None, internal CSV database will be parsed.</span>
+<span class="sd">        database (string, optional): database name. Defaults to &quot;THRAWS&quot;.</span>
+<span class="sd">        verbose (bool, optional): if True, if True, verbose mode is used. Defaults to True.</span>
+<span class="sd">        device (torch.device, optional): torch device. Defaults to torch.device(&quot;cpu&quot;).</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: impossible to find information on the database.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        torch.tensor: tensor containing TOA values of the requested Sentinel 2A image bands.</span>
+<span class="sd">        string: expected class name.</span>
+<span class="sd">        list: list of granules names.</span>
+<span class="sd">        list: list of raw data useful granules.</span>
+<span class="sd">        list: list of complementary raw data granules (to coregister without 0).</span>
+<span class="sd">        list: list of polygon coordinates for each granule.</span>
+<span class="sd">        list: list of cloud coverage percentage for each granule.</span>
+<span class="sd">        dict: {useful granule : bbox}.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="p">(</span>
+            <span class="n">raw_dir_path</span><span class="p">,</span>
+            <span class="n">_</span><span class="p">,</span>
+            <span class="n">_</span><span class="p">,</span>
+            <span class="n">expected_class</span><span class="p">,</span>
+            <span class="n">raw_useful_granules</span><span class="p">,</span>
+            <span class="n">raw_complementary_granules</span><span class="p">,</span>
+            <span class="n">_</span><span class="p">,</span>
+            <span class="n">_</span><span class="p">,</span>
+        <span class="p">)</span> <span class="o">=</span> <span class="n">get_event_info</span><span class="p">(</span><span class="n">id_event</span><span class="p">,</span> <span class="n">cfg_file_dict</span><span class="p">,</span> <span class="n">id_raw_l1_dict</span><span class="p">,</span> <span class="n">database</span><span class="o">=</span><span class="n">database</span><span class="p">)</span>
+    <span class="k">except</span><span class="p">:</span>  <span class="c1"># noqa: E722</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">&quot;Impossible to find information on event: &quot;</span>
+            <span class="o">+</span> <span class="n">colored</span><span class="p">(</span><span class="n">id_event</span><span class="p">,</span> <span class="s2">&quot;blue&quot;</span><span class="p">)</span>
+            <span class="o">+</span> <span class="s2">&quot;. Check it is included in the database.&quot;</span>
+        <span class="p">)</span>
+
+    <span class="p">(</span>
+        <span class="n">sentinel_raw_img</span><span class="p">,</span>
+        <span class="n">granules_paths</span><span class="p">,</span>
+        <span class="n">granules_polygons_coordinates_list</span><span class="p">,</span>
+        <span class="n">cloud_percentages_list</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">=</span> <span class="n">read_Raw_event_from_path</span><span class="p">(</span><span class="n">raw_dir_path</span><span class="p">,</span> <span class="n">bands_list</span><span class="p">,</span> <span class="n">verbose</span><span class="p">,</span> <span class="n">device</span><span class="p">)</span>
+    <span class="n">granule_names</span> <span class="o">=</span> <span class="n">find_granules_names</span><span class="p">(</span><span class="n">granules_paths</span><span class="p">)</span>
+    <span class="n">useful_granules_bb_dict</span> <span class="o">=</span> <span class="n">get_event_granule_bb_dict</span><span class="p">(</span>
+        <span class="n">id_event</span><span class="p">,</span> <span class="n">database</span><span class="o">=</span><span class="n">database</span><span class="p">,</span> <span class="n">cfg_file_dict</span><span class="o">=</span><span class="n">cfg_file_dict</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="p">(</span>
+        <span class="n">sentinel_raw_img</span><span class="p">,</span>
+        <span class="n">expected_class</span><span class="p">,</span>
+        <span class="n">granule_names</span><span class="p">,</span>
+        <span class="n">raw_useful_granules</span><span class="p">,</span>
+        <span class="n">raw_complementary_granules</span><span class="p">,</span>
+        <span class="n">granules_polygons_coordinates_list</span><span class="p">,</span>
+        <span class="n">cloud_percentages_list</span><span class="p">,</span>
+        <span class="n">useful_granules_bb_dict</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="shift_point_coordinates"><a class="viewcode-back" href="../../utils.html#utils.raw_utils.shift_point_coordinates">[docs]</a><span class="k">def</span> <span class="nf">shift_point_coordinates</span><span class="p">(</span><span class="n">point_coordinates</span><span class="p">,</span> <span class="n">point_distance_y</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Vertical shift of point coordinates.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        point_coordinates (list): [lan, lon] - point coordinates.</span>
+<span class="sd">        point_distance_y (int): vertical shift. Use negative for shift towards north.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        list: coordinates of the shifted point.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">point_distance_y</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">polygon_vertex</span> <span class="o">=</span> <span class="n">geopy</span><span class="o">.</span><span class="n">distance</span><span class="o">.</span><span class="n">distance</span><span class="p">(</span><span class="n">meters</span><span class="o">=</span><span class="n">point_distance_y</span><span class="p">)</span><span class="o">.</span><span class="n">destination</span><span class="p">(</span>
+            <span class="p">(</span><span class="n">point_coordinates</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">point_coordinates</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="n">bearing</span><span class="o">=</span><span class="mi">180</span>
+        <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">polygon_vertex</span> <span class="o">=</span> <span class="n">geopy</span><span class="o">.</span><span class="n">distance</span><span class="o">.</span><span class="n">distance</span><span class="p">(</span><span class="n">meters</span><span class="o">=-</span><span class="n">point_distance_y</span><span class="p">)</span><span class="o">.</span><span class="n">destination</span><span class="p">(</span>
+            <span class="p">(</span><span class="n">point_coordinates</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">point_coordinates</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="n">bearing</span><span class="o">=</span><span class="mi">0</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">polygon_vertex</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">polygon_vertex</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span></div>
+
+
+<div class="viewcode-block" id="swap_latlon"><a class="viewcode-back" href="../../utils.html#utils.raw_utils.swap_latlon">[docs]</a><span class="k">def</span> <span class="nf">swap_latlon</span><span class="p">(</span><span class="n">poly</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Function that swaps latitude and logitude values</span>
+<span class="sd">    Args:</span>
+<span class="sd">        poly (list): list of points coordinates</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        poly (list): list of points coordinates swapped.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">poly</span> <span class="o">=</span> <span class="p">[[</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">poly</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">poly</span></div>
+
+
+<div class="viewcode-block" id="export_band_to_tif"><a class="viewcode-back" href="../../utils.html#utils.raw_utils.export_band_to_tif">[docs]</a><span class="k">def</span> <span class="nf">export_band_to_tif</span><span class="p">(</span><span class="n">band</span><span class="p">,</span> <span class="n">coords</span><span class="p">,</span> <span class="n">save_path</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Export band to TIF.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        band (torch.tensor): band to save.</span>
+<span class="sd">        coords (list): list of bands coordinates [UL, BL, BR, UR]. Each point is (LON, LAT).</span>
+<span class="sd">        save_path (str): save path.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">height</span><span class="p">,</span> <span class="n">width</span> <span class="o">=</span> <span class="n">band</span><span class="p">[:,</span> <span class="p">:]</span><span class="o">.</span><span class="n">shape</span>
+
+    <span class="c1"># UL                       #BL                         #BR                            #UR</span>
+    <span class="n">gcps</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">GCP</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">*</span><span class="n">coords</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span>
+        <span class="n">GCP</span><span class="p">(</span><span class="n">height</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">*</span><span class="n">coords</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span>
+        <span class="n">GCP</span><span class="p">(</span><span class="n">height</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="o">*</span><span class="n">coords</span><span class="p">[</span><span class="mi">2</span><span class="p">]),</span>
+        <span class="n">GCP</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="o">*</span><span class="n">coords</span><span class="p">[</span><span class="mi">3</span><span class="p">]),</span>
+    <span class="p">]</span>
+    <span class="n">transform</span> <span class="o">=</span> <span class="n">from_gcps</span><span class="p">(</span><span class="n">gcps</span><span class="p">)</span>
+
+    <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;crs&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;init&quot;</span><span class="p">:</span> <span class="s2">&quot;EPSG:4326&quot;</span><span class="p">},</span>
+        <span class="s2">&quot;transform&quot;</span><span class="p">:</span> <span class="n">transform</span><span class="p">,</span>
+        <span class="s2">&quot;width&quot;</span><span class="p">:</span> <span class="n">width</span><span class="p">,</span>
+        <span class="s2">&quot;height&quot;</span><span class="p">:</span> <span class="n">height</span><span class="p">,</span>
+        <span class="s2">&quot;count&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="s2">&quot;dtype&quot;</span><span class="p">:</span> <span class="s2">&quot;uint16&quot;</span><span class="p">,</span>
+    <span class="p">}</span>
+
+    <span class="k">with</span> <span class="n">rasterio</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">save_path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="k">as</span> <span class="n">dst</span><span class="p">:</span>
+        <span class="n">dst</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">band</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">rasterio</span><span class="o">.</span><span class="n">uint16</span><span class="p">),</span> <span class="mi">1</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Roberto Del Prete, Gabriele Meoni.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

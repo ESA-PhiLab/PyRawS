@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>utils.l1_utils &mdash; pyraws 0.0.3 documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/sphinx_highlight.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            pyraws
+              <img src="../../_static/PyRawS_logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">First Steps:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../configuration.html">Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../quickstart.html">Quickstart</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../API.html">API demonstration</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../database.html">Database</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../raw.html">Raw</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../l1.html">L1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../utils.html">Utils</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Useful Info:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../contacts.html">Contacts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../glossario.html">Glossary</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">pyraws</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">utils.l1_utils</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for utils.l1_utils</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">glob</span> <span class="kn">import</span> <span class="n">glob</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">rasterio</span>
+<span class="kn">import</span> <span class="nn">rasterio.warp</span>
+<span class="kn">from</span> <span class="nn">rasterio.warp</span> <span class="kn">import</span> <span class="n">calculate_default_transform</span><span class="p">,</span> <span class="n">reproject</span><span class="p">,</span> <span class="n">Resampling</span>
+<span class="kn">from</span> <span class="nn">rasterio.io</span> <span class="kn">import</span> <span class="n">MemoryFile</span>
+<span class="kn">from</span> <span class="nn">rasterio.control</span> <span class="kn">import</span> <span class="n">GroundControlPoint</span> <span class="k">as</span> <span class="n">GCP</span>
+<span class="kn">from</span> <span class="nn">rasterio.transform</span> <span class="kn">import</span> <span class="n">from_gcps</span>
+<span class="kn">import</span> <span class="nn">rasterio</span>
+<span class="kn">from</span> <span class="nn">skimage.measure</span> <span class="kn">import</span> <span class="n">label</span><span class="p">,</span> <span class="n">regionprops</span>
+<span class="kn">from</span> <span class="nn">termcolor</span> <span class="kn">import</span> <span class="n">colored</span>
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
+<span class="kn">from</span> <span class="nn">pyraws.utils.constants</span> <span class="kn">import</span> <span class="n">S2_DEFAULT_QUANTIFICATION_VALUE</span>
+<span class="kn">from</span> <span class="nn">pyraws.utils.database_utils</span> <span class="kn">import</span> <span class="n">get_event_info</span>
+<span class="kn">from</span> <span class="nn">xml.dom</span> <span class="kn">import</span> <span class="n">minidom</span>
+
+
+<div class="viewcode-block" id="get_event_bounding_box"><a class="viewcode-back" href="../../utils.html#utils.l1_utils.get_event_bounding_box">[docs]</a><span class="k">def</span> <span class="nf">get_event_bounding_box</span><span class="p">(</span><span class="n">event_hotmap</span><span class="p">,</span> <span class="n">coords_dict</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns the bounding box and the coordinates of the bounding box top-left,</span>
+<span class="sd">    bottom-right corners for each clust of 1 in the event_hotmap.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        event_hotmap (torch.tensor): event hotmap. Pixels = 1 indicate event.</span>
+<span class="sd">        coords_dict (dict): {&quot;lat&quot; : lat, lon : &quot;lon&quot;}, containing coordinates for each pixel in the hotmap.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        skimage.bb: bounding box</span>
+<span class="sd">        list: list of coordinates [lat, lon] of top-left,</span>
+<span class="sd">             bottom-right coordinates for each cluster of events in the hotmap.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">mask</span> <span class="o">=</span> <span class="n">event_hotmap</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+    <span class="n">lbl</span> <span class="o">=</span> <span class="n">label</span><span class="p">(</span><span class="n">mask</span><span class="p">)</span>
+    <span class="n">props</span> <span class="o">=</span> <span class="n">regionprops</span><span class="p">(</span><span class="n">lbl</span><span class="p">)</span>
+    <span class="n">event_bbox_coordinates_list</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">prop</span> <span class="ow">in</span> <span class="n">props</span><span class="p">:</span>
+        <span class="n">lat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">coords_dict</span><span class="p">[</span><span class="s2">&quot;lat&quot;</span><span class="p">])</span>
+        <span class="n">lon</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">coords_dict</span><span class="p">[</span><span class="s2">&quot;lon&quot;</span><span class="p">])</span>
+
+        <span class="n">bbox_coordinates</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">[</span><span class="n">lat</span><span class="p">[</span><span class="n">prop</span><span class="o">.</span><span class="n">bbox</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">prop</span><span class="o">.</span><span class="n">bbox</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span> <span class="n">lon</span><span class="p">[</span><span class="n">prop</span><span class="o">.</span><span class="n">bbox</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">prop</span><span class="o">.</span><span class="n">bbox</span><span class="p">[</span><span class="mi">1</span><span class="p">]]],</span>
+            <span class="p">[</span><span class="n">lat</span><span class="p">[</span><span class="n">prop</span><span class="o">.</span><span class="n">bbox</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">prop</span><span class="o">.</span><span class="n">bbox</span><span class="p">[</span><span class="mi">3</span><span class="p">]],</span> <span class="n">lon</span><span class="p">[</span><span class="n">prop</span><span class="o">.</span><span class="n">bbox</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">prop</span><span class="o">.</span><span class="n">bbox</span><span class="p">[</span><span class="mi">3</span><span class="p">]]],</span>
+        <span class="p">]</span>
+        <span class="n">event_bbox_coordinates_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bbox_coordinates</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">props</span><span class="p">,</span> <span class="n">event_bbox_coordinates_list</span></div>
+
+
+<div class="viewcode-block" id="get_l1C_image_default_path"><a class="viewcode-back" href="../../utils.html#utils.l1_utils.get_l1C_image_default_path">[docs]</a><span class="k">def</span> <span class="nf">get_l1C_image_default_path</span><span class="p">(</span>
+    <span class="n">id_event</span><span class="p">,</span>
+    <span class="n">cfg_file_dict</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">id_raw_l1_dict</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">database</span><span class="o">=</span><span class="s2">&quot;THRAWS&quot;</span><span class="p">,</span>
+    <span class="n">device</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="s2">&quot;cpu&quot;</span><span class="p">),</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns th default path to the L1C cropped image including the &quot;&quot;id_event_name&quot;&quot; tif files from database.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        id_event (str): event ID.</span>
+<span class="sd">        cfg_file_dict (dict, optional): dictionary containing paths to the different pyraws directories.</span>
+<span class="sd">                                       If None, internal CSV database will be parsed.</span>
+<span class="sd">        id_raw_l1_dict (dict, optional): id-raw-l1 dictionary.</span>
+<span class="sd">                                       If None, internal CSV database will be parsed.</span>
+<span class="sd">        database (string, optional): database name. Defaults to &quot;THRAWS&quot;.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        string: default path to the L1C cropped image tif files.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">l1c_post_processed_path</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">get_event_info</span><span class="p">(</span>
+        <span class="n">id_event</span><span class="p">,</span> <span class="n">cfg_file_dict</span><span class="p">,</span> <span class="n">id_raw_l1_dict</span><span class="p">,</span> <span class="n">database</span><span class="o">=</span><span class="n">database</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">l1c_post_processed_path</span></div>
+
+
+<div class="viewcode-block" id="get_reprojected_bounds"><a class="viewcode-back" href="../../utils.html#utils.l1_utils.get_reprojected_bounds">[docs]</a><span class="k">def</span> <span class="nf">get_reprojected_bounds</span><span class="p">(</span><span class="n">rasterio_file</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns the 4 corners coordinates by reprojecting files.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        rasterio_file (rasterio): rasterio file container.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        list: list of coordinates.</span>
+<span class="sd">        dict: key params</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">dstCrs</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;init&quot;</span><span class="p">:</span> <span class="s2">&quot;EPSG:4326&quot;</span><span class="p">}</span>
+    <span class="n">srcRst</span> <span class="o">=</span> <span class="n">rasterio_file</span>
+    <span class="c1"># calculate transform array and shape of reprojected raster</span>
+    <span class="n">transform</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span> <span class="o">=</span> <span class="n">calculate_default_transform</span><span class="p">(</span>
+        <span class="n">srcRst</span><span class="o">.</span><span class="n">crs</span><span class="p">,</span> <span class="n">dstCrs</span><span class="p">,</span> <span class="n">srcRst</span><span class="o">.</span><span class="n">width</span><span class="p">,</span> <span class="n">srcRst</span><span class="o">.</span><span class="n">height</span><span class="p">,</span> <span class="o">*</span><span class="n">srcRst</span><span class="o">.</span><span class="n">bounds</span>
+    <span class="p">)</span>
+
+    <span class="c1"># working of the meta for the destination raster</span>
+    <span class="n">kwargs</span> <span class="o">=</span> <span class="n">srcRst</span><span class="o">.</span><span class="n">meta</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+        <span class="p">{</span><span class="s2">&quot;crs&quot;</span><span class="p">:</span> <span class="n">dstCrs</span><span class="p">,</span> <span class="s2">&quot;transform&quot;</span><span class="p">:</span> <span class="n">transform</span><span class="p">,</span> <span class="s2">&quot;width&quot;</span><span class="p">:</span> <span class="n">width</span><span class="p">,</span> <span class="s2">&quot;height&quot;</span><span class="p">:</span> <span class="n">height</span><span class="p">}</span>
+    <span class="p">)</span>
+    <span class="c1"># open destination raster</span>
+    <span class="k">with</span> <span class="n">MemoryFile</span><span class="p">()</span> <span class="k">as</span> <span class="n">memfile</span><span class="p">:</span>
+        <span class="k">with</span> <span class="n">memfile</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="k">as</span> <span class="n">dstRst</span><span class="p">:</span>
+            <span class="c1"># reproject and save raster band data</span>
+            <span class="n">reproject</span><span class="p">(</span>
+                <span class="n">source</span><span class="o">=</span><span class="n">rasterio</span><span class="o">.</span><span class="n">band</span><span class="p">(</span><span class="n">srcRst</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+                <span class="n">destination</span><span class="o">=</span><span class="n">rasterio</span><span class="o">.</span><span class="n">band</span><span class="p">(</span><span class="n">dstRst</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+                <span class="c1"># src_transform=srcRst.transform,</span>
+                <span class="n">src_crs</span><span class="o">=</span><span class="n">srcRst</span><span class="o">.</span><span class="n">crs</span><span class="p">,</span>
+                <span class="c1"># dst_transform=transform,</span>
+                <span class="n">dst_crs</span><span class="o">=</span><span class="n">dstCrs</span><span class="p">,</span>
+                <span class="n">resampling</span><span class="o">=</span><span class="n">Resampling</span><span class="o">.</span><span class="n">nearest</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="k">with</span> <span class="n">memfile</span><span class="o">.</span><span class="n">open</span><span class="p">()</span> <span class="k">as</span> <span class="n">reprojected_raster</span><span class="p">:</span>
+            <span class="n">left</span> <span class="o">=</span> <span class="n">reprojected_raster</span><span class="o">.</span><span class="n">bounds</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">bottom</span> <span class="o">=</span> <span class="n">reprojected_raster</span><span class="o">.</span><span class="n">bounds</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">right</span> <span class="o">=</span> <span class="n">reprojected_raster</span><span class="o">.</span><span class="n">bounds</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+            <span class="n">top</span> <span class="o">=</span> <span class="n">reprojected_raster</span><span class="o">.</span><span class="n">bounds</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="p">[[</span><span class="n">top</span><span class="p">,</span> <span class="n">left</span><span class="p">],</span> <span class="p">[</span><span class="n">bottom</span><span class="p">,</span> <span class="n">left</span><span class="p">],</span> <span class="p">[</span><span class="n">bottom</span><span class="p">,</span> <span class="n">right</span><span class="p">],</span> <span class="p">[</span><span class="n">top</span><span class="p">,</span> <span class="n">right</span><span class="p">]],</span> <span class="n">kwargs</span></div>
+
+
+<div class="viewcode-block" id="reproject_raster"><a class="viewcode-back" href="../../utils.html#utils.l1_utils.reproject_raster">[docs]</a><span class="k">def</span> <span class="nf">reproject_raster</span><span class="p">(</span><span class="n">rasterio_file</span><span class="p">,</span> <span class="n">output_filename</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns the reprojected raster.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        rasterio_file (rasterio): rasterio file container.</span>
+<span class="sd">        output_filename (str): output_filename of the reprojected raster.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        raster: reprojected raster</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">dstCrs</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;init&quot;</span><span class="p">:</span> <span class="s2">&quot;EPSG:4326&quot;</span><span class="p">}</span>
+    <span class="n">srcRst</span> <span class="o">=</span> <span class="n">rasterio_file</span>
+    <span class="c1"># calculate transform array and shape of reprojected raster</span>
+    <span class="n">transform</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span> <span class="o">=</span> <span class="n">calculate_default_transform</span><span class="p">(</span>
+        <span class="n">srcRst</span><span class="o">.</span><span class="n">crs</span><span class="p">,</span> <span class="n">dstCrs</span><span class="p">,</span> <span class="n">srcRst</span><span class="o">.</span><span class="n">width</span><span class="p">,</span> <span class="n">srcRst</span><span class="o">.</span><span class="n">height</span><span class="p">,</span> <span class="o">*</span><span class="n">srcRst</span><span class="o">.</span><span class="n">bounds</span>
+    <span class="p">)</span>
+
+    <span class="c1"># working of the meta for the destination raster</span>
+    <span class="n">kwargs</span> <span class="o">=</span> <span class="n">srcRst</span><span class="o">.</span><span class="n">meta</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+        <span class="p">{</span><span class="s2">&quot;crs&quot;</span><span class="p">:</span> <span class="n">dstCrs</span><span class="p">,</span> <span class="s2">&quot;transform&quot;</span><span class="p">:</span> <span class="n">transform</span><span class="p">,</span> <span class="s2">&quot;width&quot;</span><span class="p">:</span> <span class="n">width</span><span class="p">,</span> <span class="s2">&quot;height&quot;</span><span class="p">:</span> <span class="n">height</span><span class="p">}</span>
+    <span class="p">)</span>
+    <span class="c1"># open destination raster</span>
+    <span class="k">with</span> <span class="n">rasterio</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">output_filename</span><span class="p">,</span> <span class="s2">&quot;w+&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="k">as</span> <span class="n">dstRst</span><span class="p">:</span>
+        <span class="c1"># reproject and save raster band data</span>
+        <span class="n">reproject</span><span class="p">(</span>
+            <span class="n">source</span><span class="o">=</span><span class="n">rasterio</span><span class="o">.</span><span class="n">band</span><span class="p">(</span><span class="n">srcRst</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+            <span class="n">destination</span><span class="o">=</span><span class="n">rasterio</span><span class="o">.</span><span class="n">band</span><span class="p">(</span><span class="n">dstRst</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+            <span class="c1"># src_transform=srcRst.transform,</span>
+            <span class="n">src_crs</span><span class="o">=</span><span class="n">srcRst</span><span class="o">.</span><span class="n">crs</span><span class="p">,</span>
+            <span class="c1"># dst_transform=transform,</span>
+            <span class="n">dst_crs</span><span class="o">=</span><span class="n">dstCrs</span><span class="p">,</span>
+            <span class="n">resampling</span><span class="o">=</span><span class="n">Resampling</span><span class="o">.</span><span class="n">nearest</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">rasterio</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">output_filename</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="read_L1C_tile_from_path"><a class="viewcode-back" href="../../utils.html#utils.l1_utils.read_L1C_tile_from_path">[docs]</a><span class="k">def</span> <span class="nf">read_L1C_tile_from_path</span><span class="p">(</span>
+    <span class="n">tile_path</span><span class="p">,</span>
+    <span class="n">bands_list</span><span class="p">,</span>
+    <span class="n">reproject_bounds</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">device</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="s2">&quot;cpu&quot;</span><span class="p">),</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Read specific bands of an L1C Sentine2 tile,</span>
+<span class="sd">    specified in &quot;bands_list&quot;. The tile, located at &quot;tile_path&quot;,</span>
+<span class="sd">    is divided by a factor specified in the auxiliary file &quot;auxiliary_file_path&quot; to transform it from DN to TOA reflectance.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        tile_path (str): Sentinel 2 image path.</span>
+<span class="sd">        bands_list (list): bands list.</span>
+<span class="sd">        reproject_bounds (bool, optional): if True, bounds are reprojected to EPGS:4326.</span>
+<span class="sd">        verbose (bool, optional): if True, if True, verbose mode is used. Defaults to True.</span>
+<span class="sd">        device (torch.device, optional): torch device. Defaults to torch.device(&quot;cpu&quot;).</span>
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: Impossible to open auxiliary file.</span>
+<span class="sd">        ValueError: Impossible to open the images with the requested bands.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        list: list of the requested Sentinel 2A image bands. Each band is a torch.tensor containing TOA values.</span>
+<span class="sd">        list: list of tile&#39;s corners&#39; coordinates extracted from metadata.</span>
+<span class="sd">        list: list of tile&#39;s footprint&#39;s coordinates extracted from metadata.</span>
+<span class="sd">        dict: bands_filename_dict</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">auxiliary_file_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tile_path</span><span class="p">,</span> <span class="s2">&quot;MTD_MSIL1C.xml&quot;</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">xml_content</span> <span class="o">=</span> <span class="n">minidom</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">auxiliary_file_path</span><span class="p">)</span>
+        <span class="n">quantification_value</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span>
+            <span class="n">xml_content</span><span class="o">.</span><span class="n">getElementsByTagName</span><span class="p">(</span><span class="s2">&quot;QUANTIFICATION_VALUE&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">firstChild</span><span class="o">.</span><span class="n">data</span>
+        <span class="p">)</span>
+        <span class="n">tile_footprint_coordinates</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">xml_content</span><span class="o">.</span><span class="n">getElementsByTagName</span><span class="p">(</span><span class="s2">&quot;n1:Geometric_Info&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="o">.</span><span class="n">getElementsByTagName</span><span class="p">(</span><span class="s2">&quot;Product_Footprint&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="o">.</span><span class="n">getElementsByTagName</span><span class="p">(</span><span class="s2">&quot;Global_Footprint&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="o">.</span><span class="n">getElementsByTagName</span><span class="p">(</span><span class="s2">&quot;EXT_POS_LIST&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="o">.</span><span class="n">firstChild</span><span class="o">.</span><span class="n">data</span>
+        <span class="p">)</span>
+        <span class="n">tile_footprint_coordinates</span> <span class="o">=</span> <span class="n">tile_footprint_coordinates</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)</span>
+        <span class="n">tile_footprint_coordinates</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">[</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">]</span>
+            <span class="k">for</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span>
+                <span class="n">tile_footprint_coordinates</span><span class="p">[::</span><span class="mi">2</span><span class="p">],</span> <span class="n">tile_footprint_coordinates</span><span class="p">[</span><span class="mi">1</span><span class="p">::</span><span class="mi">2</span><span class="p">]</span>
+            <span class="p">)</span>
+        <span class="p">]</span>
+        <span class="n">tile_footprint_coordinates</span> <span class="o">=</span> <span class="n">tile_footprint_coordinates</span><span class="p">[</span>
+            <span class="p">:</span><span class="o">-</span><span class="mi">1</span>
+        <span class="p">]</span>  <span class="c1"># Excluding the last couple since it is the repetition of the first one.</span>
+    <span class="k">except</span><span class="p">:</span>  <span class="c1"># noqa: E722</span>
+        <span class="nb">print</span><span class="p">(</span>
+            <span class="n">colored</span><span class="p">(</span><span class="s2">&quot;Warning: &quot;</span><span class="p">,</span> <span class="s2">&quot;red&quot;</span><span class="p">)</span>
+            <span class="o">+</span> <span class="s2">&quot;Metadata missing. &quot;</span>
+            <span class="o">+</span> <span class="s2">&quot;It is impossible to estimate the footprint coordinates. &quot;</span>
+            <span class="o">+</span> <span class="s2">&quot;However, georeferencing of the tile is still possible.&quot;</span>
+        <span class="p">)</span>
+        <span class="n">tile_footprint_coordinates</span> <span class="o">=</span> <span class="p">[[</span><span class="s2">&quot;NA&quot;</span><span class="p">,</span> <span class="s2">&quot;NA&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">4</span><span class="p">)]</span>
+        <span class="n">quantification_value</span> <span class="o">=</span> <span class="n">S2_DEFAULT_QUANTIFICATION_VALUE</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">granule_name_path</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">glob</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tile_path</span><span class="p">,</span> <span class="s2">&quot;GRANULE&quot;</span><span class="p">,</span> <span class="s2">&quot;*&quot;</span><span class="p">)))[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="n">bands_img_paths</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">glob</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">granule_name_path</span><span class="p">,</span> <span class="s2">&quot;IMG_DATA&quot;</span><span class="p">,</span> <span class="s2">&quot;*&quot;</span><span class="p">)))</span>
+
+        <span class="n">band_name_file_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+            <span class="nb">zip</span><span class="p">(</span><span class="n">bands_list</span><span class="p">,</span> <span class="n">bands_list</span><span class="p">)</span>
+        <span class="p">)</span>  <span class="c1"># This dictionary is to match the desired band with the file.</span>
+        <span class="c1"># We initialized with bands_list also as value because they will be fixed in the next for loop.</span>
+        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">bands_img_paths</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">name</span><span class="p">[</span><span class="o">-</span><span class="mi">3</span><span class="p">:]</span> <span class="o">==</span> <span class="s2">&quot;jp2&quot;</span> <span class="ow">and</span> <span class="n">name</span><span class="p">[</span><span class="o">-</span><span class="mi">7</span><span class="p">:</span><span class="o">-</span><span class="mi">4</span><span class="p">]</span> <span class="ow">in</span> <span class="n">bands_list</span><span class="p">:</span>
+                <span class="n">band_name_file_dict</span><span class="p">[</span><span class="n">name</span><span class="p">[</span><span class="o">-</span><span class="mi">7</span><span class="p">:</span><span class="o">-</span><span class="mi">4</span><span class="p">]]</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">sentinel_img</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">band</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">bands_list</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="s2">&quot;Parsing sentinel bands&quot;</span><span class="p">):</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Taking band: &quot;</span> <span class="o">+</span> <span class="n">colored</span><span class="p">(</span><span class="n">band</span><span class="p">,</span> <span class="s2">&quot;green&quot;</span><span class="p">))</span>
+                <span class="n">band_k_raster</span> <span class="o">=</span> <span class="n">rasterio</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">band_name_file_dict</span><span class="p">[</span><span class="n">band</span><span class="p">])</span>
+
+                <span class="k">if</span> <span class="n">reproject_bounds</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="n">tile_coordinates</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">get_reprojected_bounds</span><span class="p">(</span><span class="n">band_k_raster</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">left</span> <span class="o">=</span> <span class="n">band_k_raster</span><span class="o">.</span><span class="n">bounds</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                    <span class="n">bottom</span> <span class="o">=</span> <span class="n">band_k_raster</span><span class="o">.</span><span class="n">bounds</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+                    <span class="n">right</span> <span class="o">=</span> <span class="n">band_k_raster</span><span class="o">.</span><span class="n">bounds</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+                    <span class="n">top</span> <span class="o">=</span> <span class="n">band_k_raster</span><span class="o">.</span><span class="n">bounds</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+                    <span class="n">tile_coordinates</span> <span class="o">=</span> <span class="p">[</span>
+                        <span class="p">[</span><span class="n">top</span><span class="p">,</span> <span class="n">left</span><span class="p">],</span>
+                        <span class="p">[</span><span class="n">bottom</span><span class="p">,</span> <span class="n">left</span><span class="p">],</span>
+                        <span class="p">[</span><span class="n">bottom</span><span class="p">,</span> <span class="n">right</span><span class="p">],</span>
+                        <span class="p">[</span><span class="n">top</span><span class="p">,</span> <span class="n">right</span><span class="p">],</span>
+                    <span class="p">]</span>
+
+                <span class="n">band_k</span> <span class="o">=</span> <span class="n">band_k_raster</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+                <span class="n">band_k_raster</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+                <span class="n">fullres</span> <span class="o">=</span> <span class="n">band_k</span><span class="p">[:]</span>
+
+                <span class="n">band_k_torch</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span>
+                    <span class="n">fullres</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">quantification_value</span><span class="p">)</span>
+                <span class="p">)</span>
+                <span class="k">if</span> <span class="n">device</span> <span class="o">==</span> <span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="s2">&quot;cuda&quot;</span><span class="p">):</span>
+                    <span class="n">band_k_torch</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s2">&quot;cuda&quot;</span><span class="p">)</span>
+                <span class="n">sentinel_img</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">band_k_torch</span><span class="p">)</span>
+                <span class="n">n</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">band</span> <span class="ow">in</span> <span class="n">bands_list</span><span class="p">:</span>
+                <span class="n">band_k_raster</span> <span class="o">=</span> <span class="n">rasterio</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">band_name_file_dict</span><span class="p">[</span><span class="n">band</span><span class="p">])</span>
+                <span class="k">if</span> <span class="n">reproject_bounds</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="n">tile_coordinates</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">get_reprojected_bounds</span><span class="p">(</span><span class="n">band_k_raster</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">left</span> <span class="o">=</span> <span class="n">band_k_raster</span><span class="o">.</span><span class="n">bounds</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                    <span class="n">bottom</span> <span class="o">=</span> <span class="n">band_k_raster</span><span class="o">.</span><span class="n">bounds</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+                    <span class="n">right</span> <span class="o">=</span> <span class="n">band_k_raster</span><span class="o">.</span><span class="n">bounds</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+                    <span class="n">top</span> <span class="o">=</span> <span class="n">band_k_raster</span><span class="o">.</span><span class="n">bounds</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+                    <span class="n">tile_coordinates</span> <span class="o">=</span> <span class="p">[</span>
+                        <span class="p">[</span><span class="n">top</span><span class="p">,</span> <span class="n">left</span><span class="p">],</span>
+                        <span class="p">[</span><span class="n">bottom</span><span class="p">,</span> <span class="n">left</span><span class="p">],</span>
+                        <span class="p">[</span><span class="n">bottom</span><span class="p">,</span> <span class="n">right</span><span class="p">],</span>
+                        <span class="p">[</span><span class="n">top</span><span class="p">,</span> <span class="n">right</span><span class="p">],</span>
+                    <span class="p">]</span>
+
+                <span class="n">band_k</span> <span class="o">=</span> <span class="n">band_k_raster</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+                <span class="n">band_k_raster</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+                <span class="n">fullres</span> <span class="o">=</span> <span class="n">band_k</span><span class="p">[:]</span>
+
+                <span class="n">band_k_torch</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span>
+                    <span class="n">fullres</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">quantification_value</span><span class="p">)</span>
+                <span class="p">)</span>
+                <span class="k">if</span> <span class="n">device</span> <span class="o">==</span> <span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="s2">&quot;cuda&quot;</span><span class="p">):</span>
+                    <span class="n">band_k_torch</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s2">&quot;cuda&quot;</span><span class="p">)</span>
+                <span class="n">sentinel_img</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">band_k_torch</span><span class="p">)</span>
+                <span class="n">n</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="k">except</span><span class="p">:</span>  <span class="c1"># noqa: E722</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="n">colored</span><span class="p">(</span><span class="s2">&quot;Error. &quot;</span><span class="p">,</span> <span class="s2">&quot;red&quot;</span><span class="p">)</span>
+            <span class="o">+</span> <span class="s2">&quot; impossible to open: &quot;</span>
+            <span class="o">+</span> <span class="n">colored</span><span class="p">(</span><span class="n">tile_path</span><span class="p">,</span> <span class="s2">&quot;blue&quot;</span><span class="p">)</span>
+            <span class="o">+</span> <span class="s2">&quot; with the requested bands.&quot;</span>
+        <span class="p">)</span>
+
+    <span class="k">return</span> <span class="p">(</span>
+        <span class="n">sentinel_img</span><span class="p">,</span>
+        <span class="n">tile_coordinates</span><span class="p">,</span>
+        <span class="n">tile_footprint_coordinates</span><span class="p">,</span>
+        <span class="n">band_name_file_dict</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="read_L1C_event_from_path"><a class="viewcode-back" href="../../utils.html#utils.l1_utils.read_L1C_event_from_path">[docs]</a><span class="k">def</span> <span class="nf">read_L1C_event_from_path</span><span class="p">(</span>
+    <span class="n">l1c_image_path</span><span class="p">,</span>
+    <span class="n">bands_list</span><span class="p">,</span>
+    <span class="n">reproject_bounds</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">device</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="s2">&quot;cpu&quot;</span><span class="p">),</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Read specific bands of an L1C Sentinel 2 event, specified in &quot;bands_list&quot; from img_name.</span>
+<span class="sd">    Every tile of the event is represented as TOA reflectance.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        id_event (str): event ID.</span>
+<span class="sd">        bands_list (list): bands list.</span>
+<span class="sd">        reproject_bounds (bool, optional): if True, bounds are reprojected to EPGS:4326.</span>
+<span class="sd">        verbose (bool, optional): if True, if True, verbose mode is used. Defaults to True.</span>
+<span class="sd">        device (torch.device, optional): torch device. Defaults to torch.device(&quot;cpu&quot;).</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: impossible to find information on the database.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        dictionary: dictionary containing [tile_name, tile]. Each tile is list of tensors,</span>
+<span class="sd">                    each of them is made of TOA values of the requested Sentinel 2A image bands.</span>
+<span class="sd">        dictionary: dictionary containing [tile_name, coordinates], where coordinates are the corners</span>
+<span class="sd">                    coordinates of each tile composing the requested image.</span>
+<span class="sd">        dictionary: dictionary containing [tile_name, coordinates], where coordinates are the footprint&#39;s</span>
+<span class="sd">                    coordinates of each tile composing the requested image.</span>
+<span class="sd">        dictionary: dictionary containing [tile_name, band_filename_dict], where band_filename_dict is the</span>
+<span class="sd">                    dictionary associating to every band the original jp2 file.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">tiles_paths</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">glob</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">l1c_image_path</span><span class="p">,</span> <span class="s2">&quot;*&quot;</span><span class="p">)))</span>
+
+    <span class="c1"># tiles names</span>
+    <span class="n">tiles_names</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">tile_path</span><span class="p">[</span><span class="o">-</span><span class="n">tile_path</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">sep</span><span class="p">)</span> <span class="p">:]</span> <span class="k">for</span> <span class="n">tile_path</span> <span class="ow">in</span> <span class="n">tiles_paths</span>
+    <span class="p">]</span>
+
+    <span class="n">sentinel_img</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">tiles_names</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">tiles_names</span><span class="p">))]))</span>
+    <span class="n">tiles_coordinates_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+        <span class="nb">zip</span><span class="p">(</span><span class="n">tiles_names</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">tiles_names</span><span class="p">))])</span>
+    <span class="p">)</span>
+    <span class="n">tiles_footprint_coordinates_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+        <span class="nb">zip</span><span class="p">(</span><span class="n">tiles_names</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">tiles_names</span><span class="p">))])</span>
+    <span class="p">)</span>
+    <span class="n">bands_filename_dict_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+        <span class="nb">zip</span><span class="p">(</span><span class="n">tiles_names</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">tiles_names</span><span class="p">))])</span>
+    <span class="p">)</span>
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">tile_name</span><span class="p">,</span> <span class="n">tile_path</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span>
+            <span class="nb">zip</span><span class="p">(</span><span class="n">tiles_names</span><span class="p">,</span> <span class="n">tiles_paths</span><span class="p">),</span> <span class="n">desc</span><span class="o">=</span><span class="s2">&quot;Parsing tiles...&quot;</span>
+        <span class="p">):</span>
+            <span class="p">(</span>
+                <span class="n">tile_bands</span><span class="p">,</span>
+                <span class="n">tile_coordinates</span><span class="p">,</span>
+                <span class="n">tile_footprint_coordinates</span><span class="p">,</span>
+                <span class="n">bands_filename_dict</span><span class="p">,</span>
+            <span class="p">)</span> <span class="o">=</span> <span class="n">read_L1C_tile_from_path</span><span class="p">(</span>
+                <span class="n">tile_path</span><span class="p">,</span> <span class="n">bands_list</span><span class="p">,</span> <span class="n">reproject_bounds</span><span class="p">,</span> <span class="n">verbose</span><span class="p">,</span> <span class="n">device</span>
+            <span class="p">)</span>
+            <span class="n">sentinel_img</span><span class="p">[</span><span class="n">tile_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">tile_bands</span>
+            <span class="n">tiles_coordinates_dict</span><span class="p">[</span><span class="n">tile_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">tile_coordinates</span>
+            <span class="n">tiles_footprint_coordinates_dict</span><span class="p">[</span><span class="n">tile_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">tile_footprint_coordinates</span>
+            <span class="n">bands_filename_dict_dict</span><span class="p">[</span><span class="n">tile_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">bands_filename_dict</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">tile_name</span><span class="p">,</span> <span class="n">tile_path</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">tiles_names</span><span class="p">,</span> <span class="n">tiles_paths</span><span class="p">):</span>
+            <span class="p">(</span>
+                <span class="n">tile_bands</span><span class="p">,</span>
+                <span class="n">tile_coordinates</span><span class="p">,</span>
+                <span class="n">tile_footprint_coordinates</span><span class="p">,</span>
+                <span class="n">bands_filename_dict</span><span class="p">,</span>
+            <span class="p">)</span> <span class="o">=</span> <span class="n">read_L1C_tile_from_path</span><span class="p">(</span>
+                <span class="n">tile_path</span><span class="p">,</span> <span class="n">bands_list</span><span class="p">,</span> <span class="n">reproject_bounds</span><span class="p">,</span> <span class="n">verbose</span><span class="p">,</span> <span class="n">device</span>
+            <span class="p">)</span>
+            <span class="n">sentinel_img</span><span class="p">[</span><span class="n">tile_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">tile_bands</span>
+            <span class="n">tiles_coordinates_dict</span><span class="p">[</span><span class="n">tile_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">tile_coordinates</span>
+            <span class="n">tiles_footprint_coordinates_dict</span><span class="p">[</span><span class="n">tile_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">tile_footprint_coordinates</span>
+            <span class="n">bands_filename_dict_dict</span><span class="p">[</span><span class="n">tile_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">bands_filename_dict</span>
+    <span class="k">return</span> <span class="p">(</span>
+        <span class="n">sentinel_img</span><span class="p">,</span>
+        <span class="n">tiles_coordinates_dict</span><span class="p">,</span>
+        <span class="n">tiles_footprint_coordinates_dict</span><span class="p">,</span>
+        <span class="n">bands_filename_dict_dict</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="read_L1C_event_from_database"><a class="viewcode-back" href="../../utils.html#utils.l1_utils.read_L1C_event_from_database">[docs]</a><span class="k">def</span> <span class="nf">read_L1C_event_from_database</span><span class="p">(</span>
+    <span class="n">id_event</span><span class="p">,</span>
+    <span class="n">bands_list</span><span class="p">,</span>
+    <span class="n">cfg_file_dict</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">id_raw_l1_dict</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">database</span><span class="o">=</span><span class="s2">&quot;THRAWS&quot;</span><span class="p">,</span>
+    <span class="n">reproject_bounds</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">device</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="s2">&quot;cpu&quot;</span><span class="p">),</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Read specific bands of an L1C Sentinel 2 event, specified in &quot;bands_list&quot; from img_name.</span>
+<span class="sd">    Every tile of the event is represented as TOA reflectance.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        id_event (str): event ID.</span>
+<span class="sd">        bands_list (list): bands list.</span>
+<span class="sd">        cfg_file_dict (dict, optional): dictionary containing paths to the different pyraws directories.</span>
+<span class="sd">                                        If None, internal CSV database will be parsed.</span>
+<span class="sd">        id_raw_l1_dict (dict, optional): id-raw-l1 dictionary. If None, internal CSV database will be parsed.</span>
+<span class="sd">        database (string, optional): database name. Defaults to &quot;THRAWS&quot;.</span>
+<span class="sd">        reproject_bounds (bool, optional): if True, bounds are reprojected to EPGS:4326.</span>
+<span class="sd">        verbose (bool, optional): if True, if True, verbose mode is used. Defaults to True.</span>
+<span class="sd">        device (torch.device, optional): torch device. Defaults to torch.device(&quot;cpu&quot;).</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: impossible to find information on the database.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        dictionary: dictionary containing [tile_name, tile].</span>
+<span class="sd">                    Each tile is list of tensors, each of them is made of TOA values of the requested Sentinel 2A image bands.</span>
+<span class="sd">        dictionary: dictionary containing [tile_name, coordinates], where coordinates are the corners coordinates of each tile</span>
+<span class="sd">                    composing the requested image.</span>
+<span class="sd">        dictionary: dictionary containing [tile_name, coordinates], where coordinates are the footprint&#39;s coordinates</span>
+<span class="sd">                    of each tile composing the requested image.</span>
+<span class="sd">        dictionary: dictionary containing [tile_name, band_filename_dict], where band_filename_dict is the dictionary</span>
+<span class="sd">                    associating to every band the original jp2 file.</span>
+<span class="sd">        string: expected class name.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">_</span><span class="p">,</span> <span class="n">l1c_image_path</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">expected_class</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">get_event_info</span><span class="p">(</span>
+            <span class="n">id_event</span><span class="p">,</span> <span class="n">cfg_file_dict</span><span class="p">,</span> <span class="n">id_raw_l1_dict</span><span class="p">,</span> <span class="n">database</span><span class="o">=</span><span class="n">database</span>
+        <span class="p">)</span>
+    <span class="k">except</span><span class="p">:</span>  <span class="c1"># noqa: E722</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">&quot;Impossible to find information on image: &quot;</span>
+            <span class="o">+</span> <span class="n">colored</span><span class="p">(</span><span class="n">id_event</span><span class="p">,</span> <span class="s2">&quot;blue&quot;</span><span class="p">)</span>
+            <span class="o">+</span> <span class="s2">&quot;. Check it is included in the database.&quot;</span>
+        <span class="p">)</span>
+
+    <span class="p">(</span>
+        <span class="n">sentinel_img</span><span class="p">,</span>
+        <span class="n">tiles_coordinates_dict</span><span class="p">,</span>
+        <span class="n">tiles_footprint_coordinates_dict</span><span class="p">,</span>
+        <span class="n">bands_filename_dict_dict</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">=</span> <span class="n">read_L1C_event_from_path</span><span class="p">(</span>
+        <span class="n">l1c_image_path</span><span class="p">,</span> <span class="n">bands_list</span><span class="p">,</span> <span class="n">reproject_bounds</span><span class="p">,</span> <span class="n">verbose</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="p">(</span>
+        <span class="n">sentinel_img</span><span class="p">,</span>
+        <span class="n">tiles_coordinates_dict</span><span class="p">,</span>
+        <span class="n">tiles_footprint_coordinates_dict</span><span class="p">,</span>
+        <span class="n">bands_filename_dict_dict</span><span class="p">,</span>
+        <span class="n">expected_class</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="read_L1C_image_from_tif"><a class="viewcode-back" href="../../utils.html#utils.l1_utils.read_L1C_image_from_tif">[docs]</a><span class="k">def</span> <span class="nf">read_L1C_image_from_tif</span><span class="p">(</span>
+    <span class="n">id_event</span><span class="p">,</span>
+    <span class="n">out_name_ending</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">cfg_file_dict</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">id_raw_l1_dict</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">database</span><span class="o">=</span><span class="s2">&quot;THRAWS&quot;</span><span class="p">,</span>
+    <span class="n">device</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="s2">&quot;cpu&quot;</span><span class="p">),</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Read an L1C Sentine2 image from a cropped TIF. The image is represented as TOA reflectance.</span>
+<span class="sd">    The image is post processed.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        id_event (str): event ID.</span>
+<span class="sd">        out_name_ending (src, optional): optional ending for the output name. Defaults to None.</span>
+<span class="sd">        cfg_file_dict (dict, optional): dictionary containing paths to the different pyraws directories.</span>
+<span class="sd">                                        If None, internal CSV database will be parsed.</span>
+<span class="sd">        id_raw_l1_dict (dict, optional): id-raw-l1 dictionary. If None, internal CSV database will be parsed.</span>
+<span class="sd">        database (string, optional): database name. Defaults to &quot;THRAWS&quot;.</span>
+<span class="sd">        device (torch.device, optional): torch device. Defaults to torch.device(&quot;cpu&quot;).</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: impossible to find information on the database.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        dictionary: dictionary containing every tile composing the requested image.</span>
+<span class="sd">                    Each tensor is made of TOA values of the requested Sentinel 2A image bands.</span>
+<span class="sd">        dictionary: dictionary containing lat and lon for every point.</span>
+<span class="sd">        string: expected class name.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">l1c_post_processed_path</span><span class="p">,</span> <span class="n">expected_class</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">get_event_info</span><span class="p">(</span>
+            <span class="n">id_event</span><span class="p">,</span> <span class="n">cfg_file_dict</span><span class="p">,</span> <span class="n">id_raw_l1_dict</span><span class="p">,</span> <span class="n">database</span><span class="o">=</span><span class="n">database</span>
+        <span class="p">)</span>
+    <span class="k">except</span><span class="p">:</span>  <span class="c1"># noqa: E722</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">&quot;Impossible to find information on image: &quot;</span>
+            <span class="o">+</span> <span class="n">colored</span><span class="p">(</span><span class="n">id_event</span><span class="p">,</span> <span class="s2">&quot;blue&quot;</span><span class="p">)</span>
+            <span class="o">+</span> <span class="s2">&quot;. Check it is included in the database.&quot;</span>
+        <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">out_name_ending</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">l1c_post_processed_path</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">l1c_post_processed_path</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span> <span class="n">out_name_ending</span> <span class="o">+</span> <span class="s2">&quot;.tif&quot;</span>
+        <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">l1c_post_processed_path</span> <span class="o">=</span> <span class="n">l1c_post_processed_path</span> <span class="o">+</span> <span class="s2">&quot;.tif&quot;</span>
+
+    <span class="k">with</span> <span class="n">rasterio</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">l1c_post_processed_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">raster</span><span class="p">:</span>
+        <span class="n">img_np</span> <span class="o">=</span> <span class="n">raster</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+        <span class="n">sentinel_img</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">img_np</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">))</span>
+        <span class="n">height</span> <span class="o">=</span> <span class="n">sentinel_img</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">width</span> <span class="o">=</span> <span class="n">sentinel_img</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+        <span class="n">cols</span><span class="p">,</span> <span class="n">rows</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">width</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">height</span><span class="p">))</span>
+        <span class="n">xs</span><span class="p">,</span> <span class="n">ys</span> <span class="o">=</span> <span class="n">rasterio</span><span class="o">.</span><span class="n">transform</span><span class="o">.</span><span class="n">xy</span><span class="p">(</span><span class="n">raster</span><span class="o">.</span><span class="n">transform</span><span class="p">,</span> <span class="n">rows</span><span class="p">,</span> <span class="n">cols</span><span class="p">)</span>
+        <span class="n">lons</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">ys</span><span class="p">)</span>
+        <span class="n">lats</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">xs</span><span class="p">)</span>
+        <span class="n">coords_dict</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;lat&quot;</span><span class="p">:</span> <span class="n">lats</span><span class="p">,</span> <span class="s2">&quot;lon&quot;</span><span class="p">:</span> <span class="n">lons</span><span class="p">}</span>
+
+    <span class="k">if</span> <span class="n">device</span> <span class="o">==</span> <span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="s2">&quot;cuda&quot;</span><span class="p">):</span>
+        <span class="n">sentinel_img</span> <span class="o">=</span> <span class="n">sentinel_img</span><span class="o">.</span><span class="n">cuda</span><span class="p">()</span>
+
+    <span class="n">sentinel_img</span> <span class="o">=</span> <span class="n">sentinel_img</span><span class="o">.</span><span class="n">permute</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">/</span> <span class="n">S2_DEFAULT_QUANTIFICATION_VALUE</span>
+    <span class="k">return</span> <span class="n">sentinel_img</span><span class="p">,</span> <span class="n">coords_dict</span><span class="p">,</span> <span class="n">expected_class</span></div>
+
+
+<div class="viewcode-block" id="swap_latlon"><a class="viewcode-back" href="../../utils.html#utils.l1_utils.swap_latlon">[docs]</a><span class="k">def</span> <span class="nf">swap_latlon</span><span class="p">(</span><span class="n">poly</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Function that swaps latitude and logitude values</span>
+<span class="sd">    Args:</span>
+<span class="sd">        poly (list): list of points coordinates</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        poly (list): list of points coordinates swapped.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">poly</span> <span class="o">=</span> <span class="p">[[</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">poly</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">poly</span></div>
+
+
+<div class="viewcode-block" id="export_band_to_tif"><a class="viewcode-back" href="../../utils.html#utils.l1_utils.export_band_to_tif">[docs]</a><span class="k">def</span> <span class="nf">export_band_to_tif</span><span class="p">(</span><span class="n">band</span><span class="p">,</span> <span class="n">crs</span><span class="p">,</span> <span class="n">coords</span><span class="p">,</span> <span class="n">save_path</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Export band to TIF.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        band (torch.tensor): band to save.</span>
+<span class="sd">        crs (string): epcs.</span>
+<span class="sd">        coords (list): list of bands coordinates [UL, BL, BR, UR]. Each point is (LON, LAT).</span>
+<span class="sd">        save_path (_type_): _description_</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">height</span><span class="p">,</span> <span class="n">width</span> <span class="o">=</span> <span class="n">band</span><span class="p">[:,</span> <span class="p">:]</span><span class="o">.</span><span class="n">shape</span>
+
+    <span class="c1"># UL                       #BL                         #BR                            #UR</span>
+    <span class="n">gcps</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">GCP</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">*</span><span class="n">coords</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span>
+        <span class="n">GCP</span><span class="p">(</span><span class="n">height</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">*</span><span class="n">coords</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span>
+        <span class="n">GCP</span><span class="p">(</span><span class="n">height</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="o">*</span><span class="n">coords</span><span class="p">[</span><span class="mi">2</span><span class="p">]),</span>
+        <span class="n">GCP</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="o">*</span><span class="n">coords</span><span class="p">[</span><span class="mi">3</span><span class="p">]),</span>
+    <span class="p">]</span>
+    <span class="n">transform</span> <span class="o">=</span> <span class="n">from_gcps</span><span class="p">(</span><span class="n">gcps</span><span class="p">)</span>
+
+    <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;crs&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;init&quot;</span><span class="p">:</span> <span class="n">crs</span><span class="p">},</span>
+        <span class="s2">&quot;transform&quot;</span><span class="p">:</span> <span class="n">transform</span><span class="p">,</span>
+        <span class="s2">&quot;width&quot;</span><span class="p">:</span> <span class="n">width</span><span class="p">,</span>
+        <span class="s2">&quot;height&quot;</span><span class="p">:</span> <span class="n">height</span><span class="p">,</span>
+        <span class="s2">&quot;count&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="s2">&quot;dtype&quot;</span><span class="p">:</span> <span class="s2">&quot;uint16&quot;</span><span class="p">,</span>
+    <span class="p">}</span>
+
+    <span class="k">with</span> <span class="n">rasterio</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">save_path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="k">as</span> <span class="n">dst</span><span class="p">:</span>
+        <span class="n">dst</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">band</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">rasterio</span><span class="o">.</span><span class="n">uint16</span><span class="p">),</span> <span class="mi">1</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Roberto Del Prete, Gabriele Meoni.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

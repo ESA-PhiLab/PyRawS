@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>utils.shape_utils &mdash; pyraws 0.0.3 documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/sphinx_highlight.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            pyraws
+              <img src="../../_static/PyRawS_logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">First Steps:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../configuration.html">Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../quickstart.html">Quickstart</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../API.html">API demonstration</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../database.html">Database</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../raw.html">Raw</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../l1.html">L1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../utils.html">Utils</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Useful Info:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../contacts.html">Contacts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../glossario.html">Glossary</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">pyraws</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">utils.shape_utils</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for utils.shape_utils</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">geopandas</span> <span class="k">as</span> <span class="nn">gpd</span>
+<span class="kn">import</span> <span class="nn">geopy</span>
+<span class="kn">from</span> <span class="nn">pyraws.raw.raw_event</span> <span class="kn">import</span> <span class="n">Raw_event</span>
+<span class="kn">from</span> <span class="nn">shapely.geometry</span> <span class="kn">import</span> <span class="n">Polygon</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+
+<div class="viewcode-block" id="get_granules_polys"><a class="viewcode-back" href="../../utils.html#utils.shape_utils.get_granules_polys">[docs]</a><span class="k">def</span> <span class="nf">get_granules_polys</span><span class="p">(</span><span class="n">requested_bands</span><span class="p">,</span> <span class="n">event_name</span><span class="p">,</span> <span class="n">device</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns the polygons over bands coordinates and correspondent indices.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        requested_bands (list): requested bands.</span>
+<span class="sd">        event_name (st): event ID.</span>
+<span class="sd">        device (torch.device): device.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        dict: {granule_name : polygon}</span>
+<span class="sd">        dict: {granule_name (e.g., granule_0_STACKED_T_granule_1) : index of granules stacked along track}</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">raw_event</span> <span class="o">=</span> <span class="n">Raw_event</span><span class="p">(</span><span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
+    <span class="n">raw_event</span><span class="o">.</span><span class="n">from_database</span><span class="p">(</span><span class="n">event_name</span><span class="p">,</span> <span class="n">requested_bands</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">stackable_granules</span><span class="p">,</span> <span class="n">stackable_couples</span> <span class="o">=</span> <span class="n">raw_event</span><span class="o">.</span><span class="n">stack_granules_couples</span><span class="p">()</span>
+    <span class="n">names</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">get_granule_info</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">stackable_granules</span><span class="p">]</span>
+    <span class="n">coords</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">x</span><span class="o">.</span><span class="n">get_bands_coordinates</span><span class="p">(</span><span class="n">latlon_format</span><span class="o">=</span><span class="kc">False</span><span class="p">)[</span><span class="n">requested_bands</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+        <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">stackable_granules</span>
+    <span class="p">]</span>
+    <span class="n">polys</span> <span class="o">=</span> <span class="p">[</span><span class="n">Polygon</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">coords</span><span class="p">]</span>
+    <span class="n">poly_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">names</span><span class="p">,</span> <span class="n">polys</span><span class="p">))</span>
+    <span class="n">polys_index</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">names</span><span class="p">,</span> <span class="n">stackable_couples</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">poly_dict</span><span class="p">,</span> <span class="n">polys_index</span></div>
+
+
+<div class="viewcode-block" id="create_polygon_from_coordinates"><a class="viewcode-back" href="../../utils.html#utils.shape_utils.create_polygon_from_coordinates">[docs]</a><span class="k">def</span> <span class="nf">create_polygon_from_coordinates</span><span class="p">(</span>
+    <span class="n">lat</span><span class="p">,</span> <span class="n">lon</span><span class="p">,</span> <span class="n">center_distance_x</span><span class="o">=</span><span class="mi">5000</span><span class="p">,</span> <span class="n">center_distance_y</span><span class="o">=</span><span class="mi">14000</span><span class="p">,</span> <span class="n">json_name</span><span class="o">=</span><span class="kc">None</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Creates a rectangular polygon from coordinates (lat, lon). If json_name is not None, the polygon is saved as JSON file.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        lat (float): center latitude.</span>
+<span class="sd">        lon (float): center longitude.</span>
+<span class="sd">        center_distance_x (int, optional): Horizontal distance from the center in m. Defaults to 5000.</span>
+<span class="sd">        center_distance_y (int, optional): Vertical distance from the center in m. Defaults to 14000.</span>
+<span class="sd">        json_name (str, optional): output JSON file name. If None, no file is created. Defaults to None.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        dict: polygon dict {&quot;SW&quot; : (lat, lon), &quot;NW&quot; : (lat, lon), &quot;NE&quot; : (lat, lon), &quot;SE&quot; : (lat, lon)}</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">center_coordinates</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;lat&quot;</span><span class="p">:</span> <span class="n">lat</span><span class="p">,</span> <span class="s2">&quot;lon&quot;</span><span class="p">:</span> <span class="n">lon</span><span class="p">}</span>
+    <span class="n">polygon_dict</span> <span class="o">=</span> <span class="n">create_rectangular_polygon</span><span class="p">(</span>
+        <span class="n">center_coordinates</span><span class="p">,</span> <span class="n">center_distance_x</span><span class="p">,</span> <span class="n">center_distance_y</span>
+    <span class="p">)</span>
+    <span class="n">polygon</span> <span class="o">=</span> <span class="n">Polygon</span><span class="p">(</span>
+        <span class="p">[</span><span class="n">polygon_dict</span><span class="p">[</span><span class="s2">&quot;SW&quot;</span><span class="p">],</span> <span class="n">polygon_dict</span><span class="p">[</span><span class="s2">&quot;NW&quot;</span><span class="p">],</span> <span class="n">polygon_dict</span><span class="p">[</span><span class="s2">&quot;NE&quot;</span><span class="p">],</span> <span class="n">polygon_dict</span><span class="p">[</span><span class="s2">&quot;SE&quot;</span><span class="p">]]</span>
+    <span class="p">)</span>
+    <span class="n">json_content</span> <span class="o">=</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoSeries</span><span class="p">([</span><span class="n">polygon</span><span class="p">])</span><span class="o">.</span><span class="n">to_json</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">json_name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">json_name</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">json_content</span><span class="p">)</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">polygon_dict</span><span class="p">[</span><span class="s2">&quot;SW&quot;</span><span class="p">]))</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">polygon_dict</span><span class="p">[</span><span class="s2">&quot;NW&quot;</span><span class="p">]))</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">polygon_dict</span><span class="p">[</span><span class="s2">&quot;NE&quot;</span><span class="p">]))</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">polygon_dict</span><span class="p">[</span><span class="s2">&quot;SE&quot;</span><span class="p">]))</span>
+
+    <span class="k">return</span> <span class="n">polygon</span></div>
+
+
+<div class="viewcode-block" id="create_rectangular_polygon"><a class="viewcode-back" href="../../utils.html#utils.shape_utils.create_rectangular_polygon">[docs]</a><span class="k">def</span> <span class="nf">create_rectangular_polygon</span><span class="p">(</span>
+    <span class="n">center_coordinates</span><span class="p">,</span> <span class="n">center_distance_x</span><span class="p">,</span> <span class="n">center_distance_y</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Creates a rectangular polygon from coordinates (lat, lon).</span>
+<span class="sd">    Args:</span>
+<span class="sd">        center_coordinates (dict): center coordinates {&quot;lat&quot; : lat, &quot;lon&quot; : lon}</span>
+<span class="sd">        center_distance_x (int, optional): Horizontal distance from the center in m. Defaults to 5000.</span>
+<span class="sd">        center_distance_y (int, optional): Vertical distance from the center in m. Defaults to 14000.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        dict: polygon dict {&quot;SW&quot; : (lat, lon), &quot;NW&quot; : (lat, lon), &quot;NE&quot; : (lat, lon), &quot;SE&quot; : (lat, lon)}</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">center_distance</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span>
+        <span class="n">center_distance_x</span> <span class="o">*</span> <span class="n">center_distance_x</span> <span class="o">+</span> <span class="n">center_distance_y</span> <span class="o">*</span> <span class="n">center_distance_y</span>
+    <span class="p">)</span>
+    <span class="n">bearing_angle_0</span> <span class="o">=</span> <span class="mi">90</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">arcsin</span><span class="p">(</span><span class="n">center_distance_y</span> <span class="o">/</span> <span class="n">center_distance</span><span class="p">)</span> <span class="o">*</span> <span class="mi">180</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span>
+    <span class="c1"># print(center_distance)</span>
+
+    <span class="n">bearing_angles</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;SW&quot;</span><span class="p">:</span> <span class="mi">180</span> <span class="o">+</span> <span class="n">bearing_angle_0</span><span class="p">,</span>
+        <span class="s2">&quot;NW&quot;</span><span class="p">:</span> <span class="mi">360</span> <span class="o">-</span> <span class="n">bearing_angle_0</span><span class="p">,</span>
+        <span class="s2">&quot;NE&quot;</span><span class="p">:</span> <span class="n">bearing_angle_0</span><span class="p">,</span>
+        <span class="s2">&quot;SE&quot;</span><span class="p">:</span> <span class="mi">180</span> <span class="o">-</span> <span class="n">bearing_angle_0</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="c1"># print(bearing_angles)</span>
+    <span class="n">polygon_dict</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;SW&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;NW&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;NE&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;SE&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">}</span>  <span class="c1"># South-West, North-West, ...</span>
+    <span class="k">for</span> <span class="n">bearing_keys</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">bearing_angles</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+        <span class="n">polygon_vertex</span> <span class="o">=</span> <span class="n">geopy</span><span class="o">.</span><span class="n">distance</span><span class="o">.</span><span class="n">distance</span><span class="p">(</span><span class="n">meters</span><span class="o">=</span><span class="n">center_distance</span><span class="p">)</span><span class="o">.</span><span class="n">destination</span><span class="p">(</span>
+            <span class="p">(</span><span class="n">center_coordinates</span><span class="p">[</span><span class="s2">&quot;lat&quot;</span><span class="p">],</span> <span class="n">center_coordinates</span><span class="p">[</span><span class="s2">&quot;lon&quot;</span><span class="p">]),</span>
+            <span class="n">bearing</span><span class="o">=</span><span class="n">bearing_angles</span><span class="p">[</span><span class="n">bearing_keys</span><span class="p">],</span>
+        <span class="p">)</span>
+        <span class="n">polygon_dict</span><span class="p">[</span><span class="n">bearing_keys</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">polygon_vertex</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">polygon_vertex</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+    <span class="k">return</span> <span class="n">polygon_dict</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Roberto Del Prete, Gabriele Meoni.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
