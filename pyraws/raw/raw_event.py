@@ -85,8 +85,13 @@ class Raw_event:
             verbose (bool, optional): if True, if True, verbose mode is used. Defaults to True.
         """
 
-        if not(self.is_void()):
-            print("Impossible to create a new event from path: " +colored(raw_dir_path, "blue")+". " + colored("Event already instantiated.", "red"))
+        if not (self.is_void()):
+            print(
+                "Impossible to create a new event from path: "
+                + colored(raw_dir_path, "blue")
+                + ". "
+                + colored("Event already instantiated.", "red")
+            )
         else:
             if bands_list is None:
                 bands_list = list(BANDS_RAW_SHAPE_DICT.keys())
@@ -152,8 +157,13 @@ class Raw_event:
             verbose (bool, optional): if True, if True, verbose mode is used. Defaults to True.
             database (string, optional): database name. Defaults to "THRAWS".
         """
-        if not(self.is_void()):
-            print("Impossible to create a new event from: " +colored(id_event, "blue")+". " + colored("Event already instantiated.", "red"))
+        if not (self.is_void()):
+            print(
+                "Impossible to create a new event from: "
+                + colored(id_event, "blue")
+                + ". "
+                + colored("Event already instantiated.", "red")
+            )
         else:
             if bands_list is None:
                 bands_list = list(BANDS_RAW_SHAPE_DICT.keys())
