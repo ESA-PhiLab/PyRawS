@@ -475,19 +475,18 @@ def get_event_info(
             )
             + "."
         )
-
     if (raw_useful_granules_str is not None) and (len(raw_useful_granules_str) != 0):
         raw_useful_granules_str = (
             raw_useful_granules_str[1:-1].replace(" ", "").split("],")
         )
-        if not ("[" in raw_useful_granules_str) and not (
-            "]" in raw_useful_granules_str
-        ):  # Single granules list
+        if len(raw_useful_granules_str) == 1:
+            # Single granules list
             raw_useful_granules = [
-                int(x[0]) if ((x[0] is not None) and (x[0] != "None")) else [None]
-                for x in [x.split(",") for x in raw_useful_granules_str]
+                int(x) if ((x is not None) and (x != "None")) else None
+                for x in raw_useful_granules_str[0].split(",")
             ]
         else:
+            print(raw_useful_granules_str)
             raw_useful_granules = [
                 [int(x), int(y)] if (x != "None") and (y != "None") else [None, None]
                 for [x, y] in [
