@@ -1183,8 +1183,8 @@ class Raw_granule:
             )
         if ax is not None:
             ax.imshow(
-            bands_superimposed_equalized.detach().cpu().numpy(),
-        )
+                bands_superimposed_equalized.detach().cpu().numpy(),
+            )
         else:
             plt.imshow(
                 bands_superimposed_equalized.detach().cpu().numpy(),
