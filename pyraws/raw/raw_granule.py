@@ -1130,7 +1130,7 @@ class Raw_granule:
         return coregistered_granule
 
     def show_bands_superimposition(
-        self, requested_bands=None, downsampling=True, equalize=False, n_std=2
+        self, requested_bands=None, downsampling=True, equalize=False, n_std=2, ax=None
     ):
         """It shows the superimposition of bands in requested_bands
 
@@ -1146,6 +1146,7 @@ class Raw_granule:
                                           Default to False.
             n_std (integer, optional):  number of times the value of the pixel values standard deviation used
                                         for histogram cropping. Defaults to 2.
+            ax (integer, optional): matplotlib axis to be used to plot if None. Defaults to None.
         Raises:
             ValueError: Impossible to superimpose more than 3 bands
         """
@@ -1180,10 +1181,14 @@ class Raw_granule:
             bands_superimposed_equalized = (
                 bands_superimposed_equalized / bands_superimposed_equalized.max()
             )
-
-        plt.imshow(
+        if ax is not None:
+            ax.imshow(
             bands_superimposed_equalized.detach().cpu().numpy(),
         )
+        else:
+            plt.imshow(
+                bands_superimposed_equalized.detach().cpu().numpy(),
+            )
 
     def show_bands(
         self,
