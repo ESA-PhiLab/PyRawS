@@ -7,3 +7,6 @@ scripts_and_studies/Test/
 *.pkl
 scripts_and_studies/coregistration_study/superglue_models
 pyraws/sys_config.py
+dist
+build
+myRunscripts

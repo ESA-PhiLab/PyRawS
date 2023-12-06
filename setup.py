@@ -9,7 +9,7 @@ from setuptools import setup
 
 setup(
     name="pyraws",
-    version="1.0.0",
+    version="v0.0.3",
     description="Python for RAW Sentinel2 data (PyRawS) is a powerful open-source Python package"
     + " that provides a comprehensive set of tools for working with Sentinel-2 Raw data. It provides utilities for"
     + " coarse spatial bands coregistration, geo-referencing, data visualization, and image processing.",
@@ -40,9 +40,10 @@ setup(
         "Development Status :: 3 - Alpha",
         "Intended Audience :: Developers",
         "Intended Audience :: Science/Research",
-        "Topic :: Scientific/Engineering :: Computer Vision",
+        "Topic :: Scientific/Engineering :: GIS",
         "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
         "Programming Language :: Python :: 3.8",
+        "Environment :: GPU :: NVIDIA CUDA :: 11.0",
     ],
     packages=["pyraws", "pyraws.database", "pyraws.raw", "pyraws.l1", "pyraws.utils"],
     python_requires=">=3.8, <4",
