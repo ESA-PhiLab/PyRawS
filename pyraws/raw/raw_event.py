@@ -84,48 +84,57 @@ class Raw_event:
             bands list. If None, all bands are used and sorted according to the datasheet order. Defaults to None.
             verbose (bool, optional): if True, if True, verbose mode is used. Defaults to True.
         """
-        if bands_list is None:
-            bands_list = list(BANDS_RAW_SHAPE_DICT.keys())
-        try:
-            (
-                granules_collection,
-                granules_paths,
-                polygon_coordinates_list,
-                cloud_percentages_list,
-            ) = read_Raw_event_from_path(
-                raw_dir_path, bands_list, verbose, self.__device
-            )
-        except:  # noqa: E722
-            raise ValueError(
-                "Impossible to open the raw file at: "
-                + colored(raw_dir_path, "red")
-                + "."
-            )
 
-        granule_names = find_granules_names(granules_paths)
-        self.__bands_names = bands_list
-        # These pieces of information are not available since the event is not read from database.
-        self.__raw_useful_granules_idx = []
-        self.__raw_complementary_granules_idx = []
-        self.__event_class = None
-        self.__useful_granule_bounding_box_dict = {}
-
-        for granule, n in zip(granules_collection, range(len(granules_collection))):
-            new_granule = Raw_granule(device=self.__device)
-            along_track_size = geopy.distance.geodesic(
-                polygon_coordinates_list[n][0], polygon_coordinates_list[n][1]
-            ).km
-            new_granule.create_granule(
-                bands_list,
-                granule,
-                granule_names[n],
-                polygon_coordinates_list[n],
-                along_track_size,
-                cloud_percentages_list[n],
+        if not (self.is_void()):
+            print(
+                "Impossible to create a new event from path: "
+                + colored(raw_dir_path, "blue")
+                + ". "
+                + colored("Event already instantiated.", "red")
             )
-            self.__granules_collection.append(new_granule)
+        else:
+            if bands_list is None:
+                bands_list = list(BANDS_RAW_SHAPE_DICT.keys())
+            try:
+                (
+                    granules_collection,
+                    granules_paths,
+                    polygon_coordinates_list,
+                    cloud_percentages_list,
+                ) = read_Raw_event_from_path(
+                    raw_dir_path, bands_list, verbose, self.__device
+                )
+            except:  # noqa: E722
+                raise ValueError(
+                    "Impossible to open the raw file at: "
+                    + colored(raw_dir_path, "red")
+                    + "."
+                )
 
-        self.n_granules = len(self.__granules_collection)
+            granule_names = find_granules_names(granules_paths)
+            self.__bands_names = bands_list
+            # These pieces of information are not available since the event is not read from database.
+            self.__raw_useful_granules_idx = []
+            self.__raw_complementary_granules_idx = []
+            self.__event_class = None
+            self.__useful_granule_bounding_box_dict = {}
+
+            for granule, n in zip(granules_collection, range(len(granules_collection))):
+                new_granule = Raw_granule(device=self.__device)
+                along_track_size = geopy.distance.geodesic(
+                    polygon_coordinates_list[n][0], polygon_coordinates_list[n][1]
+                ).km
+                new_granule.create_granule(
+                    bands_list,
+                    granule,
+                    granule_names[n],
+                    polygon_coordinates_list[n],
+                    along_track_size,
+                    cloud_percentages_list[n],
+                )
+                self.__granules_collection.append(new_granule)
+
+            self.n_granules = len(self.__granules_collection)
 
     def from_database(
         self,
@@ -148,49 +157,57 @@ class Raw_event:
             verbose (bool, optional): if True, if True, verbose mode is used. Defaults to True.
             database (string, optional): database name. Defaults to "THRAWS".
         """
-        if bands_list is None:
-            bands_list = list(BANDS_RAW_SHAPE_DICT.keys())
-
-        (
-            granules_collection,
-            event_class,
-            granule_names,
-            raw_useful_granules,
-            raw_complementary_granules,
-            polygon_coordinates_list,
-            cloud_percentages_list,
-            useful_granule_bounding_box_dict,
-        ) = read_Raw_event_from_database(
-            id_event,
-            bands_list,
-            cfg_file_dict,
-            id_raw_l1_dict,
-            database,
-            verbose,
-            device=self.__device,
-        )
-        self.__bands_names = bands_list
-        self.__raw_useful_granules_idx = raw_useful_granules
-        self.__raw_complementary_granules_idx = raw_complementary_granules
-        self.__event_class = event_class
-        self.__useful_granule_bounding_box_dict = useful_granule_bounding_box_dict
-
-        for granule, n in zip(granules_collection, range(len(granules_collection))):
-            new_granule = Raw_granule(device=self.__device)
-            along_track_size = geopy.distance.geodesic(
-                polygon_coordinates_list[n][0], polygon_coordinates_list[n][1]
-            ).km
-            new_granule.create_granule(
-                bands_list,
-                granule,
-                granule_names[n],
-                polygon_coordinates_list[n],
-                along_track_size,
-                cloud_percentages_list[n],
+        if not (self.is_void()):
+            print(
+                "Impossible to create a new event from: "
+                + colored(id_event, "blue")
+                + ". "
+                + colored("Event already instantiated.", "red")
             )
-            self.__granules_collection.append(new_granule)
+        else:
+            if bands_list is None:
+                bands_list = list(BANDS_RAW_SHAPE_DICT.keys())
 
-        self.n_granules = len(self.__granules_collection)
+            (
+                granules_collection,
+                event_class,
+                granule_names,
+                raw_useful_granules,
+                raw_complementary_granules,
+                polygon_coordinates_list,
+                cloud_percentages_list,
+                useful_granule_bounding_box_dict,
+            ) = read_Raw_event_from_database(
+                id_event,
+                bands_list,
+                cfg_file_dict,
+                id_raw_l1_dict,
+                database,
+                verbose,
+                device=self.__device,
+            )
+            self.__bands_names = bands_list
+            self.__raw_useful_granules_idx = raw_useful_granules
+            self.__raw_complementary_granules_idx = raw_complementary_granules
+            self.__event_class = event_class
+            self.__useful_granule_bounding_box_dict = useful_granule_bounding_box_dict
+
+            for granule, n in zip(granules_collection, range(len(granules_collection))):
+                new_granule = Raw_granule(device=self.__device)
+                along_track_size = geopy.distance.geodesic(
+                    polygon_coordinates_list[n][0], polygon_coordinates_list[n][1]
+                ).km
+                new_granule.create_granule(
+                    bands_list,
+                    granule,
+                    granule_names[n],
+                    polygon_coordinates_list[n],
+                    along_track_size,
+                    cloud_percentages_list[n],
+                )
+                self.__granules_collection.append(new_granule)
+
+            self.n_granules = len(self.__granules_collection)
 
     def get_bands_list(self):
         """Returns the list of bands of every Raw_granule object in the collection.
