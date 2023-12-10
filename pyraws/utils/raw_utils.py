@@ -339,6 +339,7 @@ def read_Raw_event_from_database(
             _,
             _,
         ) = get_event_info(id_event, cfg_file_dict, id_raw_l1_dict, database=database)
+        print(raw_dir_path)
     except:  # noqa: E722
         raise ValueError(
             "Impossible to find information on event: "

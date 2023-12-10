@@ -7,16 +7,26 @@ except:  # noqa: E722
         + "https://github.com/ESA-PhiLab/PyRawS#set-up-for-coregistration-study."
     )
 
+# try:
+#     from lightglue import LightGlue, SuperPoint, DISK, SIFT, ALIKED
+#     from lightglue.utils import load_image, rbd
+# except:  # noqa: E722
+#     raise ValueError(
+#         "LightGlue model not found. Please, install lightglue: "
+#         + "https://github.com/cvg/LightGlue"
+#     )
+
 import csv
 import sys
-import os
+import sys, os
 
 sys.path.insert(1, os.path.join("..", ".."))
+sys.path.insert(1, os.path.join("..", "..", "scripts_and_studies", "hta_detection_algorithms"))
 from pyraws.utils.visualization_utils import equalize_tensor
 import matplotlib.cm as cm
 import torch
-import kornia
-from kornia.feature import *
+# import kornia
+# from kornia.feature import *
 
 
 
@@ -114,7 +124,6 @@ def get_shift_SuperGlue_profiling(
         return [None, None]
     return shift_mean
 
-
 def get_shift_SIFT_profiling(
     b0,
     b1,
@@ -122,7 +131,7 @@ def get_shift_SIFT_profiling(
     n_std=2,
     device=torch.device("cpu"),
 ):
-    """Get a shift between two bands of a specific event by using SuperGlue.
+    """Get a shift between two bands of a specific event by using SIFT.
 
     Args:
         b0 (torch.tensor): tensor containing band 0 to coregister.
@@ -227,7 +236,121 @@ def get_shift_SIFT_profiling(
         return [None, None]
     return shift_mean
 
+def get_shift_lightglue_profiling(
+    b0,
+    b1,
+    equalize=True,
+    n_std=2,
+    device=torch.device("cpu"),
+    feature_extractor = 'alik', # alik, disk, sift or superpoint
+    width_coefficient = 0.9, # pruning threshold, disable with -1
+    depth_coefficient = 0.9, # Controls the early stopping, disable with -1
+    filter_threshold = 0.9 # Match confidence. Increase this value to obtain less, but stronger matches.
+):
+    """Get a shift between two bands of a specific event by using LightGlue.
 
+    Args:
+        b0 (torch.tensor): tensor containing band 0 to coregister.
+        b1 (torch.tensor): tensor containing band 1 to coregister.
+        equalize (bool, optional): if True, equalization is performed. Defaults to True.
+        n_std (int, optional): Outliers are saturated for equalization at histogram_mean*- n_std * histogram_std.
+                               Defaults to 2.
+        device (torch.device, optional): torch.device. Defaults to torch.device("cpu").
+
+    Returns:
+        float: mean value of the shift.
+        torch.tensor: band 0.
+        torch.tensor: band 1.
+        dict: granule info.
+        float: number of matched kyepoints.
+    """
+
+    # Aux:
+    def compute_offsets(image1, 
+                        image2, 
+                        device, 
+                        feature_extractor, 
+                        width_coefficient,
+                        depth_coefficient,
+                        filter_threshold,
+                        verbose = False):
+        
+        assert len(image1.shape) == 2, 'Error with shapes of image1'
+        assert len(image2.shape) == 2, 'Error with shapes of image2'
+        # load each image as a torch.Tensor on GPU with shape (1,H,W), normalized in [0,1]
+        image1 = image1.unsqueeze(0)
+        image2 = image2.unsqueeze(0)
+        
+        if feature_extractor == 'superpoint':
+            extractor = SuperPoint(max_num_keypoints=2048).eval().to(device) # load the extractor
+            
+        elif feature_extractor == 'disk':
+            extractor = DISK(max_num_keypoints=2048).eval().to(device)
+            
+        elif feature_extractor == 'sift':
+            extractor = SIFT(max_num_keypoints=2048).eval().to(device)
+            
+        elif feature_extractor == 'aliked':
+            extractor = ALIKED(max_num_keypoints=2048).eval().to(device)
+        
+
+        matcher = LightGlue(features=feature_extractor, depth_confidence=depth_coefficient, width_confidence=width_coefficient, filter_threshold=filter_threshold).eval().to(device)  # load the matcher
+        feats0 = extractor.extract(image1.to(device))
+        feats1 = extractor.extract(image2.to(device))
+        matches01 = matcher({"image0": feats0, "image1": feats1})
+        feats0, feats1, matches01 = [
+            rbd(x) for x in [feats0, feats1, matches01]
+        ]  # remove batch dimension
+        kpts0, kpts1, matches = feats0["keypoints"], feats1["keypoints"], matches01["matches"]
+        src_pts, dst_pts = kpts0[matches[..., 0]], kpts1[matches[..., 1]]
+        return src_pts, dst_pts
+
+    bands = torch.zeros([b0.shape[0], b0.shape[1], 2], device=device)
+    bands[:, :, 0] = b0
+    bands[:, :, 1] = b1
+    
+    if equalize:
+        l0_granule_tensor_equalized = equalize_tensor(bands[:, :, :2], n_std)
+        b0 = (
+            l0_granule_tensor_equalized[:, :, 0]
+            / l0_granule_tensor_equalized[:, :, 0].max()
+        )
+        b1 = (
+            l0_granule_tensor_equalized[:, :, 1]
+            / l0_granule_tensor_equalized[:, :, 1].max()
+        )
+    else:
+        b0 = b0 / 2**12
+        b1 = b1 / 2**12
+
+    mkpts0, mkpts1 = compute_offsets(b0, b1, device=device, feature_extractor=feature_extractor, width_coefficient=width_coefficient, depth_coefficient=depth_coefficient, filter_threshold=filter_threshold)
+    
+    
+    
+    if len(mkpts1) and len(mkpts0):
+        # shift = torch.tensor([x - y for (x, y) in zip(mkpts1, mkpts0)], device=device)
+        shift = mkpts1 - mkpts0
+        shift_v, shift_h = shift[:, 0], shift[:, 1]
+        shift_v_mean, shift_v_std = torch.mean(shift_v), torch.std(shift_v)
+        shift_h_mean, shift_h_std = torch.mean(shift_h), torch.std(shift_h)
+        shift_v = shift_v[
+            torch.logical_and(
+                shift_v > shift_v_mean - shift_v_std,
+                shift_v < shift_v_mean + shift_v_std,
+            )
+        ]
+        shift_h = shift_h[
+            torch.logical_and(
+                shift_h > shift_h_mean - shift_h_std,
+                shift_h < shift_h_mean + shift_h_std,
+            )
+        ]
+        shift_mean = torch.round(
+            torch.tensor([-shift_h.mean(), -shift_v.mean()], device=device)
+        )
+    else:
+        return [None, None]
+    return shift_mean
 
 def get_shift_SuperGlue(
     event_name,

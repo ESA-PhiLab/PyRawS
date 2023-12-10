@@ -4,8 +4,7 @@ from torchvision.transforms.functional import rotate
 import sys
 import os
 
-sys.path.insert(1, os.path.join("..", ".."))
-from coregistration_study_utils import get_shift_SuperGlue_profiling
+from coregistration_study_utils import get_shift_SuperGlue_profiling, get_shift_SIFT_profiling, get_shift_lightglue_profiling
 from pyraws.raw.raw_event import Raw_event
 from pyraws.utils.raw_utils import get_bands_shift
 import matplotlib.pyplot as plt
@@ -39,7 +38,6 @@ def get_shift_values_dict(bands):
 
     return shift_values_dict
 
-
 def coarse_coregistration(raw_granule, shift_values_dict):
     """Coarse coregistration value from preloaded shift values.
 
@@ -57,7 +55,6 @@ def coarse_coregistration(raw_granule, shift_values_dict):
     return raw_granule.coarse_coregistration(
         crop_empty_pixels=False, downsampling=True, bands_shifts=bands_shifts
     )
-
 
 def superGlue_coregistration(
     raw_granule,
@@ -106,6 +103,100 @@ def superGlue_coregistration(
         crop_empty_pixels=False, downsampling=True, bands_shifts=bands_shifts
     )
 
+def sift_coregistration(
+    raw_granule,
+    requested_bands,
+    equalize,
+    n_std,
+    device,
+):
+    """_summary_
+
+    Args:
+        raw_granule (raw_granule): Raw granule to coregister.
+        requested_bands (list): bands lists.
+        n_max_keypoints (int): maximum number of keypoints.
+        sinkhorn_iterations (int): number of keypoints iterations.
+        equalize (bool): if true, equalization is applied.
+        n_std (int): number of std values used for equalization.
+        device (torch.device): torch device.
+
+    Returns:
+        raw_granule: registered granule.
+    """
+    bands = raw_granule.as_tensor(downsampling=True)
+    for n, band in enumerate(requested_bands):
+        if band in ["B10", "B11", "B12"]:
+            bands[:, :, n] = rotate(bands[:, :, n].unsqueeze(2), 180).squeeze(2)
+
+    bands_shifts = []
+
+    for n in range(bands.shape[2] - 1):
+        bands_shifts.append(
+            get_shift_SIFT_profiling(
+                bands[:, :, 0],
+                bands[:, :, n + 1],
+                equalize=equalize,
+                n_std=n_std,
+                device=device,
+            )
+        )
+
+    return raw_granule.coarse_coregistration(
+        crop_empty_pixels=False, downsampling=True, bands_shifts=bands_shifts
+    )
+    
+def lightglue_coregistration(
+    raw_granule,
+    requested_bands,
+    equalize,
+    n_std,
+    device,
+    feature_extractor = 'alik', # ALIK, DISK, or superpoint
+    width_coefficient = 0.9, # pruning threshold, disable with -1
+    depth_coefficient = 0.9, # Controls the early stopping, disable with -1
+    filter_threshold = 0.9 # Match confidence. Increase this value to obtain less, but stronger matches.
+):
+    """_summary_
+
+    Args:
+        raw_granule (raw_granule): Raw granule to coregister.
+        requested_bands (list): bands lists.
+        n_max_keypoints (int): maximum number of keypoints.
+        sinkhorn_iterations (int): number of keypoints iterations.
+        equalize (bool): if true, equalization is applied.
+        n_std (int): number of std values used for equalization.
+        device (torch.device): torch device.
+
+    Returns:
+        raw_granule: registered granule.
+    """
+    bands = raw_granule.as_tensor(downsampling=True)
+    for n, band in enumerate(requested_bands):
+        if band in ["B10", "B11", "B12"]:
+            bands[:, :, n] = rotate(bands[:, :, n].unsqueeze(2), 180).squeeze(2)
+
+    bands_shifts = []
+
+    for n in range(bands.shape[2] - 1):
+        bands_shifts.append(
+            get_shift_lightglue_profiling(
+                bands[:, :, 0],
+                bands[:, :, n + 1],
+                equalize=equalize,
+                n_std=n_std,
+                device=device,
+                feature_extractor = feature_extractor, # alik, disk, sift or superpoint
+                width_coefficient = width_coefficient, # pruning threshold, disable with -1
+                depth_coefficient = depth_coefficient, # Controls the early stopping, disable with -1
+                filter_threshold = filter_threshold # Match confidence. Increase this value to obtain less, but stronger matches.
+            )
+        )
+
+    return raw_granule.coarse_coregistration(
+        crop_empty_pixels=False, downsampling=True, bands_shifts=bands_shifts
+    )
+    
 
 def main():
     parser = argparse.ArgumentParser()
@@ -121,7 +212,7 @@ def main():
     parser.add_argument(
         "--coreg_type",
         type=str,
-        help='Coregistration type between ""coarse"" and ""super_glue""',
+        help='Coregistration type between ""coarse"", ""super_glue"", ""SIFT"", ""lightglue""',
         default="coarse",
     )
     parser.add_argument(
@@ -146,6 +237,12 @@ def main():
         default=1024,
     )
     parser.add_argument(
+        "--extractor",
+        type=str,
+        help="Feature extractor: 'alik', 'disk', 'sift' or 'superpoint'. Default: 'superpoint' ",
+        default='superpoint',
+    )
+    parser.add_argument(
         "--sinkhorn_iterations",
         type=int,
         help="Number of sinkhorn iterations.",
@@ -159,7 +256,8 @@ def main():
     requested_bands_str = pargs.bands
     requested_bands_str = requested_bands_str.replace(" ", "")[1:-1]
     requested_bands = [x for x in requested_bands_str.split(",")]
-    events = ["Etna_00", "France_0", "Australia_1", "Piton_de_la_Fournaise_31"]
+    events = ["Barren_Island_00", "Barren_Island_00", "Barren_Island_00", "Barren_Island_00", "Barren_Island_00", "Barren_Island_00", "Barren_Island_00", "Barren_Island_00", "Barren_Island_00", "Barren_Island_00", "Barren_Island_00", "Barren_Island_00", "Barren_Island_00", "Barren_Island_00", "Barren_Island_00", "Barren_Island_00", "Barren_Island_00", "Barren_Island_00", "Barren_Island_00", "Barren_Island_00", "Barren_Island_00", "Barren_Island_00", "Barren_Island_00", "Barren_Island_00", "Barren_Island_00", "Barren_Island_00", "Barren_Island_00", "Barren_Island_00", "Barren_Island_00", "Barren_Island_00", "Barren_Island_00", "Barren_Island_00", "Barren_Island_00", "Barren_Island_00", "Barren_Island_00", "Barren_Island_00"]
+    extractor = str(pargs.extractor )
 
     # Creating output dirs if needed.
     os.makedirs("tests", exist_ok=True)
@@ -218,8 +316,76 @@ def main():
                         raw_granule_registered = coarse_coregistration(
                             raw_granules_list[n], shift_values_dict
                         )
-
+###############################################
+    # else: 
+    #     # pargs.coreg_type == "lightglue":
+    #     if pargs.device == "cpu":
+    #         with profile(activities=[ProfilerActivity.CPU], record_shapes=True) as prof:
+    #             with record_function("lightglue_coregistration_"+extractor):
+    #                 for n in range(pargs.n_event):
+    #                     raw_granule_registered = lightglue_coregistration(
+    #                         raw_granules_list[n],
+    #                         requested_bands,
+    #                         pargs.equalize,
+    #                         pargs.n_std,
+    #                         device,
+    #                         feature_extractor = extractor, # alik, disk, sift or superpoint
+    #                         width_coefficient = 0.9, # pruning threshold, disable with -1
+    #                         depth_coefficient = 0.9, # Controls the early stopping, disable with -1
+    #                         filter_threshold = 0.9, # Match confidence. Increase this value to obtain less, but stronger matches.
+    #                     )
+    #     else:
+    #         with profile(
+    #             activities=[ProfilerActivity.CUDA], record_shapes=True
+    #         ) as prof:
+    #             with record_function("lightglue_coregistration_"+extractor):
+    #                 for n in range(pargs.n_event):
+    #                     raw_granule_registered = lightglue_coregistration(
+    #                         raw_granules_list[n],
+    #                         requested_bands,
+    #                         pargs.equalize,
+    #                         pargs.n_std,
+    #                         device,
+    #                         feature_extractor = extractor, # alik, disk, sift or superpoint
+    #                         width_coefficient = 0.9, # pruning threshold, disable with -1
+    #                         depth_coefficient = 0.9, # Controls the early stopping, disable with -1
+    #                         filter_threshold = 0.9, # Match confidence. Increase this value to obtain less, but stronger matches.
+    #                     )
+                        
+###############################################
+    # if pargs.coreg_type == "SIFT":
     else:
+        # print('Using SIFT \n\n\n')
+        
+        # if pargs.device == "cpu":
+        #     with profile(activities=[ProfilerActivity.CPU], record_shapes=True) as prof:
+        #         with record_function("sift_coregistration"):
+        #             for n in range(pargs.n_event):
+        #                 raw_granule_registered = sift_coregistration(
+        #                     raw_granules_list[n],
+        #                     requested_bands,
+        #                     pargs.equalize,
+        #                     pargs.n_std,
+        #                     device,
+        #                 )
+        # else:
+        #     with profile(
+        #         activities=[ProfilerActivity.CUDA], record_shapes=True
+        #     ) as prof:
+        #         with record_function("sift_coregistration"):
+        #             for n in range(pargs.n_event):
+        #                 raw_granule_registered = sift_coregistration(
+        #                     raw_granules_list[n],
+        #                     requested_bands,
+        #                     pargs.equalize,
+        #                     pargs.n_std,
+        #                     device,
+        #                 )
+###############################################
+                        
+    # if pargs.coreg_type == "superglue":
+        print('Using Superglue \n\n\n')
+        
         if pargs.device == "cpu":
             with profile(activities=[ProfilerActivity.CPU], record_shapes=True) as prof:
                 with record_function("superglue_coregistration"):
@@ -248,6 +414,8 @@ def main():
                             pargs.n_std,
                             device,
                         )
+    # else:
+    #     raise KeyError('Invalid feature extractor. Please specify one of: SIFT, lightglue, superglue, or coarse')
 
     raw_granule_registered.show_bands_superimposition()
     plt.show()
@@ -273,6 +441,8 @@ def main():
             + str(pargs.n_event)
             + "_coreg_"
             + str(pargs.coreg_type)
+            + "_extractor_"
+            + extractor
             + "_device_"
             + str(pargs.device)
             + "_equalize_"
