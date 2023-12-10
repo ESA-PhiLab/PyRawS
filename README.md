@@ -8,7 +8,7 @@
 # PyRawS
 ![Alt Text](resources/images/PyRawS_logo.png)
 ## About the project
-`Python for RAW Sentinel2 data (PyRawS)` is a powerful open-source Python package that provides a comprehensive set of tools for working with [Sentinel-2 Raw data](#sentinel-2-raw-data)🔬.
+`Python for RAW Sentinel-2 data (PyRawS)` is a powerful open-source Python package that provides a comprehensive set of tools for working with [Sentinel-2 Raw data](#sentinel-2-raw-data)🔬.
 <sup id="fnref:1"><a href="#fn:1" class="footnote">1</a></sup>
 It provides utilities for coarse spatial bands coregistration, geo-referencing, data visualization📊, and image processing🖼️.
 The software is demonstrated on the first Sentinel-2 🛰️ Raw database for warm temperature hotspots 🔥 detection/classification, making it an ideal tool for a wide range of applications in remote sensing and earth observation🌍.
