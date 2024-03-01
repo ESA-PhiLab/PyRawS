@@ -220,7 +220,7 @@ class Raw_event:
         return self.__bands_names
 
     def get_bounding_box_dict(self):
-        """Get bounding box dictionaries.
+        """Bounding box dictionaries getter.
 
         Returns:
             dict: Returns {useful granules : bounding box dictionary}
@@ -228,7 +228,7 @@ class Raw_event:
         return self.__useful_granule_bounding_box_dict
 
     def get_event_class(self):
-        """Get event class.
+        """Event class getter.
 
         Returns:
             dict: Returns {useful granules : bounding box dictionary}
@@ -236,12 +236,23 @@ class Raw_event:
         return self.__event_class
 
     def get_granule(self, granule_idx):
-        """It returns the granule addressed by granule_idx.
+        """Returns the granule addressed by granule_idx.
 
         Args:
             granule_idx (int): granule index.
+        Returns:
+            raw_granule: raw granule matching the corresponding index.
         """
         return self.__granules_collection[granule_idx]
+
+    def get_device(self):
+        """Returns the used device.
+
+        Returns:
+            torch.device: used torch device.
+        """
+        return self.__device
+
 
     def get_stackable_granules(self):
         """Returns list of stackable granules couples indices and stacking positions.
