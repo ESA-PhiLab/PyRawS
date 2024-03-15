@@ -91,7 +91,7 @@ The PyRawS repository includes the following directories:
   2. `dataset_preparation`: it contains scripts and other files used to design the `THRAWS` files (i.e., download data, select events, and others).
   3. `hta_detection_algorithms`: it contains custom and simplified implementation of various high-thermal-anomalies-dection algorithms, including [1](#ref1) used to design the `THRAWS` dataset.
   4. `runscripts`: it contains some runscripts and utils to crop [Sentinel-2 L1C tiles](#sentinel-2-l1c-tile) and generate useful images and export tif.
-  5. `granules_filtering`: it contains a script to run and [[1]](#ref1) on [cropped Sentinel-2 L1-C tiles](#sentinel-2-l1c-tile), extract bounding boxes and map them to the correspondent [Raw granules](#sentinel-2-raw-granule).
+  5. `granules_filtering`: it contains a script to run and [[1]](#ref1) on [cropped Sentinel-2 L1-C tiles](#sentinel-2-l1c-tile), extract bounding boxes and map them to the corresponding [Raw granules](#sentinel-2-raw-granule).
   6. `download_thraws`: it contains the utility for the download of the dataset [THRAWS](https://zenodo.org/record/7908728).
 
 
@@ -206,7 +206,7 @@ This respository contains an example of database (`THRAWS`) that is used by PyRa
 To create a new database (e.g., `my_database_name`), please, proceed as follows:
 
 1. Create a ".csv" file with the structure shown above and place it into the `database`subfloders (e.g., `my_db.csv`). You can use start from the [thraws_db.csv](https://github.com/ESA-PhiLab/PyRawS/-/blob/main/PyRawS/database/thraws_db.csv) database and edit it accordingly to your specification.
-2. Create subdirectory `my_database_name` in the `data` subdirectory and populate it with the correspondent [Sentinel-2 Raw data](#sentinel-2-raw-data) and [Sentinel-2 L1 data](#sentinel-2-l1-data) as described in [Data directory](#data-directory).
+2. Create subdirectory `my_database_name` in the `data` subdirectory and populate it with the corresponding [Sentinel-2 Raw data](#sentinel-2-raw-data) and [Sentinel-2 L1 data](#sentinel-2-l1-data) as described in [Data directory](#data-directory).
 3. Update the `DATABASE_FILE_DICTIONARY` in `PyRawS/utils/constants.py` as follows:
 
 ```DATABASE_FILE_DICTIONARY={"THRAWS" : "thraws_db.csv", "my_database_name" : "my_db.csv"}```
@@ -408,7 +408,7 @@ The previous code snippet will display the image below.  As you can see, the var
 ![Alt Text](resources/images/granule_superimposition.png)
 
 ### How to perform the coarse coregisteration of Raw\_granules
-PyRawS offers some utils to perform [coarse coregistration](#coarse-coregistration) on `Raw_granule` objects. You can coregister a specific `Raw_granule` object of the `Raw_event` collection by calling the `coarse_coregistration(...)` method of the `Raw_event` class by selecting the correspondent index through the `granules_idx` input. <br>
+PyRawS offers some utils to perform [coarse coregistration](#coarse-coregistration) on `Raw_granule` objects. You can coregister a specific `Raw_granule` object of the `Raw_event` collection by calling the `coarse_coregistration(...)` method of the `Raw_event` class by selecting the corresponding index through the `granules_idx` input. <br>
 
 ```py
 from pyraws.raw.raw_event import Raw_event
