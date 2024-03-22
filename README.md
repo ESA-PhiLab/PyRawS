@@ -222,7 +222,8 @@ To create a new database (e.g., `my_database_name`), please, proceed as follows:
 ```DATABASE_FILE_DICTIONARY={"THRAWS" : "thraws_db.csv", "my_database_name" : "my_db.csv"}```
 
 Now, you should be able to use your new database. <br>
-**N.B** The creation of a database is not mandatory. However, it is strongly advisable. Indeed, without creating a database you can still open `Raw data` as described in [Open a Raw event from path](#open-a-raw-event-from-path). However, some pieces of information such as the [Raw useful granules](#raw-useful-granule) associated to a specific event, the event bounding boxes or the image class can be retrieved only when the database is set-up.
+> [!TIP]
+> **N.B** The creation of a database is not mandatory. However, it is strongly advisable. Indeed, without creating a database you can still open `Raw data` as described in [Open a Raw event from path](#open-a-raw-event-from-path). However, some pieces of information such as the [Raw useful granules](#raw-useful-granule) associated to a specific event, the event bounding boxes or the image class can be retrieved only when the database is set-up.
 
 ## Raw events and Raw granules
 ![Alt Text](resources/images/etna_00_granules.png)
