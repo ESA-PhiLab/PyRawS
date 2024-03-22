@@ -76,7 +76,7 @@ class Raw_event:
         else:
             self.__useful_granule_bounding_box_dict = {}
 
-        self.__device=device
+        self.__device = device
 
     def from_path(self, raw_dir_path, bands_list, verbose=True):
         """Read specific bands of the Sentinel-2 raw event located at ""raw_dir_path"".
@@ -252,7 +252,6 @@ class Raw_event:
             torch.device: used torch device.
         """
         return self.__device
-
 
     def get_stackable_granules(self):
         """Returns list of stackable granules couples indices and stacking positions.
