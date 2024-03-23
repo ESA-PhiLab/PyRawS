@@ -1,0 +1,22 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/devcontainers/templates/tree/main/src/anaconda
+
+{
+    "name": "pyraws",
+    "dockerComposeFile": "docker-compose.yml",
+    "service": "pyraws",
+    "workspaceFolder": "/workspace",
+    "settings": {
+        "terminal.integrated.shell.linux": "/bin/bash"
+    },
+    "extensions": [
+        "ms-toolsai.jupyter",
+        "ms-toolsai.vscode-jupyter-cell-tags",
+        "ms-toolsai.jupyter-renderers",
+        "ms-toolsai.vscode-jupyter-powertoys",
+        "ms-toolsai.vscode-jupyter-slideshow",
+        "donjayamanne.python-extension-pack"
+    ],
+    // Use 'postCreateCommand' to run commands after the container is created.
+	//"postCreateCommand": "conda install -n simulator ipykernel --update-deps --force-reinstall"
+}

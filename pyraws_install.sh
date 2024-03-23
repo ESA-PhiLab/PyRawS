@@ -9,10 +9,10 @@ then
     exit 1
 fi
 
-# Create a new Conda environment called openmmlab
+# Create a new Conda environment called pyraws
 conda create --name pyraws python=3.9 -y
 
-# Activate the AINavi environment
+# Activate the environment
 source $(conda info --base)/etc/profile.d/conda.sh
 if conda activate pyraws; then
     echo "pyraws environment activated"
@@ -21,62 +21,45 @@ else
     exit 1
 fi
 
-#!/bin/bash
-# Check the operating system and install pytorch accordingly
-if [[ "$OSTYPE" == "darwin"* ]]; then
-  # macOS
-  echo "Detected macOS"
-  conda install -y pytorch==1.11.0 torchvision==0.12.0 torchaudio==0.11.0 -c pytorch
-elif [[ "$OSTYPE" == "linux-gnu" ]]; then
-  # Linux
-  echo "Detected Linux"
-  if command -v nvcc >/dev/null 2>&1; then
-    # CUDA is available
-    if nvcc --version | grep "release 10\.2" >/dev/null 2>&1; then
-      # CUDA 10.2
-      echo "Detected CUDA 10.2"
-      conda install -y pytorch==1.11.0 torchvision==0.12.0 torchaudio==0.11.0 cudatoolkit=10.2 -c pytorch
-    elif nvcc --version | grep "release 11\.3" >/dev/null 2>&1; then
-      # CUDA 11.3
-      echo "Detected CUDA 11.3"
-      conda install -y pytorch==1.11.0 torchvision==0.12.0 torchaudio==0.11.0 cudatoolkit=11.3 -c pytorch
-    else
-      # CUDA version not supported, installing CPU version
-      echo "CUDA version not supported, installing CPU version"
-      conda install -y pytorch==1.11.0 torchvision==0.12.0 torchaudio==0.11.0 cpuonly -c pytorch
-    fi
-  else
-    # CUDA is not available, installing CPU version
-    echo "CUDA not detected, installing CPU version"
-    conda install -y pytorch==1.11.0 torchvision==0.12.0 torchaudio==0.11.0 cpuonly -c pytorch
-  fi
-elif [[ "$OSTYPE" == "msys" ]]; then
-  # Windows
-  echo "Detected Windows"
-  if where nvcc >/dev/null 2>&1; then
-    # CUDA is available
-    if nvcc --version | grep "release 10\.2" >/dev/null 2>&1; then
-      # CUDA 10.2
-      echo "Detected CUDA 10.2"
-      conda install -y pytorch==1.11.0 torchvision==0.12.0 torchaudio==0.11.0 cudatoolkit=10.2 -c pytorch
-    elif nvcc --version | grep "release 11\.3" >/dev/null 2>&1; then
-      # CUDA 11.3
-      echo "Detected CUDA 11.3"
-      conda install -y pytorch==1.11.0 torchvision==0.12.0 torchaudio==0.11.0 cudatoolkit=11.3 -c pytorch
-    else
-      # CUDA version not supported, installing CPU version
-      echo "CUDA version not supported, installing CPU version"
-      conda install -y pytorch==1.11.0 torchvision==0.12.0 torchaudio==0.11.0 cpuonly -c pytorch
-    fi
-  else
-    # CUDA is not available, installing CPU version
-    echo "CUDA not detected, installing CPU version"
-    conda install -y pytorch==1.11.0 torchvision==0.12.0 torchaudio==0.11.0 cpuonly -c pytorch 
-  fi
-else
-  echo "Unsupported operating system"
-  exit 1
-fi
+
+# Define PyTorch version and components
+pytorch_version="1.11.0"
+torchvision_version="0.12.0"
+torchaudio_version="0.11.0"
+
+# Function to install PyTorch
+install_pytorch() {
+  conda install -y pytorch==$pytorch_version torchvision==$torchvision_version torchaudio==$torchaudio_version $1 -c pytorch
+}
+
+# Install via pip:
+# pip install torch==1.12.1+cu113 torchvision==0.13.1+cu113 torchaudio==0.12.1 --extra-index-url https://download.pytorch.org/whl/cu113
+
+# Detect operating system
+case "$OSTYPE" in
+  "darwin"*)
+    # macOS
+    echo "Detected macOS"
+    install_pytorch "cpuonly"
+    ;;
+  "linux-gnu"|"linux-gnueabihf")
+    # Linux
+    echo "Detected Linux"
+    # Install PyTorch with CUDA 11.3 support
+    install_pytorch "cudatoolkit=11.3"
+    ;;
+  "msys"|"win32")
+    # Windows
+    echo "Detected Windows"
+    # Install PyTorch with CUDA 11.3 support
+    install_pytorch "cudatoolkit=11.3"
+    ;;
+  *)
+    echo "Unsupported operating system"
+    exit 1
+    ;;
+esac
+
 
 # get absolute path of current working directory
 # and setup the sys_cfg.py file
