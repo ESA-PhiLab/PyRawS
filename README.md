@@ -28,33 +28,30 @@ The systme is based on [pytorch]("https://pytorch.org/"), which be installed wit
 
 
 
-## Where I should I start? 
-Follow our [Quickstart](quickstart/README.md) section for tutorials and more.
 
 
 ## Content of the repository
 The PyRawS repository includes the following directories:
 
-
-* **quickstart**: it contains some subdirectories including [jupyter notebooks](https://jupyter-notebook.readthedocs.io/en/stable/index.html):
-  1. `API demonstration`: it contains a notebook to demonstrate PyRawS API.
-  2. `DB_creation`: it contains a notebook to automatically create a database for a target dataset.
-  3. `geographical_distribution`: it contains a notebook to diplay the geographical distribution of the events of a dataset into a map.
-
-* **PyRawS**: it contains the PyRawS package. The latter is made of the following subdirectories:
-  1. `database`: it contains various [PyRawS database](#PyRawS-databases) and other databases.
-  2. `raw`: it includes the `Raw_event` and `Raw_granule` classes used to model, respectively, [Sentinel-2 Raw events](#sentinel-2-raw-event) and [Sentinel-2 Raw granules](#sentinel-2-raw-granule).
-  3. `l1`: it contains the `L1_event` and `L1_tiles` classes used to model, respectively, [Sentinel-2 L1C events](#sentinel-2-l1c-event) and [Sentinel-2 L1C tiles](#sentinel-2-l1c-tile).
-  4. `utils`: it contains some utilities for the PYRAW package.
-
-* **resources**: it contains various resources (i.e., images for the README)
-* **scripts_and_studies**: it contains various scripts and code for different studies realized to create the `THRAWS` dataset. In particular:
-  1. `coregistration_study`: it contains utils used to perform the coregistration study and desing the [coarse coregistration](#coarse-coregistration) technique.
-  2. `dataset_preparation`: it contains scripts and other files used to design the `THRAWS` files (i.e., download data, select events, and others).
-  3. `hta_detection_algorithms`: it contains custom and simplified implementation of various high-thermal-anomalies-dection algorithms, including [1](#ref1) used to design the `THRAWS` dataset.
-  4. `runscripts`: it contains some runscripts and utils to crop [Sentinel-2 L1C tiles](#sentinel-2-l1c-tile) and generate useful images and export tif.
-  5. `granules_filtering`: it contains a script to run and [[1]](#ref1) on [cropped Sentinel-2 L1-C tiles](#sentinel-2-l1c-tile), extract bounding boxes and map them to the corresponding [Raw granules](#sentinel-2-raw-granule).
-  6. `download_thraws`: it contains the utility for the download of the dataset [THRAWS](https://zenodo.org/record/7908728).
+| Directory Name       | Description                                                                                                                                                                                     |
+|----------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| [quickstart](quickstart/README.md)           | Contains Jupyter notebooks for quick start:                                                                                                                                                     |
+|                      |   1. API demonstration: Notebook demonstrating PyRawS API.                                                                                                                                      |
+|                      |   2. DB_creation: Notebook for automatic creation of a database for a target dataset.                                                                                                           |
+|                      |   3. geographical_distribution: Notebook to display the geographical distribution of dataset events on a map.                                                                                  |
+| [pyraws](pyraws/)               | Contains PyRawS package with the following subdirectories:                                                                                                                                      |
+|                      |   1. database: Various PyRawS and other databases.                                                                                                                                              |
+|                      |   2. raw: Includes Raw_event and Raw_granule classes for modeling Sentinel-2 Raw events and granules.                                                                                         |
+|                      |   3. l1: Contains L1_event and L1_tiles classes for modeling Sentinel-2 L1C events and tiles.                                                                                                  |
+|                      |   4. utils: Utilities for the PYRAW package.                                                                                                                                                     |
+| [resources](resources/)              | Contains various resources, such as images for the README.                                                                                                                                       |
+| [scripts_and_studies](scripts_and_studies/) | Contains scripts and code for different studies related to the THRAWS dataset:                                                                                                                   |
+|                      |   1. coregistration_study: Utils for coregistration study and coarse coregistration technique.                                                                                                  |
+|                      |   2. dataset_preparation: Scripts and files for designing THRAWS files, including data download and event selection.                                                                          |
+|                      |   3. hta_detection_algorithms: Custom and simplified implementation of various high-thermal-anomalies-detection algorithms, including those used for designing the THRAWS dataset.       |
+|                      |   4. runscripts: Runscripts and utils for cropping Sentinel-2 L1C tiles, generating images, and exporting tif.                                                                                  |
+|                      |   5. granules_filtering: Script for running and mapping cropped Sentinel-2 L1C tiles to corresponding Raw granules.                                                                           |
+|                      |   6. download_thraws: Utility for downloading the THRAWS dataset from [Zenodo](https://zenodo.org/record/7908728).                                                                           |
 
 
 
@@ -144,17 +141,17 @@ To create a specific dataset, you need to create subfolder with the dataset name
 * `raw`: it will contain [decompressed raw](#sentinel-2-raw-data).
 * `l1c`: it will contain [L1C](#sentinel-2-l1c-data).
 
-Every [raw data](#sentinel-2-decompressed-raw-data) and [L1C](#sentinel-2-l1c-data) data shall be contained in a specific subdirectory --placed in `raw`or `l1c`-- whose name shall match one of the **ID_event** entries of the **.csv** file, located in `database` directory.
+> [!NOTE]
+> Every [raw data](#sentinel-2-decompressed-raw-data) and [L1C](#sentinel-2-l1c-data) data shall be contained in a specific subdirectory --placed in `raw`or `l1c`-- whose name shall match one of the **ID_event** entries of the **.csv** file, located in `database` directory.
 
-## PyRawS Database Structure
+## Working with Database
 
-> [!IMPORTANT]
-> In case you want to create your own database of event for your target aplication, the user should refer to the notebook called "database_creation.ipynb". This notebook contains the necessary code and instructions for creating the database. Simply follow the steps outlined in the notebook to successfully create something similar to the "THRAWS" database.
+This section of the respository contains an example of database (`THRAWS`) that is used by PyRawS to read and process [Sentinel-2 Raw data](#sentinel-2-raw-data) and [Sentinel-2 L1 data](#sentinel-2-l1-data) correctly. The minimal fields of the database include:
 
 > [!WARNING]
 > Additionally, make sure that all required dependencies and packages are installed before running the code in the notebook. Please note that it is important to carefully follow the instructions in the notebook to ensure that a database is created correctly and without errors. 
 
-This respository contains an example of database (`THRAWS`) that is used by PyRawS to read and process [Sentinel-2 Raw data](#sentinel-2-raw-data) and [Sentinel-2 L1 data](#sentinel-2-l1-data) correctly. The minimal fields of the database include:
+
 
 
 
@@ -183,7 +180,9 @@ To create a new database (e.g., `my_database_name`), please, proceed as follows:
 
 ```DATABASE_FILE_DICTIONARY={"THRAWS" : "thraws_db.csv", "my_database_name" : "my_db.csv"}```
 
-Now, you should be able to use your new database. <br>
+> [!IMPORTANT]
+> In case you want to create your own database of event for your target aplication, the user should refer to the notebook called "database_creation.ipynb". This notebook contains the necessary code and instructions for creating the database. Simply follow the steps outlined in the notebook to successfully create something similar to the "THRAWS" database.
+
 > [!TIP]
 > **N.B** The creation of a database is not mandatory. However, it is strongly advisable. Indeed, without creating a database you can still open `Raw data` as described in [Open a Raw event from path](#open-a-raw-event-from-path). However, some pieces of information such as the [Raw useful granules](#raw-useful-granule) associated to a specific event, the event bounding boxes or the image class can be retrieved only when the database is set-up.
 
