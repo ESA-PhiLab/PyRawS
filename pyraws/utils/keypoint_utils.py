@@ -1,7 +1,6 @@
 from pyraws.utils.img_processing_utils import (
     is_2D_image,
     three_channel_to_grayscale_img,
-    normalize_img,
 )
 import numpy as np
 import cv2
