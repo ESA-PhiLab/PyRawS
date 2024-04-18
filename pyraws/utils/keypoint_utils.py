@@ -1,6 +1,7 @@
 from pyraws.utils.img_processing_utils import (
     is_2D_image,
     three_channel_to_grayscale_img,
+    normalize_img,
 )
 import numpy as np
 import cv2
@@ -37,8 +38,8 @@ def get_matched_keypoints_sift(
 
     sift = cv2.SIFT_create()
 
-    img_1 = (img_1 - np.min(img_1)) * max_val_grayscale / np.max(img_1)
-    img_2 = (img_2 - np.min(img_2)) * max_val_grayscale / np.max(img_2)
+    img_1 = normalize_img(img_1, np.min(img_1), np.max(img_1), 0, max_val_grayscale)
+    img_2 = normalize_img(img_2, np.min(img_2), np.max(img_2), 0, max_val_grayscale)
     img_1 = img_1.astype(np.uint8)
     img_2 = img_2.astype(np.uint8)
     # Find keypoints and descriptors.
