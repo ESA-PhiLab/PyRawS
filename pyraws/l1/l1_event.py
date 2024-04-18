@@ -5,6 +5,7 @@ from ..utils.l1_utils import (
     get_l1C_image_default_path,
     read_L1C_event_from_database,
     read_L1C_event_from_path,
+    read_L1C_image_from_tif,
     reproject_raster,
 )
 import matplotlib.pyplot as plt
@@ -17,6 +18,7 @@ from rasterio.merge import merge
 from termcolor import colored
 import torch
 from tqdm import tqdm
+import cv2
 
 
 class L1C_event:
@@ -546,3 +548,46 @@ class L1C_event:
                 dest.write(band[0, :, :], n + 1)
 
         return out_name
+
+    def register_l1_to_raw(
+        self,
+        granule_idx: int,
+        raw_height: int,
+        raw_width: int,
+        keypoints_l1c: np.array,
+        keypoints_raw: np.array,
+        method_homography=cv2.RANSAC,
+    ) -> np.ndarray:
+        """Match a L1C image to its corresponding Raw image.
+
+        Args:
+            granule_idx (int): index of the granule.
+            raw_height (int): height of the Raw image.
+            raw_width (int): width of the Raw image.
+            keypoints_l1c (np.array): keypoints detected in the L1C image.
+            keypoints_raw (np.array): keypoints detected in the Raw image that match 'keypoints_l1c'.
+            method_homography (optional): method used to compute a homography matrix. Defaults to cv2.RANSAC.
+
+        Returns:
+            np.ndarray: L1C image matched to its corresponding Raw image.
+        """
+        granule_idx_str = str(granule_idx)
+
+        l1c_tif, _, _ = read_L1C_image_from_tif(
+            id_event=self.__event_name,
+            out_name_ending=granule_idx_str,
+            device=self.__device,
+        )
+        l1c_numpy = l1c_tif.numpy()
+
+        # Find the homography matrix.
+        homography, _ = cv2.findHomography(
+            keypoints_l1c, keypoints_raw, method_homography
+        )
+
+        # Use homography matrix to transform the L1C image wrt the raw image.
+        l1c_registered_to_raw = cv2.warpPerspective(
+            l1c_numpy, homography, (raw_width, raw_height)
+        )
+        # TODO: save into TIF file, add overwrite param and other params as well
+        return l1c_registered_to_raw
