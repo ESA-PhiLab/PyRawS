@@ -587,7 +587,7 @@ class L1C_event:
 
         # Use homography matrix to transform the L1C image wrt the raw image.
         l1c_registered_to_raw = cv2.warpPerspective(
-            l1c_numpy, homography, (raw_width, raw_height)
+            l1c_numpy, homography, (raw_width, raw_height), flags=cv2.INTER_NEAREST
         )
         # TODO: save into TIF file, add overwrite param and other params as well
         return l1c_registered_to_raw
