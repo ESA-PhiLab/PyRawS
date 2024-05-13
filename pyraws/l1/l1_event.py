@@ -589,5 +589,5 @@ class L1C_event:
         l1c_registered_to_raw = cv2.warpPerspective(
             l1c_numpy, homography, (raw_width, raw_height), flags=cv2.INTER_NEAREST
         )
-        # TODO: save into TIF file, add overwrite param and other params as well.
+        # TODO: save into TIF file, add overwrite param and other params as well
         return l1c_registered_to_raw
