@@ -13,9 +13,6 @@
 *(Disclaimer: This project is currently under development.)*
 
 # PyRawS
-<p align="center">
-  <img src="resources/images/PyRawS_logo.png" alt="Alt Text" width="450"/>
-</p>
 
 ## News & Updates
 
